@@ -27,13 +27,11 @@ export default () => {
     {
       title: '用户名称',
       dataIndex: 'nickName',
-      copyable: true,
       ellipsis: true
     },
     {
       title: '登录名称',
       dataIndex: 'userName',
-      copyable: true,
       ellipsis: true,
       hideInSearch: true,
     },
@@ -46,11 +44,11 @@ export default () => {
       ellipsis: true,
       valueType: 'select',
       valueEnum: {
-        1: {
+        "1": {
           text: '禁用',
           status: 'Error',
         },
-        0: {
+        "0": {
           text: '启用',
           status: 'Success'
         }
@@ -65,13 +63,13 @@ export default () => {
       ellipsis: true,
       valueType: 'select',
       valueEnum: {
-        0: {
+        "0": {
           text: '男',
         },
-        1: {
+        "1": {
           text: '女'
         },
-        2: {
+        "2": {
           text: '未知'
         }
       },
@@ -79,21 +77,18 @@ export default () => {
     {
       title: '用户邮箱',
       dataIndex: 'email',
-      copyable: true,
       ellipsis: true,
       hideInSearch: true,
     },
     {
       title: '手机号',
       dataIndex: 'phonenumber',
-      copyable: true,
       ellipsis: true,
       hideInSearch: true,
     },
     {
       title: '部门',
       dataIndex: 'deptName',
-      copyable: true,
       ellipsis: true,
       hideInSearch: true,
     },
@@ -123,7 +118,6 @@ export default () => {
           cancelText="取消"
           okButtonProps={{ loading: confirmLoading }}
           onConfirm={() => handleDelete(record.userId as number)}
-
         >
           <Button type="link" danger>删除</Button>
         </Popconfirm>

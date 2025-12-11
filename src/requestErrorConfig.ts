@@ -114,15 +114,18 @@ export const errorConfig: RequestConfig = {
     (response) => {
       // 拦截响应数据，进行个性化处理
       const { data } = response as unknown as ResponseStructure;
+      if (data?.code === 401) {
+        localStorage.removeItem("token")
+      }
       if (data?.code === 601 && data?.msg) {
         message.warning(data?.msg);
       } else if (data?.code === 200 && data?.msg) {
         message.success(data?.msg);
       } else if (data?.code !== 200) {
         console.log(response)
-        if(data?.msg){
+        if (data?.msg) {
           message.error(data?.msg);
-        }else{
+        } else {
           message.error("请求失败");
         }
       }

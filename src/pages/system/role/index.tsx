@@ -4,8 +4,7 @@ import { ProTable, TableDropdown } from '@ant-design/pro-components';
 import { Button, Dropdown, message, Popconfirm, Space, Tag } from 'antd';
 import { useRef, useState } from 'react';
 import api from '@/services/yuan/index'
-import CreateForm from './components/CreateForm';
-import UpdateForm from './components/UpdateForm';
+import RoleModalForm from './components/RoleModalForm';
 
 
 
@@ -17,9 +16,11 @@ export default () => {
     {
       dataIndex: 'roleId',
       width: 48,
-      hidden: true
+      hideInTable: true,    // 表格不显示
+      hideInSetting: true,  // 设置弹窗也不显示
     },
     {
+      title:'序号',
       dataIndex: 'index',
       valueType: 'indexBorder',
       width: 48,
@@ -35,18 +36,18 @@ export default () => {
       ellipsis: true,
       hideInSearch: true,
     },
-     {
+    {
       title: '数据范围',
       dataIndex: 'dataScope',
       ellipsis: true,
       hideInSearch: true,
       render: (_, record) => (
-      <Space>
+        <Space>
           <Tag color={'blue'} key={record.dataScope}>
             {record.dataScope}
           </Tag>
-      </Space>
-    ),
+        </Space>
+      ),
     },
     {
       disable: true,
@@ -87,21 +88,23 @@ export default () => {
       key: 'option',
       hideInSearch: true,
       render: (text, record, _, action) => [
-        <UpdateForm
-          key="config"
-          record={record as API.SysRoleBo}
+        <RoleModalForm
+          mode="edit"
+          trigger={<a type="link">编辑</a>}
           reload={actionRef.current?.reload}
+          record={record}
+          key={`edit-${record.roleId}`}
         />,
         <Popconfirm
-          title="角色删除"
+          title="删除"
           description={`确认删除角色：${record.roleName}`}
           okText="确认"
           cancelText="取消"
           okButtonProps={{ loading: confirmLoading }}
           onConfirm={() => handleDelete(record.roleId as number)}
-
+          key={`delete-${record.roleId}`}
         >
-          <Button type="link" danger>删除</Button>
+          <a type="link" style={{color:'red'}}>删除</a>
         </Popconfirm>
 
       ],
@@ -111,11 +114,11 @@ export default () => {
   const handleDelete = async (roleId: number) => {
     try {
       setConfirmLoading(true);
-      await api.sysRoleController.remove1({ roleIds: [roleId] })
+      await api.sysRoleController.sysRoleRemove({ roleIds: [roleId] })
       actionRef.current?.reload(); // 刷新表格
     } catch (error) {
       message.error('删除失败');
-    } finally{
+    } finally {
       setConfirmLoading(false);
     }
   };
@@ -132,7 +135,7 @@ export default () => {
             requestParams.orderByColumn = Object.keys(sort)[0];
             requestParams.isAsc = sort[Object.keys(sort)[0]];
           }
-          const res = await api.sysRoleController.list1(requestParams as API.list1Params);
+          const res = await api.sysRoleController.sysRoleList(requestParams as API.sysRoleListParams);
           return {
             data: res.rows || [],
             total: res.total || 0,
@@ -180,7 +183,16 @@ export default () => {
         dateFormatter="string"
         headerTitle="角色管理"
         toolBarRender={() => [
-          <CreateForm key="create" reload={actionRef.current?.reload} />
+          <RoleModalForm
+            mode="add"
+            trigger={
+              <Button type="primary" icon={<PlusOutlined />}>
+                新建角色
+              </Button>
+            }
+            reload={actionRef.current?.reload}
+            key={'roleAdd'}
+          />,
         ]}
       />
 

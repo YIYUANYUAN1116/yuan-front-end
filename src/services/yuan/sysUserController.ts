@@ -2,8 +2,8 @@
 /* eslint-disable */
 import { request } from "@umijs/max";
 
-/** 此处后端没有提供注释 PUT /system/sysUser */
-export async function edit(
+/** 修改用户 PUT /system/sysUser */
+export async function sysUserEdit(
   body: API.SysUserBo,
   options?: { [key: string]: any }
 ) {
@@ -17,8 +17,8 @@ export async function edit(
   });
 }
 
-/** 此处后端没有提供注释 POST /system/sysUser */
-export async function add(
+/** 新增用户 POST /system/sysUser */
+export async function sysUserAdd(
   body: API.SysUserBo,
   options?: { [key: string]: any }
 ) {
@@ -32,10 +32,10 @@ export async function add(
   });
 }
 
-/** 此处后端没有提供注释 GET /system/sysUser/${param0} */
-export async function getInfo(
+/** 获取用户详细信息 GET /system/sysUser/${param0} */
+export async function sysUserGetInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getInfoParams,
+  params: API.sysUserGetInfoParams,
   options?: { [key: string]: any }
 ) {
   const { userId: param0, ...queryParams } = params;
@@ -46,10 +46,10 @@ export async function getInfo(
   });
 }
 
-/** 此处后端没有提供注释 DELETE /system/sysUser/${param0} */
-export async function remove(
+/** 删除用户 DELETE /system/sysUser/${param0} */
+export async function sysUserRemove(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.removeParams,
+  params: API.sysUserRemoveParams,
   options?: { [key: string]: any }
 ) {
   const { userIds: param0, ...queryParams } = params;
@@ -60,10 +60,10 @@ export async function remove(
   });
 }
 
-/** 此处后端没有提供注释 PUT /system/sysUser/authRole */
-export async function insertAuthRole(
+/** 用户授权角色 PUT /system/sysUser/authRole */
+export async function sysUserInsertAuthRole(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.insertAuthRoleParams,
+  params: API.sysUserInsertAuthRoleParams,
   options?: { [key: string]: any }
 ) {
   return request<API.RVoid>("/system/sysUser/authRole", {
@@ -75,10 +75,24 @@ export async function insertAuthRole(
   });
 }
 
-/** 此处后端没有提供注释 POST /system/sysUser/export */
-export async function exportUsingPost(
+/** 根据用户编号获取授权角色 GET /system/sysUser/authRole/${param0} */
+export async function sysUserGetAuthRole(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.exportUsingPOSTParams,
+  params: API.sysUserGetAuthRoleParams,
+  options?: { [key: string]: any }
+) {
+  const { userId: param0, ...queryParams } = params;
+  return request<API.RSysUserInfoVo>(`/system/sysUser/authRole/${param0}`, {
+    method: "GET",
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}
+
+/** 导出用户列表 POST /system/sysUser/export */
+export async function sysUserExport(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.sysUserExportParams,
   options?: { [key: string]: any }
 ) {
   return request<any>("/system/sysUser/export", {
@@ -92,18 +106,18 @@ export async function exportUsingPost(
   });
 }
 
-/** 此处后端没有提供注释 GET /system/sysUser/getInfo */
-export async function getCurrentInfo(options?: { [key: string]: any }) {
+/** 获取用户详细信息 GET /system/sysUser/getInfo */
+export async function sysUserGetCurrentInfo(options?: { [key: string]: any }) {
   return request<API.RUserInfoVo>("/system/sysUser/getInfo", {
     method: "GET",
     ...(options || {}),
   });
 }
 
-/** 此处后端没有提供注释 GET /system/sysUser/list */
-export async function list(
+/** 查询用户列表 GET /system/sysUser/list */
+export async function sysUserList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.listParams,
+  params: API.sysUserListParams,
   options?: { [key: string]: any }
 ) {
   return request<API.TableDataInfoSysUserVo>("/system/sysUser/list", {

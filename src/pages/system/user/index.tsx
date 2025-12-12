@@ -1,10 +1,12 @@
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
-import { Button, message, Popconfirm } from 'antd';
+import { Button, message, Popconfirm, Space } from 'antd';
 import { useRef, useState } from 'react';
 import api from '@/services/yuan/index';
 import UserModalForm from './components/UserModalForm';
+import { min } from 'lodash';
+import UserRoleModalForm from './components/UserRoleModalForm';
 
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
@@ -12,11 +14,14 @@ export default () => {
 
   const columns: ProColumns<API.SysUserVo>[] = [
     {
+      title: '用户Id',
       dataIndex: 'userId',
       width: 48,
-      hidden: true,
+      hideInTable: true,    // 表格不显示
+      hideInSetting: true,  // 设置弹窗也不显示
     },
     {
+      title: '序号',
       dataIndex: 'index',
       valueType: 'indexBorder',
       width: 48,
@@ -53,8 +58,9 @@ export default () => {
     },
     {
       disable: true,
-      title: '状态',
+      title: '性别',
       dataIndex: 'sex',
+      width: 100,
       filters: true,
       onFilter: true,
       ellipsis: true,
@@ -103,26 +109,29 @@ export default () => {
       key: 'option',
       hideInSearch: true,
       render: (text, record, _, action) => [
-        <UserModalForm
-          mode="edit"
-          trigger={<Button type="link">编辑</Button>}
-          record={record}
-          reload={actionRef.current?.reload}
-          key={'edit'}
-        />,
-        <Popconfirm
-          title="用户删除"
-          description={`确认删除用户：${record.nickName}`}
-          okText="确认"
-          cancelText="取消"
-          okButtonProps={{ loading: confirmLoading }}
-          onConfirm={() => handleDelete(record.userId as number)}
-          key={'delete'}
-        >
-          <Button type="link" danger>
-            删除
-          </Button>
-        </Popconfirm>,
+        <Space size="small">
+          <UserModalForm
+            mode="edit"
+            trigger={<a type="link">编辑</a>}
+            record={record}
+            reload={actionRef.current?.reload}
+            key={`edit-${record.userId}`}
+          />
+         <UserRoleModalForm userId={record.userId} reload={actionRef.current?.reload} />
+          <Popconfirm
+            title="用户删除"
+            description={`确认删除用户：${record.nickName}`}
+            okText="确认"
+            cancelText="取消"
+            okButtonProps={{ loading: confirmLoading }}
+            onConfirm={() => handleDelete(record.userId as number)}
+            key={`delete-${record.userId}`}
+          >
+            <a type="link" style={{color:'red'}}>
+              删除
+            </a>
+          </Popconfirm>
+        </Space>
       ],
     },
   ];
@@ -130,7 +139,7 @@ export default () => {
   const handleDelete = async (userId: number) => {
     try {
       setConfirmLoading(true);
-      await api.sysUserController.remove({ userIds: [userId] });
+      await api.sysUserController.sysUserRemove({ userIds: [userId] });
       actionRef.current?.reload(); // 刷新表格
     } catch (error) {
       message.error('删除失败');
@@ -152,8 +161,8 @@ export default () => {
             requestParams.isAsc = sort[Object.keys(sort)[0]];
           }
 
-          const res = await api.sysUserController.list(
-            requestParams as API.listParams,
+          const res = await api.sysUserController.sysUserList(
+            requestParams as API.sysUserListParams,
           );
           return {
             data: res.rows || [],

@@ -21,7 +21,7 @@ const UserModalForm: FC<UserModalFormProps> = ({
   const isEdit = mode === 'edit';
 
   const { run, loading } = useRequest(
-    isEdit ? api.sysUserController.edit : api.sysUserController.add,
+    isEdit ? api.sysUserController.sysUserEdit : api.sysUserController.sysUserAdd,
     {
       manual: true,
       onSuccess: () => reload?.(),

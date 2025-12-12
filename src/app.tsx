@@ -27,7 +27,7 @@ export async function getInitialState(): Promise<{
 }> {
   const fetchUserInfo = async () => {
     try {
-      const msg = await api.sysUserController.getCurrentInfo({
+      const msg = await api.sysUserController.sysUserGetCurrentInfo({
         skipErrorHandler: true,
       });
       return msg.data;

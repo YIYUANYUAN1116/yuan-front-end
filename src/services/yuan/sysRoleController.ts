@@ -2,8 +2,8 @@
 /* eslint-disable */
 import { request } from "@umijs/max";
 
-/** 此处后端没有提供注释 PUT /system/sysRole */
-export async function edit1(
+/** 修改角色 PUT /system/sysRole */
+export async function sysRoleEdit(
   body: API.SysRoleBo,
   options?: { [key: string]: any }
 ) {
@@ -17,8 +17,8 @@ export async function edit1(
   });
 }
 
-/** 此处后端没有提供注释 POST /system/sysRole */
-export async function add1(
+/** 新增角色 POST /system/sysRole */
+export async function sysRoleAdd(
   body: API.SysRoleBo,
   options?: { [key: string]: any }
 ) {
@@ -32,10 +32,10 @@ export async function add1(
   });
 }
 
-/** 此处后端没有提供注释 GET /system/sysRole/${param0} */
-export async function getInfo1(
+/** 获取角色详细信息 GET /system/sysRole/${param0} */
+export async function sysRoleGetInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getInfo1Params,
+  params: API.sysRoleGetInfoParams,
   options?: { [key: string]: any }
 ) {
   const { roleId: param0, ...queryParams } = params;
@@ -46,10 +46,10 @@ export async function getInfo1(
   });
 }
 
-/** 此处后端没有提供注释 DELETE /system/sysRole/${param0} */
-export async function remove1(
+/** 删除角色 DELETE /system/sysRole/${param0} */
+export async function sysRoleRemove(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.remove1Params,
+  params: API.sysRoleRemoveParams,
   options?: { [key: string]: any }
 ) {
   const { roleIds: param0, ...queryParams } = params;
@@ -60,10 +60,10 @@ export async function remove1(
   });
 }
 
-/** 此处后端没有提供注释 POST /system/sysRole/export */
-export async function export1(
+/** 导出角色列表 POST /system/sysRole/export */
+export async function sysRoleExport(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.export1Params,
+  params: API.sysRoleExportParams,
   options?: { [key: string]: any }
 ) {
   return request<any>("/system/sysRole/export", {
@@ -77,10 +77,10 @@ export async function export1(
   });
 }
 
-/** 此处后端没有提供注释 GET /system/sysRole/list */
-export async function list1(
+/** 查询角色列表 GET /system/sysRole/list */
+export async function sysRoleList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.list1Params,
+  params: API.sysRoleListParams,
   options?: { [key: string]: any }
 ) {
   return request<API.TableDataInfoSysRoleVo>("/system/sysRole/list", {
@@ -91,6 +91,21 @@ export async function list1(
       ...params["bo"],
       pageQuery: undefined,
       ...params["pageQuery"],
+    },
+    ...(options || {}),
+  });
+}
+
+/** 获取角色选择框列表 GET /system/sysRole/optionselect */
+export async function sysRoleOptionselect(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.sysRoleOptionselectParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.RSelectRolesVo>("/system/sysRole/optionselect", {
+    method: "GET",
+    params: {
+      ...params,
     },
     ...(options || {}),
   });

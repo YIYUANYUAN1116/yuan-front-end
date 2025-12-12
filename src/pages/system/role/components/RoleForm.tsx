@@ -6,12 +6,11 @@ import { useEffect, useState } from "react";
 
 interface RoleFormProps {
     menuTree?: DataNode[];
-    checkedKeys?: number[] ,
 }
 
 export default (roleFormProps: RoleFormProps) => {
-   const {menuTree,checkedKeys} = roleFormProps
-   console.log(menuTree,checkedKeys)
+   const {menuTree} = roleFormProps
+
     return (
         <>
             <ProForm.Group>
@@ -64,8 +63,7 @@ export default (roleFormProps: RoleFormProps) => {
                 fieldProps={{
                     treeData: menuTree, // ← 接口返回的菜单树
                     treeCheckable: true,
-                    showSearch: true,
-                    defaultValue: checkedKeys, // 使用 defaultValue
+                    showSearch: true
                 }}
                 
                 rules={[{ required: true, message: "请选择菜单权限" }]}

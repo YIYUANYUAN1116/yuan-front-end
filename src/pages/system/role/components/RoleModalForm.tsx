@@ -1,4 +1,4 @@
-import { type ActionType, ModalForm } from '@ant-design/pro-components';
+import { type ActionType, ModalForm, ProFormTreeSelect } from '@ant-design/pro-components';
 import { useRequest } from '@umijs/max';
 import { Form } from 'antd';
 import { useState, type FC } from 'react';
@@ -49,7 +49,7 @@ const UserModalForm: FC<RoleModalFormProps> = ({
       title={isEdit ? '编辑角色' : '新建角色'}
       trigger={trigger}
       form={form}
-      initialValues={{...record}}
+      initialValues={{ ...record }}
       modalProps={{ okButtonProps: { loading } }}
       onFinish={async (values) => {
         await run(values);
@@ -62,11 +62,15 @@ const UserModalForm: FC<RoleModalFormProps> = ({
             roleId: record?.roleId
           } as API.sysMenuTreeselectParams);
           setMenuTree(convertMenuTree(res.data?.menus || []))
-          setCheckedKeys(res.data?.checkedKeys || [])
+        
+          // 2. ✅ 关键：设置表单的 menuIds 字段（不是用 defaultValue！）
+          form.setFieldsValue({
+            menuIds: res.data?.checkedKeys // 这里必须是数组
+          })
         }
       }}
     >
-      <RoleForm menuTree={menuTree} checkedKeys={checkedKeys}/>
+      <RoleForm menuTree={menuTree} />
     </ModalForm>
   );
 };

@@ -1,13 +1,10 @@
-import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { ProTable, TableDropdown } from '@ant-design/pro-components';
-import { Button, Dropdown, message, Popconfirm, Space, Tag } from 'antd';
+import { ProTable } from '@ant-design/pro-components';
+import { Button, message, Popconfirm } from 'antd';
 import { useRef, useState } from 'react';
-import api from '@/services/yuan/index'
-import CreateForm from './components/CreateForm';
-import UpdateForm from './components/UpdateForm';
-
-
+import api from '@/services/yuan/index';
+import UserModalForm from './components/UserModalForm';
 
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
@@ -17,7 +14,7 @@ export default () => {
     {
       dataIndex: 'userId',
       width: 48,
-      hidden: true
+      hidden: true,
     },
     {
       dataIndex: 'index',
@@ -27,7 +24,7 @@ export default () => {
     {
       title: '用户名称',
       dataIndex: 'nickName',
-      ellipsis: true
+      ellipsis: true,
     },
     {
       title: '登录名称',
@@ -44,14 +41,14 @@ export default () => {
       ellipsis: true,
       valueType: 'select',
       valueEnum: {
-        "1": {
+        '1': {
           text: '禁用',
           status: 'Error',
         },
-        "0": {
+        '0': {
           text: '启用',
-          status: 'Success'
-        }
+          status: 'Success',
+        },
       },
     },
     {
@@ -63,15 +60,15 @@ export default () => {
       ellipsis: true,
       valueType: 'select',
       valueEnum: {
-        "0": {
+        '0': {
           text: '男',
         },
-        "1": {
-          text: '女'
+        '1': {
+          text: '女',
         },
-        "2": {
-          text: '未知'
-        }
+        '2': {
+          text: '未知',
+        },
       },
     },
     {
@@ -106,10 +103,12 @@ export default () => {
       key: 'option',
       hideInSearch: true,
       render: (text, record, _, action) => [
-        <UpdateForm
-          key="config"
-          record={record as API.SysUserBo}
+        <UserModalForm
+          mode="edit"
+          trigger={<Button type="link">编辑</Button>}
+          record={record}
           reload={actionRef.current?.reload}
+          key={'edit'}
         />,
         <Popconfirm
           title="用户删除"
@@ -118,10 +117,12 @@ export default () => {
           cancelText="取消"
           okButtonProps={{ loading: confirmLoading }}
           onConfirm={() => handleDelete(record.userId as number)}
+          key={'delete'}
         >
-          <Button type="link" danger>删除</Button>
-        </Popconfirm>
-
+          <Button type="link" danger>
+            删除
+          </Button>
+        </Popconfirm>,
       ],
     },
   ];
@@ -129,11 +130,11 @@ export default () => {
   const handleDelete = async (userId: number) => {
     try {
       setConfirmLoading(true);
-      await api.sysUserController.remove({ userIds: [userId] })
+      await api.sysUserController.remove({ userIds: [userId] });
       actionRef.current?.reload(); // 刷新表格
     } catch (error) {
       message.error('删除失败');
-    } finally{
+    } finally {
       setConfirmLoading(false);
     }
   };
@@ -151,7 +152,9 @@ export default () => {
             requestParams.isAsc = sort[Object.keys(sort)[0]];
           }
 
-          const res = await api.sysUserController.list(requestParams as API.listParams);
+          const res = await api.sysUserController.list(
+            requestParams as API.listParams,
+          );
           return {
             data: res.rows || [],
             total: res.total || 0,
@@ -199,12 +202,18 @@ export default () => {
         dateFormatter="string"
         headerTitle="用户管理"
         toolBarRender={() => [
-          <CreateForm key="create" reload={actionRef.current?.reload} />
+          <UserModalForm
+            mode="add"
+            trigger={
+              <Button type="primary" icon={<PlusOutlined />}>
+                新建用户
+              </Button>
+            }
+            reload={actionRef.current?.reload}
+            key={'add'}
+          />,
         ]}
       />
-
-
     </div>
-
   );
 };

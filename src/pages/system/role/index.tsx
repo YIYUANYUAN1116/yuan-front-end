@@ -5,6 +5,7 @@ import { Button, Dropdown, message, Popconfirm, Space, Tag } from 'antd';
 import { useRef, useState } from 'react';
 import api from '@/services/yuan/index'
 import RoleModalForm from './components/RoleModalForm';
+import { HIDE_COLUMN } from '@/utils/colums';
 
 
 
@@ -16,11 +17,10 @@ export default () => {
     {
       dataIndex: 'roleId',
       width: 48,
-      hideInTable: true,    // 表格不显示
-      hideInSetting: true,  // 设置弹窗也不显示
+      ...HIDE_COLUMN
     },
     {
-      title:'序号',
+      title: '序号',
       dataIndex: 'index',
       valueType: 'indexBorder',
       width: 48,
@@ -87,7 +87,7 @@ export default () => {
       valueType: 'option',
       key: 'option',
       hideInSearch: true,
-      render: (text, record, _, action) => [
+      render: (text, record) => [
         <RoleModalForm
           mode="edit"
           trigger={<a type="link">编辑</a>}
@@ -104,7 +104,7 @@ export default () => {
           onConfirm={() => handleDelete(record.roleId as number)}
           key={`delete-${record.roleId}`}
         >
-          <a type="link" style={{color:'red'}}>删除</a>
+          <a type="link" style={{ color: 'red' }}>删除</a>
         </Popconfirm>
 
       ],
@@ -128,8 +128,7 @@ export default () => {
       <ProTable<API.SysRoleVo>
         columns={columns}
         actionRef={actionRef}
-        cardBordered
-        request={async (params, sort, filter) => {
+        request={async (params, sort) => {
           const requestParams = { ...params };
           if (sort && Object.keys(sort).length > 0) {
             requestParams.orderByColumn = Object.keys(sort)[0];
@@ -142,45 +141,16 @@ export default () => {
             success: true,
           };
         }}
-        editable={{
-          type: 'multiple',
-        }}
         columnsState={{
           persistenceKey: 'pro-table-singe-demos',
           persistenceType: 'localStorage',
           defaultValue: {
             option: { fixed: 'right', disable: true },
           },
-          onChange(value) {
-            console.log('value: ', value);
-          },
         }}
-        rowKey="userId"
-        search={{
-          labelWidth: 'auto',
-        }}
-        options={{
-          setting: {
-            listsHeight: 400,
-          },
-        }}
-        form={{
-          // 由于配置了 transform，提交的参数与定义的不同这里需要转化一下
-          syncToUrl: (values, type) => {
-            if (type === 'get') {
-              return {
-                ...values,
-                created_at: [values.startTime, values.endTime],
-              };
-            }
-            return values;
-          },
-        }}
-        pagination={{
-          pageSize: 5,
-          onChange: (page) => console.log(page),
-        }}
-        dateFormatter="string"
+        rowKey="roleId"
+        pagination={{ pageSize: 10 }}
+        search={{ labelWidth: 'auto' }}
         headerTitle="角色管理"
         toolBarRender={() => [
           <RoleModalForm

@@ -1,12 +1,11 @@
-import { type ActionType, ModalForm, ProFormTreeSelect } from '@ant-design/pro-components';
+import { type ActionType, ModalForm, ProForm, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect } from '@ant-design/pro-components';
 import { useRequest } from '@umijs/max';
 import { Form } from 'antd';
 import { useState, type FC } from 'react';
 import api from '@/services/yuan/index';
-import RoleForm from './RoleForm';
-import { values } from 'lodash';
 import { sysMenuTreeselect } from '@/services/yuan/sysMenuController';
 import { DataNode } from 'antd/es/tree';
+import { convertTree } from '@/utils/TreeUtils';
 
 interface RoleModalFormProps {
   mode: 'add' | 'edit';
@@ -22,9 +21,8 @@ const UserModalForm: FC<RoleModalFormProps> = ({
   record,
 }) => {
   const [menuTree, setMenuTree] = useState<DataNode[]>([]);
-  const [checkedKeys, setCheckedKeys] = useState<number[]>([]);
   const isEdit = mode === 'edit';
-
+  const [form] = Form.useForm<API.SysRoleBo>();
   const { run, loading } = useRequest(
     isEdit ? api.sysRoleController.sysRoleEdit : api.sysRoleController.sysRoleAdd,
     {
@@ -33,16 +31,7 @@ const UserModalForm: FC<RoleModalFormProps> = ({
     },
   );
 
-  const [form] = Form.useForm<API.SysRoleBo>();
-  // 将后端菜单树转换为 ProFormTreeSelect 可用的 treeData
-  const convertMenuTree = (menus: API.TreeLong[]): any[] => {
-    return menus.map((item: API.TreeLong) => ({
-      title: item.label,
-      value: item.id,
-      key: item.id,
-      children: item.children ? convertMenuTree(item.children) : [],
-    }));
-  };
+
 
   return (
     <ModalForm<API.SysRoleBo>
@@ -61,16 +50,70 @@ const UserModalForm: FC<RoleModalFormProps> = ({
             menu: {},
             roleId: record?.roleId
           } as API.sysMenuTreeselectParams);
-          setMenuTree(convertMenuTree(res.data?.menus || []))
-        
-          // 2. ✅ 关键：设置表单的 menuIds 字段（不是用 defaultValue！）
+
+          setMenuTree(convertTree(res.data?.menus || []))
           form.setFieldsValue({
             menuIds: res.data?.checkedKeys // 这里必须是数组
           })
         }
       }}
     >
-      <RoleForm menuTree={menuTree} />
+      <>
+        <ProForm.Group>
+          <ProFormText width="md" name="roleId" hidden />
+
+          <ProFormText
+            width="md"
+            name="roleName"
+            label="角色名称"
+            placeholder="请输入角色名称"
+            rules={[{ required: true, message: '请输入角色名称' }]}
+          />
+
+          <ProFormText
+            width="md"
+            name="roleKey"
+            label="权限字符"
+            rules={[{ required: true, message: '请输入权限字符' }]}
+            placeholder="请输入权限字符"
+          />
+        </ProForm.Group>
+
+        <ProForm.Group>
+          <ProFormText
+            width="md"
+            name="roleSort"
+            label="显示顺序"
+            rules={[{ required: true, message: '请输入显示顺序' }]}
+            placeholder="显示顺序"
+          />
+
+          <ProFormSelect
+            width="md"
+            rules={[{ required: true, message: '请选择状态' }]}
+            options={[
+              { value: "0", label: '启用' },
+              { value: "1", label: '禁用' }
+            ]}
+            name="status"
+            label="状态"
+          />
+        </ProForm.Group>
+
+        <ProFormTextArea name="remark" label="备注" placeholder="请输入备注" />
+
+        <ProFormTreeSelect
+          name="menuIds"
+          label="菜单权限"
+          placeholder="请选择菜单权限"
+          fieldProps={{
+            treeData: menuTree, // ← 接口返回的菜单树
+            treeCheckable: true,
+            showSearch: true
+          }}
+          rules={[{ required: true, message: "请选择菜单权限" }]}
+        />
+      </>
     </ModalForm>
   );
 };

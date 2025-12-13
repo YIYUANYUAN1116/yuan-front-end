@@ -5,8 +5,8 @@ import { Button, message, Popconfirm, Space } from 'antd';
 import { useRef, useState } from 'react';
 import api from '@/services/yuan/index';
 import UserModalForm from './components/UserModalForm';
-import { min } from 'lodash';
 import UserRoleModalForm from './components/UserRoleModalForm';
+import { HIDE_COLUMN } from '@/utils/colums';
 
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
@@ -17,8 +17,7 @@ export default () => {
       title: '用户Id',
       dataIndex: 'userId',
       width: 48,
-      hideInTable: true,    // 表格不显示
-      hideInSetting: true,  // 设置弹窗也不显示
+      ...HIDE_COLUMN,
     },
     {
       title: '序号',
@@ -46,14 +45,8 @@ export default () => {
       ellipsis: true,
       valueType: 'select',
       valueEnum: {
-        '1': {
-          text: '禁用',
-          status: 'Error',
-        },
-        '0': {
-          text: '启用',
-          status: 'Success',
-        },
+        '1': { text: '禁用', status: 'Error' },
+        '0': { text: '启用', status: 'Success' },
       },
     },
     {
@@ -66,15 +59,9 @@ export default () => {
       ellipsis: true,
       valueType: 'select',
       valueEnum: {
-        '0': {
-          text: '男',
-        },
-        '1': {
-          text: '女',
-        },
-        '2': {
-          text: '未知',
-        },
+        '0': { text: '男' },
+        '1': { text: '女' },
+        '2': { text: '未知' },
       },
     },
     {
@@ -102,22 +89,20 @@ export default () => {
       sorter: true,
       hideInSearch: true,
     },
-
     {
       title: '操作',
       valueType: 'option',
       key: 'option',
       hideInSearch: true,
-      render: (text, record, _, action) => [
+      render: (text, record) => (
         <Space size="small">
           <UserModalForm
             mode="edit"
-            trigger={<a type="link">编辑</a>}
+            trigger={<a>编辑</a>}
             record={record}
             reload={actionRef.current?.reload}
-            key={`edit-${record.userId}`}
           />
-         <UserRoleModalForm userId={record.userId} reload={actionRef.current?.reload} />
+          <UserRoleModalForm userId={record.userId!} reload={actionRef.current?.reload} />
           <Popconfirm
             title="用户删除"
             description={`确认删除用户：${record.nickName}`}
@@ -125,14 +110,11 @@ export default () => {
             cancelText="取消"
             okButtonProps={{ loading: confirmLoading }}
             onConfirm={() => handleDelete(record.userId as number)}
-            key={`delete-${record.userId}`}
           >
-            <a type="link" style={{color:'red'}}>
-              删除
-            </a>
+            <a style={{ color: 'red' }}>删除</a>
           </Popconfirm>
         </Space>
-      ],
+      ),
     },
   ];
 
@@ -140,7 +122,8 @@ export default () => {
     try {
       setConfirmLoading(true);
       await api.sysUserController.sysUserRemove({ userIds: [userId] });
-      actionRef.current?.reload(); // 刷新表格
+      actionRef.current?.reload();
+      message.success('删除成功');
     } catch (error) {
       message.error('删除失败');
     } finally {
@@ -149,80 +132,47 @@ export default () => {
   };
 
   return (
-    <div>
-      <ProTable<API.SysUserVo>
-        columns={columns}
-        actionRef={actionRef}
-        cardBordered
-        request={async (params, sort, filter) => {
-          const requestParams = { ...params };
-          if (sort && Object.keys(sort).length > 0) {
-            requestParams.orderByColumn = Object.keys(sort)[0];
-            requestParams.isAsc = sort[Object.keys(sort)[0]];
+    <ProTable<API.SysUserVo>
+      columns={columns}
+      actionRef={actionRef}
+      request={async (params, sort) => {
+        const requestParams = { ...params };
+        if (sort && Object.keys(sort).length > 0) {
+          requestParams.orderByColumn = Object.keys(sort)[0];
+          requestParams.isAsc = sort[Object.keys(sort)[0]];
+        }
+        const res = await api.sysUserController.sysUserList(
+          requestParams as API.sysUserListParams,
+        );
+        return {
+          data: res.rows || [],
+          total: res.total || 0,
+          success: true,
+        };
+      }}
+      columnsState={{
+        persistenceKey: 'pro-table-singe-demos',
+        persistenceType: 'localStorage',
+        defaultValue: {
+          option: { fixed: 'right', disable: true },
+        },
+      }}
+      rowKey="userId"
+      search={{ labelWidth: 'auto' }}
+      pagination={{ pageSize: 10 }}
+      headerTitle="用户管理"
+      toolBarRender={() => [
+        <UserModalForm
+          mode="add"
+          trigger={
+            <Button type="primary" icon={<PlusOutlined />}>
+              新建用户
+            </Button>
           }
-
-          const res = await api.sysUserController.sysUserList(
-            requestParams as API.sysUserListParams,
-          );
-          return {
-            data: res.rows || [],
-            total: res.total || 0,
-            success: true,
-          };
-        }}
-        editable={{
-          type: 'multiple',
-        }}
-        columnsState={{
-          persistenceKey: 'pro-table-singe-demos',
-          persistenceType: 'localStorage',
-          defaultValue: {
-            option: { fixed: 'right', disable: true },
-          },
-          onChange(value) {
-            console.log('value: ', value);
-          },
-        }}
-        rowKey="userId"
-        search={{
-          labelWidth: 'auto',
-        }}
-        options={{
-          setting: {
-            listsHeight: 400,
-          },
-        }}
-        form={{
-          // 由于配置了 transform，提交的参数与定义的不同这里需要转化一下
-          syncToUrl: (values, type) => {
-            if (type === 'get') {
-              return {
-                ...values,
-                created_at: [values.startTime, values.endTime],
-              };
-            }
-            return values;
-          },
-        }}
-        pagination={{
-          pageSize: 5,
-          onChange: (page) => console.log(page),
-        }}
-        dateFormatter="string"
-        headerTitle="用户管理"
-        toolBarRender={() => [
-          <UserModalForm
-            mode="add"
-            trigger={
-              <Button type="primary" icon={<PlusOutlined />}>
-                新建用户
-              </Button>
-            }
-            reload={actionRef.current?.reload}
-            key={'add'}
-          />,
-        ]}
-      />
-    </div>
+          reload={actionRef.current?.reload}
+          key="add"
+        />,
+      ]}
+    />
   );
 };

@@ -106,6 +106,34 @@ declare namespace API {
     data?: SysDictTypeVo[];
   };
 
+  type RListSysMenuVo = {
+    code?: number;
+    msg?: string;
+    data?: {
+      menuId?: number;
+      menuName?: string;
+      parentId?: number;
+      orderNum?: number;
+      path?: string;
+      component?: string;
+      queryParam?: string;
+      isFrame?: number;
+      isCache?: number;
+      menuType?: string;
+      visible?: string;
+      status?: string;
+      perms?: string;
+      icon?: string;
+      createDept?: number;
+      createBy?: number;
+      createTime?: string;
+      updateBy?: number;
+      updateTime?: string;
+      remark?: string;
+      children?: any[];
+    }[];
+  };
+
   type RLoginVo = {
     code?: number;
     msg?: string;
@@ -315,7 +343,7 @@ declare namespace API {
 
   type SysMenuBo = {
     menuId?: number;
-    menuName: string;
+    menuName?: string;
     parentId?: number;
     orderNum?: number;
     path?: string;
@@ -334,6 +362,7 @@ declare namespace API {
     updateBy?: number;
     updateTime?: string;
     remark?: string;
+    menuTypes?:string[];
   };
 
   type sysMenuExportParams = {
@@ -347,6 +376,10 @@ declare namespace API {
   type sysMenuListParams = {
     bo: SysMenuBo;
     pageQuery: PageQuery;
+  };
+
+  type sysMenuListTreeParams = {
+    bo: SysMenuBo;
   };
 
   type sysMenuRemoveParams = {
@@ -383,6 +416,7 @@ declare namespace API {
     updateBy?: number;
     updateTime?: string;
     remark?: string;
+    children?: any[];
   };
 
   type SysRoleBo = {
@@ -685,7 +719,29 @@ declare namespace API {
 
   type TableDataInfoSysMenuVo = {
     total?: number;
-    rows?: SysMenuVo[];
+    rows?: {
+      menuId?: number;
+      menuName?: string;
+      parentId?: number;
+      orderNum?: number;
+      path?: string;
+      component?: string;
+      queryParam?: string;
+      isFrame?: number;
+      isCache?: number;
+      menuType?: string;
+      visible?: string;
+      status?: string;
+      perms?: string;
+      icon?: string;
+      createDept?: number;
+      createBy?: number;
+      createTime?: string;
+      updateBy?: number;
+      updateTime?: string;
+      remark?: string;
+      children?: any[];
+    }[];
     code?: number;
     msg?: string;
   };

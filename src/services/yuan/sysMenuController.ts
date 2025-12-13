@@ -96,6 +96,23 @@ export async function sysMenuList(
   });
 }
 
+/** 查询树型菜单列表 GET /system/sysMenu/listTree */
+export async function sysMenuListTree(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.sysMenuListTreeParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.RListSysMenuVo>("/system/sysMenu/listTree", {
+    method: "GET",
+    params: {
+      ...params,
+      bo: undefined,
+      ...params["bo"],
+    },
+    ...(options || {}),
+  });
+}
+
 /** 获取角色菜单树 GET /system/sysMenu/roleMenuTreeselect/${param0} */
 export async function sysMenuRoleMenuTreeselect(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)

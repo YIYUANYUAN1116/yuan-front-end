@@ -87,14 +87,14 @@ export default [
         name: 'role',
         component: './system/role',
       },
+            {
+        path: '/system/menu',
+        name: 'menu',
+        component: './system/menu',
+      },
     ]
   },
-  {
-    name: 'list.table-list',
-    icon: 'table',
-    path: '/list',
-    component: './table-list',
-  },
+
   {
     path: '/',
     redirect: '/welcome',

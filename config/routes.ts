@@ -47,7 +47,7 @@ export default [
       },
     ],
   },
-   {
+  {
     path: '/dashboard',
     name: 'dashboard',
     icon: 'dashboard',
@@ -87,10 +87,15 @@ export default [
         name: 'role',
         component: './system/role',
       },
-            {
+      {
         path: '/system/menu',
         name: 'menu',
         component: './system/menu',
+      },
+      {
+        path: '/system/dict',
+        name: 'dict',
+        component: './system/dict',
       },
     ]
   },

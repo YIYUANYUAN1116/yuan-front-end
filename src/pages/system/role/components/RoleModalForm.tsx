@@ -5,7 +5,7 @@ import { useState, type FC } from 'react';
 import api from '@/services/yuan/index';
 import { sysMenuTreeselect } from '@/services/yuan/sysMenuController';
 import { DataNode } from 'antd/es/tree';
-import { convertTree } from '@/utils/TreeUtils';
+import { convertTree } from '@/util/TreeUtils';
 
 interface RoleModalFormProps {
   mode: 'add' | 'edit';

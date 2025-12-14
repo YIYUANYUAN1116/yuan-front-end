@@ -1,3 +1,9 @@
+export type OperationMode = 'edit' | 'add';
+export const OperationModes = {
+    EDIT: 'edit',
+    ADD: 'add'
+} as const;
+
 export const statusMap = {
     '0': { text: '启用', color: 'success' },
     '1': { text: '禁用', color: 'error' },

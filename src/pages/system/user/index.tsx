@@ -6,17 +6,20 @@ import { useRef, useState } from 'react';
 import api from '@/services/yuan/index';
 import UserModalForm from './components/UserModalForm';
 import UserRoleModalForm from './components/UserRoleModalForm';
-import { HIDE_COLUMN } from '@/utils/colums';
+import { HIDE_COLUMN } from '@/util/ColumsUtils';
+import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils';
+import { sysUserList, sysUserRemove } from '@/services/yuan/sysUserController';
+import { useRequest } from '@umijs/max';
+
 
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
-  const [confirmLoading, setConfirmLoading] = useState(false);
+  const { run: deleteRun, loading: deleteLoading } = createLoadingRequest(sysUserRemove, actionRef)
 
   const columns: ProColumns<API.SysUserVo>[] = [
     {
       title: '用户Id',
       dataIndex: 'userId',
-      width: 48,
       ...HIDE_COLUMN,
     },
     {
@@ -29,6 +32,7 @@ export default () => {
       title: '用户名称',
       dataIndex: 'nickName',
       ellipsis: true,
+      hideInSearch: true,
     },
     {
       title: '登录名称',
@@ -68,7 +72,6 @@ export default () => {
       title: '用户邮箱',
       dataIndex: 'email',
       ellipsis: true,
-      hideInSearch: true,
     },
     {
       title: '手机号',
@@ -108,8 +111,8 @@ export default () => {
             description={`确认删除用户：${record.nickName}`}
             okText="确认"
             cancelText="取消"
-            okButtonProps={{ loading: confirmLoading }}
-            onConfirm={() => handleDelete(record.userId as number)}
+            okButtonProps={{ loading: deleteLoading }}
+            onConfirm={() => deleteRun({ userIds: [record.userId as number] })}
           >
             <a style={{ color: 'red' }}>删除</a>
           </Popconfirm>
@@ -118,38 +121,16 @@ export default () => {
     },
   ];
 
-  const handleDelete = async (userId: number) => {
-    try {
-      setConfirmLoading(true);
-      await api.sysUserController.sysUserRemove({ userIds: [userId] });
-      actionRef.current?.reload();
-      message.success('删除成功');
-    } catch (error) {
-      message.error('删除失败');
-    } finally {
-      setConfirmLoading(false);
-    }
-  };
+  const fetchDictData = createFetchList<
+    Record<string, any>,
+    API.SysUserVo
+  >(sysUserList as any);
 
   return (
     <ProTable<API.SysUserVo>
       columns={columns}
       actionRef={actionRef}
-      request={async (params, sort) => {
-        const requestParams = { ...params };
-        if (sort && Object.keys(sort).length > 0) {
-          requestParams.orderByColumn = Object.keys(sort)[0];
-          requestParams.isAsc = sort[Object.keys(sort)[0]];
-        }
-        const res = await api.sysUserController.sysUserList(
-          requestParams as API.sysUserListParams,
-        );
-        return {
-          data: res.rows || [],
-          total: res.total || 0,
-          success: true,
-        };
-      }}
+      request={async (params, sort) => fetchDictData(params, sort)}
       columnsState={{
         persistenceKey: 'pro-table-singe-demos',
         persistenceType: 'localStorage',

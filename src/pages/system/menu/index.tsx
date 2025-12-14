@@ -5,45 +5,33 @@ import { Button, Popconfirm, Space, message } from 'antd';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { sysMenuListTree, sysMenuRemove, sysMenuEdit } from '@/services/yuan/sysMenuController';
 import MenuDrawer from './components/MenuDrawer';
-import { HIDE_COLUMN } from '@/utils/colums';
-
-/**
- * Drawer 编辑 + 表单联动版（企业级推荐）
- */
-
-
-
-const RowActions = React.memo(({ record, reload }: any) => {
-  const [loading, setLoading] = useState(false);
-
-  const handleDelete = async () => {
-    setLoading(true);
-    await sysMenuRemove({ menuIds: [record.menuId] });
-    reload();
-    setLoading(false);
-  };
-  return (
-    <Space size={8}>
-      <MenuDrawer
-        mode="edit"
-        record={record}
-        reload={reload}
-        trigger={<a>编辑</a>}
-      />
-      <Popconfirm
-        title="确认删除？"
-        onConfirm={handleDelete}
-        okText="确认"
-        cancelText="取消"
-      >
-        <a style={{ color: 'red' }}>删除</a>
-      </Popconfirm>
-    </Space>
-  );
-});
+import { HIDE_COLUMN } from '@/util/ColumsUtils';
+import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils';
 
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
+  const { run: deleteRun, loading: deleteLoading } = createLoadingRequest(sysMenuRemove, actionRef)
+  const RowActions = React.memo(({ record, reload }: any) => {
+    return (
+      <Space size={8}>
+        <MenuDrawer
+          mode="edit"
+          record={record}
+          reload={reload}
+          trigger={<a>编辑</a>}
+        />
+        <Popconfirm
+          title="确认删除？"
+          okButtonProps={{ loading: deleteLoading }}
+          onConfirm={() => deleteRun({ menuIds: [record.menuId as number] })}
+          okText="确认"
+          cancelText="取消"
+        >
+          <a style={{ color: 'red' }}>删除</a>
+        </Popconfirm>
+      </Space>
+    );
+  });
 
   const reload = useCallback(() => {
     actionRef.current?.reload();
@@ -52,7 +40,6 @@ export default () => {
   const columns = useMemo<ProColumns<API.SysMenuVo>[]>(() => [
     {
       dataIndex: 'menuId',
-      width: 48,
       ...HIDE_COLUMN
     },
     {
@@ -67,21 +54,29 @@ export default () => {
       ...HIDE_COLUMN
     },
     {
-      title: '子菜单数量',
-      dataIndex: 'childrenLength',
-      ellipsis: true,
-      hideInSearch: true,
-      render: (text, record) => [
-        <a>{record.children?.length}</a>
-      ],
-    },
-
-    {
       title: '路由地址',
       dataIndex: 'path',
       ellipsis: true,
       hideInSearch: true,
     },
+    {
+      disable: true,
+      title: '菜单状态',
+      dataIndex: 'status',
+      ellipsis: true,
+      valueType: 'select',
+      valueEnum: {
+        0: {
+          text: '启用',
+          status: 'Success'
+        },
+        1: {
+          text: '禁用',
+          status: 'Error',
+        }
+      },
+    },
+
     {
       disable: true,
       title: '菜单类型',
@@ -101,21 +96,13 @@ export default () => {
       },
     },
     {
-      disable: true,
-      title: '菜单状态',
-      dataIndex: 'status',
+      title: '子菜单数量',
+      dataIndex: 'childrenLength',
       ellipsis: true,
-      valueType: 'select',
-      valueEnum: {
-        0: {
-          text: '启用',
-          status: 'Success'
-        },
-        1: {
-          text: '禁用',
-          status: 'Error',
-        }
-      },
+      hideInSearch: true,
+      render: (text, record) => [
+        <span>{record.children?.length}</span>
+      ],
     },
     {
       title: '显示顺序',
@@ -144,16 +131,19 @@ export default () => {
     },
   ], [reload]);
 
+
+  const fetchDictData = async (params: any) => {
+    const res = await sysMenuListTree({ bo: params } as API.sysMenuListTreeParams);
+    return { data: res.data || [], success: true };
+  }
+
   return (
     <ProTable
       rowKey="menuId"
       columns={columns}
       actionRef={actionRef}
       cardBordered
-      request={async (params) => {
-        const res = await sysMenuListTree({ bo: params } as API.sysMenuListTreeParams);
-        return { data: res.data || [], success: true };
-      }}
+      request={async (params) => fetchDictData(params)}
       pagination={false}
       headerTitle="菜单管理"
       expandable={{

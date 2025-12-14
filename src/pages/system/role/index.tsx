@@ -1,18 +1,17 @@
-import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { ProTable, TableDropdown } from '@ant-design/pro-components';
-import { Button, Dropdown, message, Popconfirm, Space, Tag } from 'antd';
+import { ProTable } from '@ant-design/pro-components';
+import { Button, message, Popconfirm, Space, Tag } from 'antd';
 import { useRef, useState } from 'react';
 import api from '@/services/yuan/index'
 import RoleModalForm from './components/RoleModalForm';
-import { HIDE_COLUMN } from '@/utils/colums';
-
+import { HIDE_COLUMN } from '@/util/ColumsUtils';
+import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils';
+import { sysRoleList, sysRoleRemove } from '@/services/yuan/sysRoleController';
 
 
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
-  const [confirmLoading, setConfirmLoading] = useState(false);
-
   const columns: ProColumns<API.SysRoleVo>[] = [
     {
       dataIndex: 'roleId',
@@ -34,20 +33,6 @@ export default () => {
       title: '权限字符',
       dataIndex: 'roleKey',
       ellipsis: true,
-      hideInSearch: true,
-    },
-    {
-      title: '数据范围',
-      dataIndex: 'dataScope',
-      ellipsis: true,
-      hideInSearch: true,
-      render: (_, record) => (
-        <Space>
-          <Tag color={'blue'} key={record.dataScope}>
-            {record.dataScope}
-          </Tag>
-        </Space>
-      ),
     },
     {
       disable: true,
@@ -68,6 +53,20 @@ export default () => {
         }
       },
     },
+    {
+      title: '数据范围',
+      dataIndex: 'dataScope',
+      ellipsis: true,
+      hideInSearch: true,
+      render: (_, record) => (
+        <Space>
+          <Tag color={'blue'} key={record.dataScope}>
+            {record.dataScope}
+          </Tag>
+        </Space>
+      ),
+    },
+
     {
       title: '备注',
       dataIndex: 'remark',
@@ -100,8 +99,8 @@ export default () => {
           description={`确认删除角色：${record.roleName}`}
           okText="确认"
           cancelText="取消"
-          okButtonProps={{ loading: confirmLoading }}
-          onConfirm={() => handleDelete(record.roleId as number)}
+          okButtonProps={{ loading: deleteLoading }}
+          onConfirm={() => deleteRun(record.roleId as number)}
           key={`delete-${record.roleId}`}
         >
           <a type="link" style={{ color: 'red' }}>删除</a>
@@ -111,36 +110,18 @@ export default () => {
     },
   ];
 
-  const handleDelete = async (roleId: number) => {
-    try {
-      setConfirmLoading(true);
-      await api.sysRoleController.sysRoleRemove({ roleIds: [roleId] })
-      actionRef.current?.reload(); // 刷新表格
-    } catch (error) {
-      message.error('删除失败');
-    } finally {
-      setConfirmLoading(false);
-    }
-  };
+  const { run: deleteRun, loading: deleteLoading } = createLoadingRequest(sysRoleRemove, actionRef)
+  const fetchDictData = createFetchList<
+    Record<string, any>,
+    API.SysRoleVo
+  >(sysRoleList as any);
 
   return (
     <div>
       <ProTable<API.SysRoleVo>
         columns={columns}
         actionRef={actionRef}
-        request={async (params, sort) => {
-          const requestParams = { ...params };
-          if (sort && Object.keys(sort).length > 0) {
-            requestParams.orderByColumn = Object.keys(sort)[0];
-            requestParams.isAsc = sort[Object.keys(sort)[0]];
-          }
-          const res = await api.sysRoleController.sysRoleList(requestParams as API.sysRoleListParams);
-          return {
-            data: res.rows || [],
-            total: res.total || 0,
-            success: true,
-          };
-        }}
+        request={async (params, sort) => fetchDictData(params, sort)}
         columnsState={{
           persistenceKey: 'pro-table-singe-demos',
           persistenceType: 'localStorage',

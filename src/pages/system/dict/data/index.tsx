@@ -1,21 +1,31 @@
-
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
-import { ActionType, ProColumns, ProTable, ProTableProps } from '@ant-design/pro-components'
-import { Button, Popconfirm, Space } from 'antd'
-import { useRef } from 'react'
-import DictModalForm from './components/DictModalForm'
-import { OperationModes } from '@/const/Const'
-import { PlusOutlined } from '@ant-design/icons'
-import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils'
-import { dictTypeList, dictTypeRemove } from '@/services/yuan/sysDictTypeController';
+import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
+import { useSearchParams } from '@umijs/max';
+import React, { useRef } from 'react'
+import DictDataModalForm from './components/DictDataModalForm';
+import { Button, Popconfirm, Space } from 'antd';
+import { dictList, dictRemove } from '@/services/yuan/sysDictDataController';
+import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils';
+import { OperationModes } from '@/const/Const';
+import { PlusOutlined } from '@ant-design/icons';
 import { history } from '@umijs/max';
 
-const index = () => {
+export default function index() {
+    const [searchParams] = useSearchParams();
+    const dictType = searchParams.get('dictType');
+    const dictName = searchParams.get('dictName');
     const actionRef = useRef<ActionType | null>(null);
-    const columns: ProColumns<API.SysDictTypeVo>[] = [
+
+    const { run: delRun, loading: delLoading } = createLoadingRequest(dictRemove, actionRef.current?.reload)
+    const fetchDictData = createFetchList<
+        Record<string, any>,
+        API.SysDictDataVo
+    >(dictList as any);
+
+    const columns: ProColumns<API.SysDictDataVo>[] = [
         {
-            title: '字典类型Id',
-            dataIndex: 'dictId',
+            title: 'id',
+            dataIndex: 'dictCode',
             ...HIDE_COLUMN,
         },
         {
@@ -25,13 +35,13 @@ const index = () => {
             width: 48
         },
         {
-            title: '字典名称',
-            dataIndex: 'dictName',
+            title: '字典标签',
+            dataIndex: 'dictLabel',
             ellipsis: true,
         },
         {
-            title: '字典类型',
-            dataIndex: 'dictType',
+            title: '字典键值',
+            dataIndex: 'dictValue',
             ellipsis: true,
         },
         {
@@ -54,6 +64,27 @@ const index = () => {
             hideInSearch: true,
         },
         {
+            title: '字典类型',
+            dataIndex: 'dictType',
+            ellipsis: true,
+            ...HIDE_COLUMN
+        },
+        {
+            title: '排序',
+            dataIndex: 'dictSort',
+            ellipsis: true
+        },
+        {
+            title: '默认',
+            dataIndex: 'isDefault',
+            ellipsis: true,
+            valueEnum: {
+                Y: { text: '是', status: 'Success' },
+                N: { text: '否', status: 'Default' },
+            },
+        },
+
+        {
             title: '创建时间',
             dataIndex: 'createTime',
             valueType: 'dateTime',
@@ -67,27 +98,20 @@ const index = () => {
             hideInSearch: true,
             render: (text, record) => (
                 <Space size="small">
-                    <DictModalForm
+                    <DictDataModalForm
                         mode={OperationModes.EDIT}
                         trigger={<a>编辑</a>}
                         record={record}
                         reload={actionRef.current?.reload}
+                        dictName={dictName || ''}
                     />
-                    <a onClick={() => {
-                        history.push({
-                            pathname: '/system/dict/data',
-                            search: `?dictType=${record.dictType}&dictName=${record.dictName}`,
-                        })
-                    }}>
-                        字典项
-                    </a>
                     <Popconfirm
                         title="删除"
-                        description={`确认删除：${record.dictName}`}
+                        description={`确认删除：${record.dictLabel}`}
                         okText="确认"
                         cancelText="取消"
-                        okButtonProps={{ loading: deleteLoading }}
-                        onConfirm={() => deleteRun({ dictIds: [record.dictId as number] })}
+                        okButtonProps={{ loading: delLoading }}
+                        onConfirm={() => delRun({ dictCodes: [record.dictCode as number] })}
                     >
                         <a style={{ color: 'red' }}>删除</a>
                     </Popconfirm>
@@ -96,31 +120,37 @@ const index = () => {
         },
     ]
 
-    const fetchDictData = createFetchList<
-        Record<string, any>,
-        API.SysDictTypeVo
-    >(dictTypeList as any);
-
-    const { run: deleteRun, loading: deleteLoading } = createLoadingRequest(dictTypeRemove, actionRef.current?.reload)
+    const headerTitle = (
+        <Space>
+            <Button
+                type="link"
+                onClick={() => history.push('/system/dict')}
+            >
+                返回字典类型
+            </Button>
+            <span>{dictName}-字典</span>
+        </Space>
+    );
 
     return (
         <ProTable
+            headerTitle={headerTitle}
+            rowKey={'dictCode'}
             columns={columns}
-            rowKey={"dictId"}
             request={async (params, sort) => fetchDictData(params, sort)}
             cardBordered
             actionRef={actionRef}
             pagination={{ pageSize: 10 }}
-            headerTitle="字典类型"
+            params={{ dictType }}
             columnsState={{
-                persistenceKey: 'sys-dict-type-pro-table',
+                persistenceKey: 'sys-dict-data-pro-table',
                 persistenceType: 'localStorage',
                 defaultValue: {
                     option: { fixed: 'right', disable: true },
                 },
             }}
             toolBarRender={() => [
-                <DictModalForm
+                <DictDataModalForm
                     mode={OperationModes.ADD}
                     reload={actionRef.current?.reload}
                     trigger={
@@ -128,11 +158,11 @@ const index = () => {
                             新建字典
                         </Button>
                     }
+                    dictName={dictName || ''}
+                    dictType={dictType || ''}
                     key="add"
                 />
             ]}
         />
     )
 }
-
-export default index

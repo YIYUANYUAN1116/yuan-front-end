@@ -9,12 +9,11 @@ import UserRoleModalForm from './components/UserRoleModalForm';
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
 import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils';
 import { sysUserList, sysUserRemove } from '@/services/yuan/sysUserController';
-import { useRequest } from '@umijs/max';
 
 
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
-  const { run: deleteRun, loading: deleteLoading } = createLoadingRequest(sysUserRemove, actionRef)
+  const { run: deleteRun, loading: deleteLoading } = createLoadingRequest(sysUserRemove, actionRef.current?.reload)
 
   const columns: ProColumns<API.SysUserVo>[] = [
     {
@@ -132,7 +131,7 @@ export default () => {
       actionRef={actionRef}
       request={async (params, sort) => fetchDictData(params, sort)}
       columnsState={{
-        persistenceKey: 'pro-table-singe-demos',
+        persistenceKey: 'sys-user-pro-table',
         persistenceType: 'localStorage',
         defaultValue: {
           option: { fixed: 'right', disable: true },

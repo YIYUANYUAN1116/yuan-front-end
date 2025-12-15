@@ -1,4 +1,5 @@
 import { sysMenuAdd, sysMenuEdit, sysMenuTreeselect } from "@/services/yuan/sysMenuController";
+import { createLoadingRequest } from "@/util/DataRequestUtils";
 import { convertTree } from "@/util/TreeUtils";
 import { DrawerForm, ProFormDigit, ProFormRadio, ProFormText, ProFormTreeSelect } from "@ant-design/pro-components";
 import { useRequest } from "@umijs/max";
@@ -9,14 +10,7 @@ const MenuDrawer = ({ mode, trigger, record, reload }: any) => {
   const [treeData, setTreeData] = useState<any[]>([]);
   const [form] = Form.useForm<API.SysMenuVo>();
   const isEdit = mode === 'edit';
-
-  const { run, loading } = useRequest(
-    isEdit ? sysMenuEdit : sysMenuAdd,
-    {
-      manual: true,
-      onSuccess: () => reload?.(),
-    },
-  );
+  const { run: run, loading: loading } = createLoadingRequest(isEdit ? sysMenuEdit : sysMenuAdd, reload)
 
   return (
     <DrawerForm
@@ -84,7 +78,6 @@ const MenuDrawer = ({ mode, trigger, record, reload }: any) => {
           buttonStyle: "solid",
         }}
         radioType="button"
-
       />
 
       <ProFormText

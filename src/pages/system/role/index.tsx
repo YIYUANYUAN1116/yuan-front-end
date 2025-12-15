@@ -110,7 +110,7 @@ export default () => {
     },
   ];
 
-  const { run: deleteRun, loading: deleteLoading } = createLoadingRequest(sysRoleRemove, actionRef)
+  const { run: deleteRun, loading: deleteLoading } = createLoadingRequest(sysRoleRemove, actionRef.current?.reload)
   const fetchDictData = createFetchList<
     Record<string, any>,
     API.SysRoleVo
@@ -122,13 +122,13 @@ export default () => {
         columns={columns}
         actionRef={actionRef}
         request={async (params, sort) => fetchDictData(params, sort)}
-        columnsState={{
-          persistenceKey: 'pro-table-singe-demos',
-          persistenceType: 'localStorage',
-          defaultValue: {
-            option: { fixed: 'right', disable: true },
-          },
-        }}
+       columnsState={{
+        persistenceKey: 'sys-role-pro-table',
+        persistenceType: 'localStorage',
+        defaultValue: {
+          option: { fixed: 'right', disable: true },
+        },
+      }}
         rowKey="roleId"
         pagination={{ pageSize: 10 }}
         search={{ labelWidth: 'auto' }}

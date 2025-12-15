@@ -10,7 +10,7 @@ import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils';
 
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
-  const { run: deleteRun, loading: deleteLoading } = createLoadingRequest(sysMenuRemove, actionRef)
+  const { run: deleteRun, loading: deleteLoading } = createLoadingRequest(sysMenuRemove, actionRef.current?.reload)
   const RowActions = React.memo(({ record, reload }: any) => {
     return (
       <Space size={8}>
@@ -151,8 +151,11 @@ export default () => {
         expandRowByClick: false, // ✅ 禁用整行点击展开
       }}
       columnsState={{
-        persistenceKey: undefined,
-        persistenceType: undefined,
+        persistenceKey: 'sys-menu-pro-table',
+        persistenceType: 'localStorage',
+        defaultValue: {
+          option: { fixed: 'right', disable: true },
+        },
       }}
       toolBarRender={() => [
         <MenuDrawer

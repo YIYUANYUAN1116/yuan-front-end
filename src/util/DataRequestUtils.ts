@@ -2,6 +2,7 @@ import { ActionType } from "@ant-design/pro-components";
 import { useRequest } from "@umijs/max";
 import { message } from "antd";
 import { SortOrder } from "antd/es/table/interface";
+import { log } from "console";
 
 type ListRequestFn<P, R> = (params: P) => Promise<R>;
 
@@ -50,19 +51,18 @@ export const createFetchList = <
  */
 export const createLoadingRequest = <T extends (...args: any[]) => Promise<any>>(
     apiFn: T,
-    actionRef: React.RefObject<ActionType | null>,
+    reload?: ActionType['reload'],
     options?: {
         successMessage?: string;
         errorMessage?: string;
     }
 ) => {
     const { successMessage, errorMessage} = options || {};
-
     return useRequest(apiFn, {
         manual: true,
         onSuccess: () => {
             successMessage?message.success(successMessage):'';
-            actionRef.current?.reload?.();
+            reload?.();
         },
         onError: (error) => {
             console.error('接口出错:', error);

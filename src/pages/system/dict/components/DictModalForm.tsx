@@ -1,6 +1,7 @@
 
 import { OperationMode, OperationModes } from '@/const/Const';
 import { dictTypeAdd, dictTypeEdit } from '@/services/yuan/sysDictTypeController';
+import { createLoadingRequest } from '@/util/DataRequestUtils';
 
 import { ActionType, ModalForm, ProForm, ProFormText } from '@ant-design/pro-components';
 import { useRequest } from '@umijs/max';
@@ -17,14 +18,7 @@ interface DictModalFormProps {
 const DictModalForm = (props: DictModalFormProps) => {
     const { mode, trigger, reload, record } = props;
     const isEdit = mode == OperationModes.EDIT
-
-    const { run, loading } = useRequest(
-        isEdit ? dictTypeEdit : dictTypeAdd,
-        {
-            manual: true,
-            onSuccess: () => reload?.(),
-        },
-    );
+    const { run: run, loading: loading } = createLoadingRequest(isEdit ? dictTypeEdit : dictTypeAdd, reload)
 
     return (
         <ModalForm

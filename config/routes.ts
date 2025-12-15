@@ -1,4 +1,5 @@
-﻿import path from "path";
+﻿import component from "@/locales/bn-BD/component";
+import path from "path";
 
 /**
  * @name umi 的路由配置
@@ -97,6 +98,10 @@ export default [
         name: 'dict',
         component: './system/dict',
       },
+      {
+        path: '/system/dict/data',
+        component: './system/dict/data'
+      }
     ]
   },
 

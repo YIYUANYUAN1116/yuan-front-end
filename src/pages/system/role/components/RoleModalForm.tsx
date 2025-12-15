@@ -6,6 +6,8 @@ import api from '@/services/yuan/index';
 import { sysMenuTreeselect } from '@/services/yuan/sysMenuController';
 import { DataNode } from 'antd/es/tree';
 import { convertTree } from '@/util/TreeUtils';
+import { sysRoleEdit, sysRoleAdd } from '@/services/yuan/sysRoleController';
+import { createLoadingRequest } from '@/util/DataRequestUtils';
 
 interface RoleModalFormProps {
   mode: 'add' | 'edit';
@@ -23,14 +25,7 @@ const UserModalForm: FC<RoleModalFormProps> = ({
   const [menuTree, setMenuTree] = useState<DataNode[]>([]);
   const isEdit = mode === 'edit';
   const [form] = Form.useForm<API.SysRoleBo>();
-  const { run, loading } = useRequest(
-    isEdit ? api.sysRoleController.sysRoleEdit : api.sysRoleController.sysRoleAdd,
-    {
-      manual: true,
-      onSuccess: () => reload?.(),
-    },
-  );
-
+  const { run: run, loading: loading } = createLoadingRequest(isEdit ? sysRoleEdit : sysRoleAdd, reload)
 
 
   return (

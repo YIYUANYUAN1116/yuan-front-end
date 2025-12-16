@@ -1,8 +1,8 @@
+import { dictDictType } from "@/services/yuan/sysDictDataController";
 import { ActionType } from "@ant-design/pro-components";
 import { useRequest } from "@umijs/max";
 import { message } from "antd";
 import { SortOrder } from "antd/es/table/interface";
-import { log } from "console";
 
 type ListRequestFn<P, R> = (params: P) => Promise<R>;
 
@@ -57,16 +57,64 @@ export const createLoadingRequest = <T extends (...args: any[]) => Promise<any>>
         errorMessage?: string;
     }
 ) => {
-    const { successMessage, errorMessage} = options || {};
+    const { successMessage, errorMessage } = options || {};
     return useRequest(apiFn, {
         manual: true,
         onSuccess: () => {
-            successMessage?message.success(successMessage):'';
+            successMessage ? message.success(successMessage) : '';
             reload?.();
         },
         onError: (error) => {
             console.error('接口出错:', error);
-            errorMessage?message.error(errorMessage):'';
+            errorMessage ? message.error(errorMessage) : '';
         },
     });
 };
+
+export const useDictDataValueEnum = (dictType: string) => {
+  const { data } = useRequest(() => dictDictType({ dictType }), {
+    refreshDeps: [dictType], // dictType 变化时重新请求
+  })
+  // 转成 valueEnum 结构
+  const valueEnum = data?.reduce<Record<string, { text: string; status?: string; color?: string }>>((acc, item) => {
+    const dictValue = item.dictValue as string
+    if (item.listClass?.startsWith('#')) {
+      acc[dictValue] = { text: item.dictLabel || '', color: item.listClass }
+    } else {
+      acc[dictValue] = { text: item.dictLabel || '', status: item.listClass }
+    }
+    return acc
+  }, {}) || {}
+
+  return valueEnum
+}
+
+
+
+//缓存版的字典
+// const cache: Record<string, Record<string, any>> = {};
+// export const useDictDataValueEnum = (dictType: string) => {
+//     const { data } = useRequest(
+//         () => dictDictType({ dictType }),
+//         {
+//             formatResult: (res) => {
+//                 const enumData: Record<string, any> = {};
+
+//                 res.data?.forEach(item => {
+//                     const dictValue = item.dictValue as string
+//                     enumData[dictValue] = {
+//                         text: item.dictLabel,
+//                         status: item.listClass?.startsWith('#') ? undefined : item.listClass,
+//                         color: item.listClass?.startsWith('#') ? item.listClass : undefined,
+//                     };
+//                 });
+//                 cache[dictType] = enumData;
+//                 return enumData;
+//             },
+//             cacheKey: dictType,
+//             refreshDeps: [], // dictType 变更时刷新
+//         }
+//     );
+
+//     return cache[dictType] || data || {};
+// }

@@ -6,12 +6,15 @@ import { useRef, useState } from 'react';
 import api from '@/services/yuan/index'
 import RoleModalForm from './components/RoleModalForm';
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
-import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils';
+import { createFetchList, createLoadingRequest, useDictDataValueEnum } from '@/util/DataRequestUtils';
 import { sysRoleList, sysRoleRemove } from '@/services/yuan/sysRoleController';
+import { DictEnum } from '@/const/dict-enum';
 
 
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
+  const statusEnum = useDictDataValueEnum(DictEnum.SYS_NORMAL_DISABLE)
+
   const columns: ProColumns<API.SysRoleVo>[] = [
     {
       dataIndex: 'roleId',
@@ -42,16 +45,7 @@ export default () => {
       onFilter: true,
       ellipsis: true,
       valueType: 'select',
-      valueEnum: {
-        0: {
-          text: '启用',
-          status: 'Success'
-        },
-        1: {
-          text: '禁用',
-          status: 'Error',
-        }
-      },
+      valueEnum: statusEnum,
     },
     {
       title: '数据范围',
@@ -116,19 +110,20 @@ export default () => {
     API.SysRoleVo
   >(sysRoleList as any);
 
+
   return (
     <div>
       <ProTable<API.SysRoleVo>
         columns={columns}
         actionRef={actionRef}
         request={async (params, sort) => fetchDictData(params, sort)}
-       columnsState={{
-        persistenceKey: 'sys-role-pro-table',
-        persistenceType: 'localStorage',
-        defaultValue: {
-          option: { fixed: 'right', disable: true },
-        },
-      }}
+        columnsState={{
+          persistenceKey: 'sys-role-pro-table',
+          persistenceType: 'localStorage',
+          defaultValue: {
+            option: { fixed: 'right', disable: true },
+          },
+        }}
         rowKey="roleId"
         pagination={{ pageSize: 10 }}
         search={{ labelWidth: 'auto' }}

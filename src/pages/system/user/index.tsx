@@ -2,18 +2,19 @@ import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
 import { Button, message, Popconfirm, Space } from 'antd';
-import { useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import api from '@/services/yuan/index';
 import UserModalForm from './components/UserModalForm';
 import UserRoleModalForm from './components/UserRoleModalForm';
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
-import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils';
+import { createFetchList, createLoadingRequest, useDictDataValueEnum } from '@/util/DataRequestUtils';
 import { sysUserList, sysUserRemove } from '@/services/yuan/sysUserController';
-
-
+import { DictEnum } from '@/const/dict-enum';
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
   const { run: deleteRun, loading: deleteLoading } = createLoadingRequest(sysUserRemove, actionRef.current?.reload)
+  const sexEnum = useDictDataValueEnum(DictEnum.SYS_USER_SEX)
+  const statusEnum = useDictDataValueEnum(DictEnum.SYS_NORMAL_DISABLE)
 
   const columns: ProColumns<API.SysUserVo>[] = [
     {
@@ -47,10 +48,7 @@ export default () => {
       onFilter: true,
       ellipsis: true,
       valueType: 'select',
-      valueEnum: {
-        '1': { text: '禁用', status: 'Error' },
-        '0': { text: '启用', status: 'Success' },
-      },
+      valueEnum: statusEnum
     },
     {
       disable: true,
@@ -61,11 +59,7 @@ export default () => {
       onFilter: true,
       ellipsis: true,
       valueType: 'select',
-      valueEnum: {
-        '0': { text: '男' },
-        '1': { text: '女' },
-        '2': { text: '未知' },
-      },
+      valueEnum: sexEnum
     },
     {
       title: '用户邮箱',

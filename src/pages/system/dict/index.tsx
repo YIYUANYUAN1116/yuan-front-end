@@ -6,12 +6,14 @@ import { useRef } from 'react'
 import DictModalForm from './components/DictModalForm'
 import { OperationModes } from '@/const/Const'
 import { PlusOutlined } from '@ant-design/icons'
-import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils'
+import { createFetchList, createLoadingRequest, useDictDataValueEnum } from '@/util/DataRequestUtils'
 import { dictTypeList, dictTypeRemove } from '@/services/yuan/sysDictTypeController';
 import { history } from '@umijs/max';
+import { DictEnum } from '@/const/dict-enum';
 
 const index = () => {
     const actionRef = useRef<ActionType | null>(null);
+    const statusEnum = useDictDataValueEnum(DictEnum.SYS_NORMAL_DISABLE)
     const columns: ProColumns<API.SysDictTypeVo>[] = [
         {
             title: '字典类型Id',
@@ -42,10 +44,7 @@ const index = () => {
             onFilter: true,
             ellipsis: true,
             valueType: 'select',
-            valueEnum: {
-                '1': { text: '禁用', status: 'Error' },
-                '0': { text: '启用', status: 'Success' },
-            },
+            valueEnum: statusEnum,
         },
         {
             title: '备注',

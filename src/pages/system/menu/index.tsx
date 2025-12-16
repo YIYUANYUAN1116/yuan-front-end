@@ -6,10 +6,12 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { sysMenuListTree, sysMenuRemove, sysMenuEdit } from '@/services/yuan/sysMenuController';
 import MenuDrawer from './components/MenuDrawer';
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
-import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils';
+import { createLoadingRequest, useDictDataValueEnum } from '@/util/DataRequestUtils';
+import { DictEnum } from '@/const/dict-enum';
 
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
+  const statusEnum = useDictDataValueEnum(DictEnum.SYS_NORMAL_DISABLE)
   const { run: deleteRun, loading: deleteLoading } = createLoadingRequest(sysMenuRemove, actionRef.current?.reload)
   const RowActions = React.memo(({ record, reload }: any) => {
     return (
@@ -65,16 +67,7 @@ export default () => {
       dataIndex: 'status',
       ellipsis: true,
       valueType: 'select',
-      valueEnum: {
-        0: {
-          text: '启用',
-          status: 'Success'
-        },
-        1: {
-          text: '禁用',
-          status: 'Error',
-        }
-      },
+      valueEnum: statusEnum,
     },
 
     {

@@ -5,17 +5,18 @@ import React, { useRef } from 'react'
 import DictDataModalForm from './components/DictDataModalForm';
 import { Button, Popconfirm, Space } from 'antd';
 import { dictList, dictRemove } from '@/services/yuan/sysDictDataController';
-import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils';
+import { createFetchList, createLoadingRequest, useDictDataValueEnum } from '@/util/DataRequestUtils';
 import { OperationModes } from '@/const/Const';
 import { PlusOutlined } from '@ant-design/icons';
 import { history } from '@umijs/max';
+import { DictEnum } from '@/const/dict-enum';
 
 export default function index() {
     const [searchParams] = useSearchParams();
     const dictType = searchParams.get('dictType');
     const dictName = searchParams.get('dictName');
     const actionRef = useRef<ActionType | null>(null);
-
+    const statusEnum = useDictDataValueEnum(DictEnum.SYS_NORMAL_DISABLE)
     const { run: delRun, loading: delLoading } = createLoadingRequest(dictRemove, actionRef.current?.reload)
     const fetchDictData = createFetchList<
         Record<string, any>,
@@ -52,10 +53,7 @@ export default function index() {
             onFilter: true,
             ellipsis: true,
             valueType: 'select',
-            valueEnum: {
-                '1': { text: '禁用', status: 'Error' },
-                '0': { text: '启用', status: 'Success' },
-            },
+            valueEnum: statusEnum,
         },
         {
             title: '备注',

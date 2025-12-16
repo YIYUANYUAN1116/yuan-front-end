@@ -362,7 +362,7 @@ declare namespace API {
     updateBy?: number;
     updateTime?: string;
     remark?: string;
-    menuTypes?:string[];
+    menuTypes?: string[];
   };
 
   type sysMenuExportParams = {
@@ -782,11 +782,11 @@ declare namespace API {
   };
 
   type TreeLong = {
-    name?: { empty?: boolean };
-    id?: number;
     parentId?: number;
+    id?: number;
     config?: TreeNodeConfig;
     weight?: any;
+    name?: { empty?: boolean };
     empty?: boolean;
   };
 

@@ -4,7 +4,7 @@ declare namespace API {
   };
 
   type dictExportParams = {
-    dictData: SysDictDataBo;
+    bo: SysDictDataBo;
   };
 
   type dictGetInfoParams = {
@@ -12,7 +12,7 @@ declare namespace API {
   };
 
   type dictListParams = {
-    dictData: SysDictDataBo;
+    bo: SysDictDataBo;
     pageQuery: PageQuery;
   };
 
@@ -21,12 +21,12 @@ declare namespace API {
   };
 
   type dictTypeAllParams = {
-    dictType: SysDictTypeBo;
+    bo: SysDictTypeBo;
     pageQuery: PageQuery;
   };
 
   type dictTypeExportParams = {
-    dictType: SysDictTypeBo;
+    bo: SysDictTypeBo;
   };
 
   type dictTypeGetInfoParams = {
@@ -34,7 +34,7 @@ declare namespace API {
   };
 
   type dictTypeListParams = {
-    dictType: SysDictTypeBo;
+    bo: SysDictTypeBo;
     pageQuery: PageQuery;
   };
 
@@ -177,10 +177,22 @@ declare namespace API {
     data?: SysDictTypeVo;
   };
 
+  type RSysLogininforVo = {
+    code?: number;
+    msg?: string;
+    data?: SysLogininforVo;
+  };
+
   type RSysMenuVo = {
     code?: number;
     msg?: string;
     data?: SysMenuVo;
+  };
+
+  type RSysOperLogVo = {
+    code?: number;
+    msg?: string;
+    data?: SysOperLogVo;
   };
 
   type RSysRoleDeptVo = {
@@ -341,6 +353,49 @@ declare namespace API {
     createTime?: string;
   };
 
+  type SysLogininforBo = {
+    infoId?: number;
+    tenantId?: string;
+    userName?: string;
+    ipaddr?: string;
+    loginLocation?: string;
+    browser?: string;
+    os?: string;
+    status?: string;
+    msg?: string;
+    loginTime?: string;
+  };
+
+  type SysLogininforExportParams = {
+    bo: SysLogininforBo;
+  };
+
+  type SysLogininforGetInfoParams = {
+    infoId: number;
+  };
+
+  type SysLogininforListParams = {
+    bo: SysLogininforBo;
+    pageQuery: PageQuery;
+  };
+
+  type SysLogininforRemoveParams = {
+    infoIds: number[];
+  };
+
+  type SysLogininforVo = {
+    infoId?: number;
+    tenantId?: string;
+    userName?: string;
+    ipaddr?: string;
+    loginLocation?: string;
+    browser?: string;
+    os?: string;
+    status?: string;
+    msg?: string;
+    loginTime?: string;
+  };
+
   type SysMenuBo = {
     menuId?: number;
     menuName?: string;
@@ -391,7 +446,7 @@ declare namespace API {
   };
 
   type sysMenuTreeselectParams = {
-    menu: SysMenuBo;
+    bo: SysMenuBo;
     roleId: number;
   };
 
@@ -417,6 +472,65 @@ declare namespace API {
     updateTime?: string;
     remark?: string;
     children?: any[];
+  };
+
+  type SysOperLogBo = {
+    operId?: number;
+    tenantId?: string;
+    title?: string;
+    businessType?: number;
+    method?: string;
+    requestMethod?: string;
+    operatorType?: number;
+    operName?: string;
+    deptName?: string;
+    operUrl?: string;
+    operIp?: string;
+    operLocation?: string;
+    operParam?: string;
+    jsonResult?: string;
+    status?: number;
+    errorMsg?: string;
+    operTime?: string;
+    costTime?: number;
+  };
+
+  type SysOperLogExportParams = {
+    bo: SysOperLogBo;
+  };
+
+  type SysOperLogGetInfoParams = {
+    operId: number;
+  };
+
+  type SysOperLogListParams = {
+    bo: SysOperLogBo;
+    pageQuery: PageQuery;
+  };
+
+  type SysOperLogRemoveParams = {
+    operIds: number[];
+  };
+
+  type SysOperLogVo = {
+    operId?: number;
+    tenantId?: string;
+    title?: string;
+    businessType?: number;
+    method?: string;
+    requestMethod?: string;
+    operatorType?: number;
+    operName?: string;
+    deptName?: string;
+    operUrl?: string;
+    operIp?: string;
+    operLocation?: string;
+    operParam?: string;
+    jsonResult?: string;
+    status?: number;
+    errorMsg?: string;
+    operTime?: string;
+    costTime?: number;
   };
 
   type SysRoleBo = {
@@ -717,6 +831,13 @@ declare namespace API {
     msg?: string;
   };
 
+  type TableDataInfoSysLogininforVo = {
+    total?: number;
+    rows?: SysLogininforVo[];
+    code?: number;
+    msg?: string;
+  };
+
   type TableDataInfoSysMenuVo = {
     total?: number;
     rows?: {
@@ -742,6 +863,13 @@ declare namespace API {
       remark?: string;
       children?: any[];
     }[];
+    code?: number;
+    msg?: string;
+  };
+
+  type TableDataInfoSysOperLogVo = {
+    total?: number;
+    rows?: SysOperLogVo[];
     code?: number;
     msg?: string;
   };
@@ -782,11 +910,11 @@ declare namespace API {
   };
 
   type TreeLong = {
-    parentId?: number;
+    name?: { empty?: boolean };
     id?: number;
+    parentId?: number;
     config?: TreeNodeConfig;
     weight?: any;
-    name?: { empty?: boolean };
     empty?: boolean;
   };
 

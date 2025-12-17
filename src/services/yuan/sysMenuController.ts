@@ -140,8 +140,8 @@ export async function sysMenuTreeselect(
     method: "GET",
     params: {
       ...params,
-      menu: undefined,
-      ...params["menu"],
+      bo: undefined,
+      ...params["bo"],
     },
     ...(options || {}),
   });

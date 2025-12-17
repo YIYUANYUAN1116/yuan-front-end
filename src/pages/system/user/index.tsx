@@ -7,15 +7,17 @@ import api from '@/services/yuan/index';
 import UserModalForm from './components/UserModalForm';
 import UserRoleModalForm from './components/UserRoleModalForm';
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
-import { createFetchList, createLoadingRequest, useDictDataValueEnum } from '@/util/DataRequestUtils';
+import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils';
 import { sysUserList, sysUserRemove } from '@/services/yuan/sysUserController';
 import { DictEnum } from '@/const/dict-enum';
+import { useDictDataValueEnum } from '@/hook/DictHook';
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
   const { run: deleteRun, loading: deleteLoading } = createLoadingRequest(sysUserRemove, actionRef.current?.reload)
   const sexEnum = useDictDataValueEnum(DictEnum.SYS_USER_SEX)
   const statusEnum = useDictDataValueEnum(DictEnum.SYS_NORMAL_DISABLE)
 
+  console.log(statusEnum)
   const columns: ProColumns<API.SysUserVo>[] = [
     {
       title: '用户Id',

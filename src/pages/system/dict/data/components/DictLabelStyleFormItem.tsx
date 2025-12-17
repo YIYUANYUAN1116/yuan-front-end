@@ -17,11 +17,11 @@ interface DictLabelStyleFormItemProps {
 
 const PRESET_OPTIONS = [
   {
-    label: <Tag color="success">成功: Success</Tag>,
+    label: <Tag color="success">启用/成功: Success</Tag>,
     value: 'Success',
   },
   {
-    label: <Tag color="error">禁用: Error</Tag>,
+    label: <Tag color="error">禁用/失败: Error</Tag>,
     value: 'Error',
   },
   {

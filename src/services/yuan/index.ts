@@ -6,7 +6,9 @@ import * as authController from "./authController";
 import * as sysDeptController from "./sysDeptController";
 import * as sysDictDataController from "./sysDictDataController";
 import * as sysDictTypeController from "./sysDictTypeController";
+import * as sysLogininforController from "./sysLogininforController";
 import * as sysMenuController from "./sysMenuController";
+import * as sysOperLogController from "./sysOperLogController";
 import * as sysRoleController from "./sysRoleController";
 import * as sysRoleDeptService from "./sysRoleDeptService";
 import * as sysRoleMenuService from "./sysRoleMenuService";
@@ -18,7 +20,9 @@ export default {
   sysRoleController,
   sysRoleMenuService,
   sysRoleDeptService,
+  sysOperLogController,
   sysMenuController,
+  sysLogininforController,
   sysDeptController,
   sysDictTypeController,
   sysDictDataController,

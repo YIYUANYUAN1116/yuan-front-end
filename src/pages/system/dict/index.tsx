@@ -6,10 +6,11 @@ import { useRef } from 'react'
 import DictModalForm from './components/DictModalForm'
 import { OperationModes } from '@/const/Const'
 import { PlusOutlined } from '@ant-design/icons'
-import { createFetchList, createLoadingRequest, useDictDataValueEnum } from '@/util/DataRequestUtils'
+import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils'
 import { dictTypeList, dictTypeRemove } from '@/services/yuan/sysDictTypeController';
 import { history } from '@umijs/max';
 import { DictEnum } from '@/const/dict-enum';
+import { useDictDataValueEnum } from '@/hook/DictHook';
 
 const index = () => {
     const actionRef = useRef<ActionType | null>(null);

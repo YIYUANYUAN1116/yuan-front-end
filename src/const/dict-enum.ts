@@ -1,7 +1,7 @@
 export enum DictEnum {
   PAY_STATE = 'pay_state', // 支付状态
   PROMPT_TEMPLATE_TYPE = 'prompt_template_type', // 任务状态
-  SYS_COMMON_STATUS = 'sys_common_status',
+  SYS_COMMON_STATUS = 'sys_common_status', //一般状态
   SYS_DEVICE_TYPE = 'sys_device_type', // 设备类型
   SYS_GRANT_TYPE = 'sys_grant_type', // 授权类型
   SYS_MODEL_BILLING = 'sys_model_billing', // 计费方式
@@ -20,4 +20,5 @@ export enum DictEnum {
   MCP_TRANSPORT_TYPE = 'mcp_transport_type', // mcp链接方式
   STATUS_TYPE = 'status_type', // 状态类型
   MODEL_PROVIDER= 'model_provider',
+  SYS_OPRE_STATUS= 'sys_opre_status',
 }

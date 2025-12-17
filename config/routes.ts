@@ -101,7 +101,27 @@ export default [
       {
         path: '/system/dict/data',
         component: './system/dict/data'
-      }
+      },
+      {
+        path: '/system/log',
+        name: 'log',
+        routes: [
+          {
+            path: '/system/log',
+            redirect: '/system/log/oprelog',
+          },
+          {
+            path: '/system/log/oprelog',
+            name: 'oprelog',
+            component: './system/log/oprelog',
+          },
+          {
+            path: '/system/log/loginfor',
+            name: 'loginfor',
+            component: './system/log/loginfor',
+          },
+        ]
+      },
     ]
   },
 

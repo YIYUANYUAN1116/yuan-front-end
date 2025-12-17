@@ -5,11 +5,12 @@ import React, { useRef } from 'react'
 import DictDataModalForm from './components/DictDataModalForm';
 import { Button, Popconfirm, Space } from 'antd';
 import { dictList, dictRemove } from '@/services/yuan/sysDictDataController';
-import { createFetchList, createLoadingRequest, useDictDataValueEnum } from '@/util/DataRequestUtils';
+import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils';
 import { OperationModes } from '@/const/Const';
 import { PlusOutlined } from '@ant-design/icons';
 import { history } from '@umijs/max';
 import { DictEnum } from '@/const/dict-enum';
+import { useDictDataValueEnum } from '@/hook/DictHook';
 
 export default function index() {
     const [searchParams] = useSearchParams();

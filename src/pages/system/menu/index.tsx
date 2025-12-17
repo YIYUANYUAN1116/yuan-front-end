@@ -6,8 +6,9 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { sysMenuListTree, sysMenuRemove, sysMenuEdit } from '@/services/yuan/sysMenuController';
 import MenuDrawer from './components/MenuDrawer';
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
-import { createLoadingRequest, useDictDataValueEnum } from '@/util/DataRequestUtils';
+import { createLoadingRequest } from '@/util/DataRequestUtils';
 import { DictEnum } from '@/const/dict-enum';
+import { useDictDataValueEnum } from '@/hook/DictHook';
 
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
@@ -122,7 +123,7 @@ export default () => {
       width: 140,
       render: (_, record) => <RowActions record={record} reload={reload} />,
     },
-  ], [reload]);
+  ], [reload,statusEnum]);
 
 
   const fetchDictData = async (params: any) => {

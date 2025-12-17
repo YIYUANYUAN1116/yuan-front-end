@@ -53,5 +53,8 @@ export default {
   'menu.system.user': '用户管理',
   'menu.system.role': '角色管理',
   'menu.system.menu': '菜单管理',
-  'menu.system.dict': '字典管理'
+  'menu.system.dict': '字典管理',
+  'menu.system.log': '日志管理',
+  'menu.system.log.oprelog': '操作日志',
+  'menu.system.log.loginfor': '登录日志',
 };

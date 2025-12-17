@@ -70,8 +70,8 @@ export async function dictTypeAll(
     method: "GET",
     params: {
       ...params,
-      dictType: undefined,
-      ...params["dictType"],
+      bo: undefined,
+      ...params["bo"],
       pageQuery: undefined,
       ...params["pageQuery"],
     },
@@ -89,8 +89,8 @@ export async function dictTypeExport(
     method: "POST",
     params: {
       ...params,
-      dictType: undefined,
-      ...params["dictType"],
+      bo: undefined,
+      ...params["bo"],
     },
     ...(options || {}),
   });
@@ -106,8 +106,8 @@ export async function dictTypeList(
     method: "GET",
     params: {
       ...params,
-      dictType: undefined,
-      ...params["dictType"],
+      bo: undefined,
+      ...params["bo"],
       pageQuery: undefined,
       ...params["pageQuery"],
     },

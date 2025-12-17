@@ -6,9 +6,10 @@ import { useRef, useState } from 'react';
 import api from '@/services/yuan/index'
 import RoleModalForm from './components/RoleModalForm';
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
-import { createFetchList, createLoadingRequest, useDictDataValueEnum } from '@/util/DataRequestUtils';
+import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils';
 import { sysRoleList, sysRoleRemove } from '@/services/yuan/sysRoleController';
 import { DictEnum } from '@/const/dict-enum';
+import { useDictDataValueEnum } from '@/hook/DictHook';
 
 
 export default () => {

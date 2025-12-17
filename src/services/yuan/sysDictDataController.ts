@@ -70,8 +70,8 @@ export async function dictExport(
     method: "POST",
     params: {
       ...params,
-      dictData: undefined,
-      ...params["dictData"],
+      bo: undefined,
+      ...params["bo"],
     },
     ...(options || {}),
   });
@@ -87,8 +87,8 @@ export async function dictList(
     method: "GET",
     params: {
       ...params,
-      dictData: undefined,
-      ...params["dictData"],
+      bo: undefined,
+      ...params["bo"],
       pageQuery: undefined,
       ...params["pageQuery"],
     },

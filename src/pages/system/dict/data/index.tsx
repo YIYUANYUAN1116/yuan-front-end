@@ -3,7 +3,7 @@ import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { useSearchParams } from '@umijs/max';
 import React, { useRef } from 'react'
 import DictDataModalForm from './components/DictDataModalForm';
-import { Button, Popconfirm, Space } from 'antd';
+import { Button, Popconfirm, Space, Table } from 'antd';
 import { dictList, dictRemove } from '@/services/yuan/sysDictDataController';
 import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils';
 import { OperationModes } from '@/const/Const';
@@ -11,6 +11,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { history } from '@umijs/max';
 import { DictEnum } from '@/const/dict-enum';
 import { useDictDataValueEnum } from '@/hook/DictHook';
+import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
 
 export default function index() {
     const [searchParams] = useSearchParams();
@@ -162,6 +163,21 @@ export default function index() {
                     key="add"
                 />
             ]}
+            rowSelection={{
+                // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
+                // 注释该行则默认不显示下拉选项
+                selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
+            }}
+            tableAlertOptionRender={false}
+            tableAlertRender={(props) => (
+                <BatchDeleteAlert<API.SysDictDataVo>
+                    {...props}
+                    actionRef={actionRef}
+                    onDelete={(keys) =>
+                        dictRemove({ dictCodes: keys as number[] })
+                    }
+                />
+            )}
         />
     )
 }

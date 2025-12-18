@@ -1,8 +1,6 @@
 import { type ActionType, ModalForm, ProForm, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect } from '@ant-design/pro-components';
-import { useRequest } from '@umijs/max';
 import { Form } from 'antd';
 import { useState, type FC } from 'react';
-import api from '@/services/yuan/index';
 import { sysMenuTreeselect } from '@/services/yuan/sysMenuController';
 import { DataNode } from 'antd/es/tree';
 import { convertTree } from '@/util/TreeUtils';
@@ -42,13 +40,13 @@ const UserModalForm: FC<RoleModalFormProps> = ({
       onOpenChange={async (visible) => {
         if (visible) {
           const res = await sysMenuTreeselect({
-            menu: {},
+            bo: {},
             roleId: record?.roleId
           } as API.sysMenuTreeselectParams);
 
           setMenuTree(convertTree(res.data?.menus || []))
           form.setFieldsValue({
-            menuIds: res.data?.checkedKeys // 这里必须是数组
+            menuIds: res.data?.checkedKeys as []// 这里必须是数组
           })
         }
       }}

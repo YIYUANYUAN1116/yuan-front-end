@@ -550,6 +550,7 @@ declare namespace API {
     updateBy?: number;
     updateTime?: string;
     remark?: string;
+    menuIds?: number[];
   };
 
   type SysRoleDeptBo = {

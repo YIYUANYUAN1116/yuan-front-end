@@ -1,7 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
-import { Button, message, Popconfirm, Space } from 'antd';
+import { Button, message, Modal, Popconfirm, Space, Table } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import api from '@/services/yuan/index';
 import UserModalForm from './components/UserModalForm';
@@ -11,6 +11,7 @@ import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils';
 import { sysUserList, sysUserRemove } from '@/services/yuan/sysUserController';
 import { DictEnum } from '@/const/dict-enum';
 import { useDictDataValueEnum } from '@/hook/DictHook';
+import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
   const { run: deleteRun, loading: deleteLoading } = createLoadingRequest(sysUserRemove, actionRef.current?.reload)
@@ -149,6 +150,21 @@ export default () => {
           key="add"
         />,
       ]}
+      rowSelection={{
+        // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
+        // 注释该行则默认不显示下拉选项
+        selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
+      }}
+      tableAlertOptionRender={false}
+      tableAlertRender={(props) => (
+        <BatchDeleteAlert<API.SysUserVo>
+          {...props}
+          actionRef={actionRef}
+          onDelete={(keys) =>
+            sysUserRemove({ userIds: keys as number[] })
+          }
+        />
+      )}
     />
   );
 };

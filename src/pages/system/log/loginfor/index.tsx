@@ -11,6 +11,7 @@ import { useDictDataTagMap, useDictDataValueEnum } from '@/hook/DictHook';
 import { DictEnum } from '@/const/dict-enum';
 import LoginforDrawer from './components/LoginforDrawer';
 import { sysLogininforList, sysLogininforRemove } from '@/services/yuan/sysLogininforController';
+import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
 
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
@@ -54,7 +55,7 @@ export default () => {
       title: '操作系统',
       dataIndex: 'os',
       ellipsis: true,
-      render: (text,record) => {
+      render: (text, record) => {
         if (!record.os) return '-';
         const match = record.os.match(/^Windows\s+\d+/);
         return match ? match[0] : record.os;
@@ -77,7 +78,7 @@ export default () => {
       dataIndex: 'loginTime',
       hideInSearch: true,
       valueType: 'dateTime',
-      width:200
+      width: 200
     },
     {
       title: '操作',
@@ -123,39 +124,15 @@ export default () => {
         selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
       }}
       tableAlertOptionRender={false}
-      tableAlertRender={({
-        selectedRowKeys,
-        selectedRows,
-        onCleanSelected,
-      }) => {
-        return (
-          <Space size={24}>
-            <span>
-              已选 {selectedRowKeys.length} 项
-              <a style={{ marginInlineStart: 8 }} onClick={onCleanSelected}>
-                取消选择
-              </a>
-            </span>
-            <a
-              onClick={() => {
-                Modal.confirm({
-                  title: '确认删除',
-                  content: `确认删除选中的 ${selectedRowKeys.length} 条操作日志吗？`,
-                  onOk: async () => {
-                    await sysLogininforRemove(
-                      { infoIds: selectedRowKeys as number[] }
-                    );
-                    onCleanSelected();
-                    actionRef.current?.reload();
-                  }
-                });
-              }}
-            >
-              批量删除
-            </a>
-          </Space>
-        );
-      }}
+      tableAlertRender={(props) => (
+        <BatchDeleteAlert<API.SysLogininforVo>
+          {...props}
+          actionRef={actionRef}
+          onDelete={(keys) =>
+            sysLogininforRemove({ infoIds: keys as number[] })
+          }
+        />
+      )}
 
     />
   );

@@ -12,6 +12,7 @@ import { DictEnum } from '@/const/dict-enum';
 import { useDictDataValueEnum } from '@/hook/DictHook';
 import DataScopeModalForm from './components/DataScopeModalForm';
 import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
+import { history } from '@umijs/max';
 
 
 export const authScopeOptions = [
@@ -27,7 +28,7 @@ export default () => {
   const actionRef = useRef<ActionType | null>(null);
   const statusEnum = useDictDataValueEnum(DictEnum.SYS_NORMAL_DISABLE)
 
-  
+
   const { run: deleteRun, loading: deleteLoading } = createLoadingRequest(sysRoleRemove, actionRef.current?.reload)
   const fetchDictData = createFetchList<
     Record<string, any>,
@@ -102,54 +103,58 @@ export default () => {
       key: 'option',
       hideInSearch: true,
       render: (text, record) => {
-        const items: MenuProps['items'] = [
-          {
-            key: 'assignUser',
-            label: '分配用户',
-            onClick: () => console.log('分配用户'),
-          },
-          {
-            key: 'dataScope',
-            label: (
-              <DataScopeModalForm
-                trigger={<a>数据权限</a>}
+        if (!record.superAdmin) {
+          const items: MenuProps['items'] = [
+            {
+              key: 'assignUser',
+              label: '分配用户',
+              onClick: () => history.push({
+                pathname:"/system/role-assign",
+                 search: `?roleId=${record.roleId}&roleName=${record.roleName}`,
+              }),
+            },
+            {
+              key: 'dataScope',
+              label: (
+                <DataScopeModalForm
+                  trigger={<a>数据权限</a>}
+                  record={record}
+                />
+              ),
+            }
+          ];
+          return [
+            <>
+              <RoleModalForm
+                mode="edit"
+                trigger={<a type="link">编辑</a>}
+                reload={actionRef.current?.reload}
                 record={record}
+                key={`edit-${record.roleId}`}
               />
-            ),
-          }
-        ];
-        return [
-          <>
-            <RoleModalForm
-              mode="edit"
-              trigger={<a type="link">编辑</a>}
-              reload={actionRef.current?.reload}
-              record={record}
-              key={`edit-${record.roleId}`}
-            />
-            <Popconfirm
-              title="删除"
-              description={`确认删除角色：${record.roleName}`}
-              okText="确认"
-              cancelText="取消"
-              okButtonProps={{ loading: deleteLoading }}
-              onConfirm={() => deleteRun({ roleIds: record.roleId as number })}
-              key={`delete-${record.roleId}`}
-            >
-              <a type="link" style={{ color: 'red' }}>删除</a>
-            </Popconfirm>
+              <Popconfirm
+                title="删除"
+                description={`确认删除角色：${record.roleName}`}
+                okText="确认"
+                cancelText="取消"
+                okButtonProps={{ loading: deleteLoading }}
+                onConfirm={() => deleteRun({ roleIds: record.roleId as number })}
+                key={`delete-${record.roleId}`}
+              >
+                <a type="link" style={{ color: 'red' }}>删除</a>
+              </Popconfirm>
+              <Dropdown menu={{ items }}>
+                <a onClick={(e) => e.preventDefault()}>
+                  <Space>
+                    更多
+                    <DownOutlined />
+                  </Space>
+                </a>
+              </Dropdown>
+            </>
 
-            <Dropdown menu={{ items }}>
-              <a onClick={(e) => e.preventDefault()}>
-                <Space>
-                  更多
-                  <DownOutlined />
-                </Space>
-              </a>
-            </Dropdown>
-          </>
-
-        ]
+          ]
+        }
       },
     },
   ];

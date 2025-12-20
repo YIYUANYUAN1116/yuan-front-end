@@ -18,7 +18,6 @@ export default () => {
   const sexEnum = useDictDataValueEnum(DictEnum.SYS_USER_SEX)
   const statusEnum = useDictDataValueEnum(DictEnum.SYS_NORMAL_DISABLE)
 
-  console.log(statusEnum)
   const columns: ProColumns<API.SysUserVo>[] = [
     {
       title: '用户Id',

@@ -60,6 +60,80 @@ export async function sysRoleRemove(
   });
 }
 
+/** 获取角色已分配用户列表 GET /system/sysRole/authUser/allocatedList */
+export async function allocatedUserList(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.allocatedUserListParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.TableDataInfoSysUserVo>(
+    "/system/sysRole/authUser/allocatedList",
+    {
+      method: "GET",
+      params: {
+        ...params,
+        user: undefined,
+        ...params["user"],
+        pageQuery: undefined,
+        ...params["pageQuery"],
+      },
+      ...(options || {}),
+    }
+  );
+}
+
+/** 批量取消授权用户 PUT /system/sysRole/authUser/cancelAll */
+export async function cancelAuthUserAll(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.cancelAuthUserAllParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.RVoid>("/system/sysRole/authUser/cancelAll", {
+    method: "PUT",
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
+/** 批量选择用户授权 PUT /system/sysRole/authUser/selectAll */
+export async function selectAuthUserAll(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.selectAuthUserAllParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.RVoid>("/system/sysRole/authUser/selectAll", {
+    method: "PUT",
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
+/** 获取角色未分配用户列表 GET /system/sysRole/authUser/unallocatedList */
+export async function unallocatedUserList(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.unallocatedUserListParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.TableDataInfoSysUserVo>(
+    "/system/sysRole/authUser/unallocatedList",
+    {
+      method: "GET",
+      params: {
+        ...params,
+        user: undefined,
+        ...params["user"],
+        pageQuery: undefined,
+        ...params["pageQuery"],
+      },
+      ...(options || {}),
+    }
+  );
+}
+
 /** 导出角色列表 POST /system/sysRole/export */
 export async function sysRoleExport(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)

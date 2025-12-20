@@ -88,6 +88,11 @@ export default [
         name: 'role',
         component: './system/role',
       },
+       {
+        path: '/system/role-assign',
+        component: './system/role/assign',
+        hideInMenu: true,
+      },
       {
         path: '/system/menu',
         name: 'menu',
@@ -100,7 +105,8 @@ export default [
       },
       {
         path: '/system/dict/data',
-        component: './system/dict/data'
+        component: './system/dict/data',
+        hideInMenu: true,
       },
       {
         path: '/system/log',

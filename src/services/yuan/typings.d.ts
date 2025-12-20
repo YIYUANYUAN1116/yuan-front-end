@@ -1,4 +1,14 @@
 declare namespace API {
+  type allocatedUserListParams = {
+    user: SysUserBo;
+    pageQuery: PageQuery;
+  };
+
+  type cancelAuthUserAllParams = {
+    roleId: number;
+    userIds: number[];
+  };
+
   type dictDictTypeParams = {
     dictType: string;
   };
@@ -110,7 +120,7 @@ declare namespace API {
     code?: number;
     msg?: string;
     data?: {
-      menuId?: number;
+      menuId: number;
       menuName?: string;
       parentId?: number;
       orderNum?: number;
@@ -235,6 +245,11 @@ declare namespace API {
     code?: number;
     msg?: string;
     data?: any;
+  };
+
+  type selectAuthUserAllParams = {
+    roleId: number;
+    userIds: number[];
   };
 
   type SelectRolesVo = {
@@ -451,7 +466,8 @@ declare namespace API {
   };
 
   type SysMenuVo = {
-    menuId?: number;
+    /** 角色id */
+    menuId: number;
     menuName?: string;
     parentId?: number;
     orderNum?: number;
@@ -629,7 +645,8 @@ declare namespace API {
   };
 
   type SysRoleVo = {
-    roleId?: number;
+    /** 角色id */
+    roleId: number;
     tenantId?: string;
     roleName?: string;
     roleKey?: string;
@@ -690,7 +707,8 @@ declare namespace API {
   };
 
   type SysTenantVo = {
-    id?: number;
+    /** 租户id */
+    id: number;
     tenantId?: string;
     contactUserName?: string;
     contactPhone?: string;
@@ -742,6 +760,7 @@ declare namespace API {
     remark?: string;
     kroleGroupType?: string;
     kroleGroupIds?: string;
+    roleId?: number;
   };
 
   type sysUserExportParams = {
@@ -778,7 +797,8 @@ declare namespace API {
   };
 
   type SysUserVo = {
-    userId?: number;
+    /** 用户Id */
+    userId: number;
     openId?: string;
     userGrade?: string;
     userBalance?: number;
@@ -842,7 +862,7 @@ declare namespace API {
   type TableDataInfoSysMenuVo = {
     total?: number;
     rows?: {
-      menuId?: number;
+      menuId: number;
       menuName?: string;
       parentId?: number;
       orderNum?: number;
@@ -926,6 +946,11 @@ declare namespace API {
     nameKey?: string;
     childrenKey?: string;
     deep?: number;
+  };
+
+  type unallocatedUserListParams = {
+    user: SysUserBo;
+    pageQuery: PageQuery;
   };
 
   type UserInfoVo = {

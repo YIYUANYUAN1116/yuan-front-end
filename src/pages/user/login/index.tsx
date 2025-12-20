@@ -136,7 +136,6 @@ const Login: React.FC = () => {
     try {
       // 登录
       const msg = await api.authController.login(values);
-      // const msg = await login({ ...values, type });
       if (msg.code === 200) {
         const defaultLoginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',

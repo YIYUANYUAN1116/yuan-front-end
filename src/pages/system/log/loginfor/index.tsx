@@ -16,7 +16,6 @@ import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
   const statusEnum = useDictDataValueEnum(DictEnum.SYS_OPRE_STATUS)
-  const opreTypetagMap = useDictDataTagMap(DictEnum.SYS_OPER_TYPE)
 
   const columns: ProColumns<API.SysLogininforVo>[] = [
     {
@@ -78,7 +77,9 @@ export default () => {
       dataIndex: 'loginTime',
       hideInSearch: true,
       valueType: 'dateTime',
-      width: 200
+      width: 200,
+      sorter: true,
+      defaultSortOrder: 'descend', // 默认降序
     },
     {
       title: '操作',

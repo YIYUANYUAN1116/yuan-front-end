@@ -102,60 +102,61 @@ export default () => {
       valueType: 'option',
       key: 'option',
       hideInSearch: true,
-      render: (text, record) => {
-        if (!record.superAdmin) {
-          const items: MenuProps['items'] = [
-            {
-              key: 'assignUser',
-              label: '分配用户',
-              onClick: () => history.push({
-                pathname:"/system/role-assign",
-                 search: `?roleId=${record.roleId}&roleName=${record.roleName}`,
-              }),
-            },
-            {
-              key: 'dataScope',
-              label: (
-                <DataScopeModalForm
-                  trigger={<a>数据权限</a>}
-                  record={record}
-                />
-              ),
-            }
-          ];
-          return [
-            <>
-              <RoleModalForm
-                mode="edit"
-                trigger={<a type="link">编辑</a>}
-                reload={actionRef.current?.reload}
-                record={record}
-                key={`edit-${record.roleId}`}
-              />
-              <Popconfirm
-                title="删除"
-                description={`确认删除角色：${record.roleName}`}
-                okText="确认"
-                cancelText="取消"
-                okButtonProps={{ loading: deleteLoading }}
-                onConfirm={() => deleteRun({ roleIds: record.roleId as number })}
-                key={`delete-${record.roleId}`}
-              >
-                <a type="link" style={{ color: 'red' }}>删除</a>
-              </Popconfirm>
-              <Dropdown menu={{ items }}>
-                <a onClick={(e) => e.preventDefault()}>
-                  <Space>
-                    更多
-                    <DownOutlined />
-                  </Space>
-                </a>
-              </Dropdown>
-            </>
+      render: (_, record) => {
+        if (record.superAdmin) return null;
 
-          ]
-        }
-      },
+        const items: MenuProps['items'] = [
+          {
+            key: 'assignUser',
+            label: '分配用户',
+            onClick: () =>
+              history.push({
+                pathname: '/system/role-assign',
+                search: `?roleId=${record.roleId}&roleName=${record.roleName}`,
+              }),
+          },
+          {
+            key: 'dataScope',
+            label: (
+              <DataScopeModalForm
+                trigger={<a>数据权限</a>}
+                record={record}
+              />
+            ),
+          },
+        ];
+
+        return (
+          <Space>
+            <RoleModalForm
+              mode="edit"
+              trigger={<a>编辑</a>}
+              reload={actionRef.current?.reload}
+              record={record}
+            />
+
+            <Popconfirm
+              title="删除"
+              description={`确认删除角色：${record.roleName}`}
+              okText="确认"
+              cancelText="取消"
+              okButtonProps={{ loading: deleteLoading }}
+              onConfirm={() => deleteRun({ roleIds: record.roleId as number })}
+            >
+              <a style={{ color: 'red' }}>删除</a>
+            </Popconfirm>
+
+            <Dropdown menu={{ items }}>
+              <a onClick={(e) => e.preventDefault()}>
+                <Space>
+                  更多
+                  <DownOutlined />
+                </Space>
+              </a>
+            </Dropdown>
+          </Space>
+        );
+      }
     },
   ];
 

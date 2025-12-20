@@ -1,5 +1,5 @@
 import { type ActionType, ModalForm, ProForm, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect } from '@ant-design/pro-components';
-import { Form } from 'antd';
+import { Form, TreeSelect } from 'antd';
 import { useState, type FC } from 'react';
 import { sysMenuTreeselect } from '@/services/yuan/sysMenuController';
 import { DataNode } from 'antd/es/tree';
@@ -102,9 +102,13 @@ const UserModalForm: FC<RoleModalFormProps> = ({
           fieldProps={{
             treeData: menuTree, // ← 接口返回的菜单树
             treeCheckable: true,
+            treeCheckStrictly: true,
+            showCheckedStrategy: TreeSelect.SHOW_ALL,
             showSearch: true
           }}
-          rules={[{ required: true, message: "请选择菜单权限" }]}
+          transform={(value) => ({
+            menuIds: value?.map((v: any) => v.value),
+          })}
         />
       </>
     </ModalForm>

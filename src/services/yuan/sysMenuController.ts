@@ -113,6 +113,14 @@ export async function sysMenuListTree(
   });
 }
 
+/** 获取菜单路由 GET /system/sysMenu/menuRouters */
+export async function menuRouters(options?: { [key: string]: any }) {
+  return request<API.RListReactRouterVo>("/system/sysMenu/menuRouters", {
+    method: "GET",
+    ...(options || {}),
+  });
+}
+
 /** 获取角色菜单树 GET /system/sysMenu/roleMenuTreeselect/${param0} */
 export async function sysMenuRoleMenuTreeselect(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)

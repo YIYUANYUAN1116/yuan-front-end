@@ -104,6 +104,22 @@ declare namespace API {
     isAsc?: string;
   };
 
+  type ReactRouterVo = {
+    name?: string;
+    path?: string;
+    icon?: string;
+    component?: string;
+    layout?: boolean;
+    hideInMenu?: boolean;
+    access?: string;
+  };
+
+  type RListReactRouterVo = {
+    code?: number;
+    msg?: string;
+    data?: ReactRouterVo[];
+  };
+
   type RListSysDictDataVo = {
     code?: number;
     msg?: string;
@@ -120,8 +136,9 @@ declare namespace API {
     code?: number;
     msg?: string;
     data?: {
-      menuId: number;
+      menuId?: number;
       menuName?: string;
+      routeName?: string;
       parentId?: number;
       orderNum?: number;
       path?: string;
@@ -414,6 +431,7 @@ declare namespace API {
   type SysMenuBo = {
     menuId?: number;
     menuName?: string;
+    routeName?: string;
     parentId?: number;
     orderNum?: number;
     path?: string;
@@ -466,9 +484,9 @@ declare namespace API {
   };
 
   type SysMenuVo = {
-    /** 角色id */
-    menuId: number;
+    menuId?: number;
     menuName?: string;
+    routeName?: string;
     parentId?: number;
     orderNum?: number;
     path?: string;
@@ -645,8 +663,7 @@ declare namespace API {
   };
 
   type SysRoleVo = {
-    /** 角色id */
-    roleId: number;
+    roleId?: number;
     tenantId?: string;
     roleName?: string;
     roleKey?: string;
@@ -707,8 +724,7 @@ declare namespace API {
   };
 
   type SysTenantVo = {
-    /** 租户id */
-    id: number;
+    id?: number;
     tenantId?: string;
     contactUserName?: string;
     contactPhone?: string;
@@ -797,8 +813,7 @@ declare namespace API {
   };
 
   type SysUserVo = {
-    /** 用户Id */
-    userId: number;
+    userId?: number;
     openId?: string;
     userGrade?: string;
     userBalance?: number;
@@ -862,8 +877,9 @@ declare namespace API {
   type TableDataInfoSysMenuVo = {
     total?: number;
     rows?: {
-      menuId: number;
+      menuId?: number;
       menuName?: string;
+      routeName?: string;
       parentId?: number;
       orderNum?: number;
       path?: string;

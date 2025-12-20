@@ -1,19 +1,22 @@
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable, DrawerForm, ProFormText, ProFormSelect, ProFormDigit } from '@ant-design/pro-components';
-import { Button, Popconfirm, Space, message } from 'antd';
+import { Button, Popconfirm, Space, Tag, message } from 'antd';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { sysMenuListTree, sysMenuRemove, sysMenuEdit } from '@/services/yuan/sysMenuController';
 import MenuDrawer from './components/MenuDrawer';
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
 import { createLoadingRequest } from '@/util/DataRequestUtils';
 import { DictEnum } from '@/const/dict-enum';
-import { useDictDataValueEnum } from '@/hook/DictHook';
+import { useDictDataTagMap, useDictDataValueEnum } from '@/hook/DictHook';
+import { text } from 'stream/consumers';
 
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
   const statusEnum = useDictDataValueEnum(DictEnum.SYS_NORMAL_DISABLE)
   const { run: deleteRun, loading: deleteLoading } = createLoadingRequest(sysMenuRemove, actionRef.current?.reload)
+  const showHideMap = useDictDataTagMap(DictEnum.SYS_SHOW_HIDE)
+
   const RowActions = React.memo(({ record, reload }: any) => {
     return (
       <Space size={8}>
@@ -71,6 +74,14 @@ export default () => {
       valueEnum: statusEnum,
     },
 
+        {
+      disable: true,
+      title: '隐藏状态',
+      dataIndex: 'visible',
+      ellipsis: true,
+      render:(text,record)=> showHideMap[record.visible || 0]?.render() ?? record.visible,
+    },
+
     {
       disable: true,
       title: '菜单类型',
@@ -90,13 +101,11 @@ export default () => {
       },
     },
     {
-      title: '子菜单数量',
-      dataIndex: 'childrenLength',
+      title: '菜单权限',
+      dataIndex: 'perms',
       ellipsis: true,
       hideInSearch: true,
-      render: (text, record) => [
-        <span>{record.children?.length}</span>
-      ],
+      render: (text, record) =>  <Tag>{text}</Tag>,
     },
     {
       title: '显示顺序',
@@ -153,7 +162,7 @@ export default () => {
       }}
       toolBarRender={() => [
         <MenuDrawer
-          key="add"
+          key="menuAdd"
           mode="add"
           reload={reload}
           trigger={<Button type="primary" icon={<PlusOutlined />}

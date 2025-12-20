@@ -100,7 +100,9 @@ export default () => {
             title: '操作时间',
             dataIndex: 'operTime',
             hideInSearch: true,
-            valueType: 'dateTime'
+            valueType: 'dateTime',
+            sorter: true,
+            defaultSortOrder: 'descend', // 默认降序
         },
         {
             title: '操作',

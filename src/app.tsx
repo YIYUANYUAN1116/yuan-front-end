@@ -1,5 +1,6 @@
 import { LinkOutlined } from '@ant-design/icons';
-import type { Settings as LayoutSettings } from '@ant-design/pro-components';
+import type { Settings as LayoutSettings, MenuDataItem } from '@ant-design/pro-components';
+import * as Icons from '@ant-design/icons';
 import { SettingDrawer } from '@ant-design/pro-components';
 import type { RequestConfig, RunTimeLayoutConfig } from '@umijs/max';
 import { history, Link } from '@umijs/max';
@@ -15,6 +16,7 @@ import defaultSettings from '../config/defaultSettings';
 import { errorConfig } from './requestErrorConfig';
 import '@ant-design/v5-patch-for-react-19';
 import api from '@/services/yuan/index'
+import { menuRouters } from './services/yuan/sysMenuController';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
@@ -113,6 +115,29 @@ export const layout: RunTimeLayoutConfig = ({
       ]
       : [],
     menuHeaderRender: undefined,
+    menu: {
+      // 每当 initialState?.currentUser?.userid 发生修改时重新执行 request
+      params: {
+        userId: initialState?.currentUser?.user?.userId,
+      },
+      request: async (params, defaultMenuData) => {
+        const menuData = await menuRouters();
+        //解决icon不显示的问题
+        const transformIcon = (iconName: string) => {
+          const IconComponent = (Icons as any)[iconName];
+          return IconComponent ? <IconComponent /> : null;
+        };
+
+        const mapMenu = (menus: any[]): any[] => {
+          return menus.map(item => ({
+            ...item,
+            icon: item.icon ? transformIcon(item.icon) : undefined,
+            children: item.children ? mapMenu(item.children) : undefined,
+          }));
+        };
+        return mapMenu(menuData.data || []);
+      },
+    },
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     // 增加一个 loading 的状态

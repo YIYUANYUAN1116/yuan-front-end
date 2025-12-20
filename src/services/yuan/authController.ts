@@ -16,3 +16,11 @@ export async function login(
     ...(options || {}),
   });
 }
+
+/** 退出登录 POST /auth/logout */
+export async function logout(options?: { [key: string]: any }) {
+  return request<API.RVoid>("/auth/logout", {
+    method: "POST",
+    ...(options || {}),
+  });
+}

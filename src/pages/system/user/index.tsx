@@ -1,7 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
-import { Button, message, Modal, Popconfirm, Space, Table } from 'antd';
+import { Button, message, Modal, Popconfirm, Result, Space, Table } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
 import api from '@/services/yuan/index';
 import UserModalForm from './components/UserModalForm';
@@ -12,7 +12,15 @@ import { sysUserList, sysUserRemove } from '@/services/yuan/sysUserController';
 import { DictEnum } from '@/const/dict-enum';
 import { useDictDataValueEnum } from '@/hook/DictHook';
 import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
+import { Access, useAccess } from '@umijs/max';
 export default () => {
+
+  /**权限控制 */
+  const access = useAccess();
+  if (!access.canAccess('system:user:list')) {
+    return <Result status="403" title="无权限访问" />;
+  }
+
   const actionRef = useRef<ActionType | null>(null);
   const { run: deleteRun, loading: deleteLoading } = createLoadingRequest(sysUserRemove, actionRef.current?.reload)
   const sexEnum = useDictDataValueEnum(DictEnum.SYS_USER_SEX)
@@ -94,23 +102,31 @@ export default () => {
       hideInSearch: true,
       render: (text, record) => (
         <Space size="small">
-          <UserModalForm
-            mode="edit"
-            trigger={<a>编辑</a>}
-            record={record}
-            reload={actionRef.current?.reload}
-          />
-          <UserRoleModalForm userId={record.userId!} reload={actionRef.current?.reload} />
-          <Popconfirm
-            title="用户删除"
-            description={`确认删除用户：${record.nickName}`}
-            okText="确认"
-            cancelText="取消"
-            okButtonProps={{ loading: deleteLoading }}
-            onConfirm={() => deleteRun({ userIds: [record.userId as number] })}
-          >
-            <a style={{ color: 'red' }}>删除</a>
-          </Popconfirm>
+          <Access accessible={access.canAccess('system:user:edit') || false}>
+            <UserModalForm
+              mode="edit"
+              trigger={<a>编辑</a>}
+              record={record}
+              reload={actionRef.current?.reload}
+            />
+          </Access>
+
+          <Access accessible={access.canAccess('system:user:edit') || false}>
+            <UserRoleModalForm userId={record.userId!} reload={actionRef.current?.reload} />
+          </Access>
+
+          <Access accessible={access.canAccess('system:user:remove') || false}>
+            <Popconfirm
+              title="用户删除"
+              description={`确认删除用户：${record.nickName}`}
+              okText="确认"
+              cancelText="取消"
+              okButtonProps={{ loading: deleteLoading }}
+              onConfirm={() => deleteRun({ userIds: [record.userId as number] })}
+            >
+              <a style={{ color: 'red' }}>删除</a>
+            </Popconfirm>
+          </Access>
         </Space>
       ),
     },
@@ -141,9 +157,9 @@ export default () => {
         <UserModalForm
           mode="add"
           trigger={
-            <Button type="primary" icon={<PlusOutlined />}>
-              新建用户
-            </Button>
+            <Access accessible={access.canAccess('system:user:add') || false}>
+              <Button type="primary">新增</Button>
+            </Access>
           }
           reload={actionRef.current?.reload}
           key="add"
@@ -156,13 +172,16 @@ export default () => {
       }}
       tableAlertOptionRender={false}
       tableAlertRender={(props) => (
-        <BatchDeleteAlert<API.SysUserVo>
-          {...props}
-          actionRef={actionRef}
-          onDelete={(keys) =>
-            sysUserRemove({ userIds: keys as number[] })
-          }
-        />
+        <Access accessible={access.canAccess('system:user:remove') || false}>
+          <BatchDeleteAlert<API.SysUserVo>
+            {...props}
+            actionRef={actionRef}
+            onDelete={(keys) =>
+              sysUserRemove({ userIds: keys as number[] })
+            }
+          />
+        </Access>
+
       )}
     />
   );

@@ -94,7 +94,7 @@ const MenuDrawer = ({ mode, trigger, record, reload }: any) => {
         radioType="button"
       />
 
-        <ProFormRadio.Group
+      <ProFormRadio.Group
         name="visible"
         label="显示状态"
         options={[
@@ -108,14 +108,15 @@ const MenuDrawer = ({ mode, trigger, record, reload }: any) => {
         radioType="button"
       />
 
+      <ProFormText
+        name="menuName"
+        label="菜单名称"
+        rules={[{ required: true }]}
+      />
       {currentMenuType !== 'F' &&
         (
           <>
-            <ProFormText
-              name="menuName"
-              label="菜单名称"
-              rules={[{ required: true }]}
-            />
+
             <ProFormText
               name="routeName"
               label="路由名称"

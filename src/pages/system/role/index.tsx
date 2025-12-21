@@ -10,7 +10,7 @@ import { DictEnum } from '@/const/dict-enum';
 import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 import DataScopeModalForm from './components/DataScopeModalForm';
 import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
-import { history } from '@umijs/max';
+import { Access, history, useAccess } from '@umijs/max';
 import { useTableRequest } from '@/hooks/table/useTableRequest';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
 
@@ -26,7 +26,7 @@ export const authScopeOptions = [
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
   const statusEnum = useDictDataValueEnum(DictEnum.SYS_NORMAL_DISABLE)
-
+  const access = useAccess();
 
   const { run: deleteRun, loading: deleteLoading } = useActionRequest(sysRoleRemove, actionRef.current?.reload)
 
@@ -124,32 +124,37 @@ export default () => {
 
         return (
           <Space>
-            <RoleModalForm
-              mode="edit"
-              trigger={<a>编辑</a>}
-              reload={actionRef.current?.reload}
-              record={record}
-            />
+            <Access accessible={access.canAccess('system:role:edit')}>
+              <RoleModalForm
+                mode="edit"
+                trigger={<a>编辑</a>}
+                reload={actionRef.current?.reload}
+                record={record}
+              />
+            </Access>
+            <Access accessible={access.canAccess('system:role:remove')}>
+              <Popconfirm
+                title="删除"
+                description={`确认删除角色：${record.roleName}`}
+                okText="确认"
+                cancelText="取消"
+                okButtonProps={{ loading: deleteLoading }}
+                onConfirm={() => deleteRun({ roleIds: [record.roleId as number] })}
+              >
+                <a style={{ color: 'red' }}>删除</a>
+              </Popconfirm>
+            </Access>
+            <Access accessible={access.canAccess('system:role:assigne')}>
+              <Dropdown menu={{ items }}>
+                <a onClick={(e) => e.preventDefault()}>
+                  <Space>
+                    更多
+                    <DownOutlined />
+                  </Space>
+                </a>
+              </Dropdown>
+            </Access>
 
-            <Popconfirm
-              title="删除"
-              description={`确认删除角色：${record.roleName}`}
-              okText="确认"
-              cancelText="取消"
-              okButtonProps={{ loading: deleteLoading }}
-              onConfirm={() => deleteRun({ roleIds: [record.roleId as number]})}
-            >
-              <a style={{ color: 'red' }}>删除</a>
-            </Popconfirm>
-
-            <Dropdown menu={{ items }}>
-              <a onClick={(e) => e.preventDefault()}>
-                <Space>
-                  更多
-                  <DownOutlined />
-                </Space>
-              </a>
-            </Dropdown>
           </Space>
         );
       }
@@ -178,16 +183,19 @@ export default () => {
         search={{ labelWidth: 'auto' }}
         headerTitle="角色管理"
         toolBarRender={() => [
-          <RoleModalForm
-            mode="add"
-            trigger={
-              <Button type="primary" icon={<PlusOutlined />}>
-                新建角色
-              </Button>
-            }
-            reload={actionRef.current?.reload}
-            key={'roleAdd'}
-          />,
+          <Access accessible={access.canAccess('system:role:add')}>
+            <RoleModalForm
+              mode="add"
+              trigger={
+                <Button type="primary" icon={<PlusOutlined />}>
+                  新建角色
+                </Button>
+              }
+              reload={actionRef.current?.reload}
+              key={'roleAdd'}
+            />
+          </Access>
+
         ]}
         rowSelection={{
           // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
@@ -196,13 +204,16 @@ export default () => {
         }}
         tableAlertOptionRender={false}
         tableAlertRender={(props) => (
-          <BatchDeleteAlert<API.SysRoleVo>
-            {...props}
-            actionRef={actionRef}
-            onDelete={(keys) =>
-              sysRoleRemove({ roleIds: keys as number[] })
-            }
-          />
+          <Access accessible={access.canAccess('system:role:remove')}>
+            <BatchDeleteAlert<API.SysRoleVo>
+              {...props}
+              actionRef={actionRef}
+              onDelete={(keys) =>
+                sysRoleRemove({ roleIds: keys as number[] })
+              }
+            />
+          </Access>
+
         )}
       />
 

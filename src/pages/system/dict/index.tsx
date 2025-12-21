@@ -7,7 +7,7 @@ import DictModalForm from './components/DictModalForm'
 import { OperationModes } from '@/const/Const'
 import { PlusOutlined } from '@ant-design/icons'
 import { dictTypeList, dictTypeRemove } from '@/services/yuan/sysDictTypeController';
-import { history } from '@umijs/max';
+import { Access, history, useAccess } from '@umijs/max';
 import { DictEnum } from '@/const/dict-enum';
 import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
@@ -18,6 +18,8 @@ import { dictCache } from '@/hooks/dict/dictCache';
 const index = () => {
     const actionRef = useRef<ActionType | null>(null);
     const statusEnum = useDictDataValueEnum(DictEnum.SYS_NORMAL_DISABLE)
+    const access = useAccess();
+
     const columns: ProColumns<API.SysDictTypeVo>[] = [
         {
             title: '字典类型Id',
@@ -70,33 +72,42 @@ const index = () => {
             hideInSearch: true,
             render: (text, record) => (
                 <Space size="small">
-                    <DictModalForm
-                        mode={OperationModes.EDIT}
-                        trigger={<a>编辑</a>}
-                        record={record}
-                        reload={actionRef.current?.reload}
-                    />
-                    <a onClick={() => {
-                        history.push({
-                            pathname: '/system/dict/data',
-                            search: `?dictType=${record.dictType}&dictName=${record.dictName}`,
-                        })
-                    }}>
-                        字典项
-                    </a>
-                    <Popconfirm
-                        title="删除"
-                        description={`确认删除：${record.dictName}`}
-                        okText="确认"
-                        cancelText="取消"
-                        okButtonProps={{ loading: deleteLoading }}
-                        onConfirm={() => {
-                            deleteRun({ dictIds: [record.dictId as number] })
-                            dictCache.delete(record.dictType)
-                        }}
-                    >
-                        <a style={{ color: 'red' }}>删除</a>
-                    </Popconfirm>
+                    <Access accessible={access.canAccess('system:dict:edit')}>
+                        <DictModalForm
+                            mode={OperationModes.EDIT}
+                            trigger={<a>编辑</a>}
+                            record={record}
+                            reload={actionRef.current?.reload}
+                        />
+                    </Access>
+
+                    <Access accessible={access.canAccess('system:dictData:edit')}>
+                        <a onClick={() => {
+                            history.push({
+                                pathname: '/system/dict/data',
+                                search: `?dictType=${record.dictType}&dictName=${record.dictName}`,
+                            })
+                        }}>
+                            字典项
+                        </a>
+                    </Access>
+
+                    <Access accessible={access.canAccess('system:dict:remove')}>
+                        <Popconfirm
+                            title="删除"
+                            description={`确认删除：${record.dictName}`}
+                            okText="确认"
+                            cancelText="取消"
+                            okButtonProps={{ loading: deleteLoading }}
+                            onConfirm={() => {
+                                deleteRun({ dictIds: [record.dictId as number] })
+                                dictCache.delete(record.dictType)
+                            }}
+                        >
+                            <a style={{ color: 'red' }}>删除</a>
+                        </Popconfirm>
+                    </Access>
+
                 </Space>
             ),
         },
@@ -122,16 +133,18 @@ const index = () => {
                 },
             }}
             toolBarRender={() => [
-                <DictModalForm
-                    mode={OperationModes.ADD}
-                    reload={actionRef.current?.reload}
-                    trigger={
-                        <Button type="primary" icon={<PlusOutlined />}>
-                            新建字典
-                        </Button>
-                    }
-                    key="add"
-                />
+                <Access accessible={access.canAccess('system:dict:add')}>
+                    <DictModalForm
+                        mode={OperationModes.ADD}
+                        reload={actionRef.current?.reload}
+                        trigger={
+                            <Button type="primary" icon={<PlusOutlined />}>
+                                新建字典
+                            </Button>
+                        }
+                        key="add"
+                    />
+                </Access>
             ]}
             rowSelection={{
                 // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
@@ -140,13 +153,16 @@ const index = () => {
             }}
             tableAlertOptionRender={false}
             tableAlertRender={(props) => (
-                <BatchDeleteAlert<API.SysDictTypeVo>
-                    {...props}
-                    actionRef={actionRef}
-                    onDelete={(keys) =>
-                        dictTypeRemove({ dictIds: keys as number[] })
-                    }
-                />
+                <Access accessible={access.canAccess('system:dict:remove')}>
+                    <BatchDeleteAlert<API.SysDictTypeVo>
+                        {...props}
+                        actionRef={actionRef}
+                        onDelete={(keys) =>
+                            dictTypeRemove({ dictIds: keys as number[] })
+                        }
+                    />
+                </Access>
+
             )}
         />
     )

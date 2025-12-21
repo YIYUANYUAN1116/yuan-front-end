@@ -16,9 +16,6 @@ export default () => {
 
   /**权限控制 */
   const access = useAccess();
-  if (!access.canAccess('system:user:list')) {
-    return <Result status="403" title="无权限访问" />;
-  }
 
   const actionRef = useRef<ActionType | null>(null);
   const { run: deleteRun, loading: deleteLoading } = useActionRequest(sysUserRemove, actionRef.current?.reload)
@@ -110,11 +107,11 @@ export default () => {
             />
           </Access>
 
-          <Access accessible={access.canAccess('system:user:edit') || false}>
+          <Access accessible={access.canAccess('system:user:assign')}>
             <UserRoleModalForm userId={record.userId!} reload={actionRef.current?.reload} />
           </Access>
 
-          <Access accessible={access.canAccess('system:user:remove') || false}>
+          <Access accessible={access.canAccess('system:user:remove')}>
             <Popconfirm
               title="用户删除"
               description={`确认删除用户：${record.nickName}`}

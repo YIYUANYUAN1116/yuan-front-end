@@ -1,7 +1,7 @@
 
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
-import {  Space, Table } from 'antd';
+import { Space, Table } from 'antd';
 import { useRef } from 'react';
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
 import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
@@ -10,10 +10,12 @@ import LoginforDrawer from './components/LoginforDrawer';
 import { sysLogininforList, sysLogininforRemove } from '@/services/yuan/sysLogininforController';
 import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
 import { useTableRequest } from '@/hooks/table/useTableRequest';
+import { Access, useAccess } from '@umijs/max';
 
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
   const statusEnum = useDictDataValueEnum(DictEnum.SYS_OPRE_STATUS)
+  const access = useAccess();
 
   const columns: ProColumns<API.SysLogininforVo>[] = [
     {
@@ -121,13 +123,15 @@ export default () => {
       }}
       tableAlertOptionRender={false}
       tableAlertRender={(props) => (
-        <BatchDeleteAlert<API.SysLogininforVo>
-          {...props}
-          actionRef={actionRef}
-          onDelete={(keys) =>
-            sysLogininforRemove({ infoIds: keys as number[] })
-          }
-        />
+        <Access accessible={access.canAccess('system:loginfor:remove')}>
+          <BatchDeleteAlert<API.SysLogininforVo>
+            {...props}
+            actionRef={actionRef}
+            onDelete={(keys) =>
+              sysLogininforRemove({ infoIds: keys as number[] })
+            }
+          />
+        </Access>
       )}
 
     />

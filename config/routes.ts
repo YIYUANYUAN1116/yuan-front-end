@@ -1,4 +1,5 @@
 ﻿import component from "@/locales/bn-BD/component";
+import { access } from "fs";
 import path from "path";
 
 /**
@@ -61,11 +62,13 @@ export default [
         path: '/dashboard/workplace',
         name: 'workplace',
         component: './dashboard/workplace',
+        access:'canDashboardWorkplace'
       },
       {
         path: '/dashboard/analysis',
         name: 'analysis',
         component: './dashboard/analysis',
+        access:'canDashboardAnalysis'
       },
     ]
   },
@@ -82,13 +85,15 @@ export default [
         path: '/system/user',
         name: 'user',
         component: './system/user',
+        access: 'canSystemUserList',
       },
       {
         path: '/system/role',
         name: 'role',
         component: './system/role',
+        access: 'canSystemRoleList',
       },
-       {
+      {
         path: '/system/role-assign',
         component: './system/role/assign',
         hideInMenu: true,
@@ -97,11 +102,13 @@ export default [
         path: '/system/menu',
         name: 'menu',
         component: './system/menu',
+        access: 'canSystemMenuList',
       },
       {
         path: '/system/dict',
         name: 'dict',
         component: './system/dict',
+        access: 'canSystemDictList',
       },
       {
         path: '/system/dict/data',
@@ -120,11 +127,13 @@ export default [
             path: '/system/log/oprelog',
             name: 'oprelog',
             component: './system/log/oprelog',
+            access: 'canSystemOprelogList',
           },
           {
             path: '/system/log/loginfor',
             name: 'loginfor',
             component: './system/log/loginfor',
+            access: 'canSystemLoginforList',
           },
         ]
       },

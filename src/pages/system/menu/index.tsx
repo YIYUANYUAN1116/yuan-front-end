@@ -10,12 +10,14 @@ import { DictEnum } from '@/const/dict-enum';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
 import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 import { useDictDataTagMap } from '@/hooks/dict/useDictDataTagMap';
+import { Access, useAccess } from '@umijs/max';
 
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
   const statusEnum = useDictDataValueEnum(DictEnum.SYS_NORMAL_DISABLE)
   const { run: deleteRun, loading: deleteLoading } = useActionRequest(sysMenuRemove, actionRef.current?.reload)
   const showHideMap = useDictDataTagMap(DictEnum.SYS_SHOW_HIDE)
+  const access = useAccess();
 
   const renderVisible = (value: string | number) => {
     const tag = showHideMap[String(value)];
@@ -25,21 +27,26 @@ export default () => {
   const RowActions = React.memo(({ record, reload }: any) => {
     return (
       <Space size={8}>
-        <MenuDrawer
-          mode="edit"
-          record={record}
-          reload={reload}
-          trigger={<a>编辑</a>}
-        />
-        <Popconfirm
-          title="确认删除？"
-          okButtonProps={{ loading: deleteLoading }}
-          onConfirm={() => deleteRun({ menuIds: [record.menuId as number] })}
-          okText="确认"
-          cancelText="取消"
-        >
-          <a style={{ color: 'red' }}>删除</a>
-        </Popconfirm>
+        <Access accessible={access.canAccess('system:menu:edit')}>
+          <MenuDrawer
+            mode="edit"
+            record={record}
+            reload={reload}
+            trigger={<a>编辑</a>}
+          />
+        </Access>
+        <Access accessible={access.canAccess('system:menu:remove')}>
+          <Popconfirm
+            title="确认删除？"
+            okButtonProps={{ loading: deleteLoading }}
+            onConfirm={() => deleteRun({ menuIds: [record.menuId as number] })}
+            okText="确认"
+            cancelText="取消"
+          >
+            <a style={{ color: 'red' }}>删除</a>
+          </Popconfirm>
+
+        </Access>
       </Space>
     );
   });
@@ -110,12 +117,14 @@ export default () => {
       dataIndex: 'perms',
       ellipsis: true,
       hideInSearch: true,
+      width:200,
       render: (text, record) => <Tag>{text}</Tag>,
     },
     {
       title: '显示顺序',
       dataIndex: 'orderNum',
       ellipsis: true,
+      width:100,
       hideInSearch: true,
     },
     {
@@ -166,13 +175,15 @@ export default () => {
         },
       }}
       toolBarRender={() => [
-        <MenuDrawer
-          key="menuAdd"
-          mode="add"
-          reload={reload}
-          trigger={<Button type="primary" icon={<PlusOutlined />}
-          >新建菜单</Button>}
-        />,
+        <Access accessible={access.canAccess('system:menu:add')}>
+          <MenuDrawer
+            key="menuAdd"
+            mode="add"
+            reload={reload}
+            trigger={<Button type="primary" icon={<PlusOutlined />}
+            >新建菜单</Button>}
+          />
+        </Access >
       ]}
     />
   );

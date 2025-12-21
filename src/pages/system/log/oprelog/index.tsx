@@ -11,11 +11,13 @@ import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
 import { useTableRequest } from '@/hooks/table/useTableRequest';
 import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 import { useDictDataTagMap } from '@/hooks/dict/useDictDataTagMap';
+import { Access, useAccess } from '@umijs/max';
 
 export default () => {
     const actionRef = useRef<ActionType | null>(null);
     const statusEnum = useDictDataValueEnum(DictEnum.SYS_OPRE_STATUS)
     const opreTypetagMap = useDictDataTagMap(DictEnum.SYS_OPER_TYPE)
+    const access = useAccess();
     const renderBusinessType = (value: string | number) => {
         const tag = opreTypetagMap[String(value)];
         return tag?.render?.() ?? value;
@@ -148,13 +150,15 @@ export default () => {
             }}
             tableAlertOptionRender={false}
             tableAlertRender={(props) => (
-                <BatchDeleteAlert<API.SysOperLogVo>
-                    {...props}
-                    actionRef={actionRef}
-                    onDelete={(keys) =>
-                        sysOperLogRemove({ operIds: keys as number[] })
-                    }
-                />
+                <Access accessible={access.canAccess('system:operlog:remove')}>
+                    <BatchDeleteAlert<API.SysOperLogVo>
+                        {...props}
+                        actionRef={actionRef}
+                        onDelete={(keys) =>
+                            sysOperLogRemove({ operIds: keys as number[] })
+                        }
+                    />
+                </Access>
             )}
 
         />

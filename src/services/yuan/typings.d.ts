@@ -950,8 +950,8 @@ declare namespace API {
     name?: { empty?: boolean };
     id?: number;
     parentId?: number;
-    config?: TreeNodeConfig;
     weight?: any;
+    config?: TreeNodeConfig;
     empty?: boolean;
   };
 

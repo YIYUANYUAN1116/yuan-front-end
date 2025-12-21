@@ -4,7 +4,6 @@ import * as Icons from '@ant-design/icons';
 import { SettingDrawer } from '@ant-design/pro-components';
 import type { RequestConfig, RunTimeLayoutConfig } from '@umijs/max';
 import { history, Link } from '@umijs/max';
-import React from 'react';
 import {
   AvatarDropdown,
   AvatarName,
@@ -54,7 +53,7 @@ export async function getInitialState(): Promise<{
   }
   return {
     fetchUserInfo,
-    settings: defaultSettings as Partial<LayoutSettings>,
+    settings: defaultSettings as Partial<LayoutSettings>
   };
 }
 
@@ -132,10 +131,14 @@ export const layout: RunTimeLayoutConfig = ({
           return menus.map(item => ({
             ...item,
             icon: item.icon ? transformIcon(item.icon) : undefined,
+            access: item.access
+              ? () => initialState?.currentUser?.permissions?.includes(item.access)
+              : undefined,
             children: item.children ? mapMenu(item.children) : undefined,
           }));
         };
-        return mapMenu(menuData.data || []);
+        const res = mapMenu(menuData.data || [])
+        return res;
       },
     },
     // 自定义 403 页面

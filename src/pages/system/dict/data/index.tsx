@@ -1,17 +1,19 @@
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { useSearchParams } from '@umijs/max';
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 import DictDataModalForm from './components/DictDataModalForm';
 import { Button, Popconfirm, Space, Table } from 'antd';
 import { dictList, dictRemove } from '@/services/yuan/sysDictDataController';
-import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils';
 import { OperationModes } from '@/const/Const';
 import { PlusOutlined } from '@ant-design/icons';
 import { history } from '@umijs/max';
 import { DictEnum } from '@/const/dict-enum';
-import { useDictDataValueEnum } from '@/hook/DictHook';
+import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
+import { useTableRequest } from '@/hooks/table/useTableRequest';
+import { useActionRequest } from '@/hooks/action/useActionRequest';
+import { dictCache } from '@/hooks/dict/dictCache';
 
 export default function index() {
     const [searchParams] = useSearchParams();
@@ -19,11 +21,7 @@ export default function index() {
     const dictName = searchParams.get('dictName');
     const actionRef = useRef<ActionType | null>(null);
     const statusEnum = useDictDataValueEnum(DictEnum.SYS_NORMAL_DISABLE)
-    const { run: delRun, loading: delLoading } = createLoadingRequest(dictRemove, actionRef.current?.reload)
-    const fetchDictData = createFetchList<
-        Record<string, any>,
-        API.SysDictDataVo
-    >(dictList as any);
+    const { run: delRun, loading: delLoading } = useActionRequest(dictRemove, actionRef.current?.reload)
 
     const columns: ProColumns<API.SysDictDataVo>[] = [
         {
@@ -111,7 +109,10 @@ export default function index() {
                         okText="确认"
                         cancelText="取消"
                         okButtonProps={{ loading: delLoading }}
-                        onConfirm={() => delRun({ dictCodes: [record.dictCode as number] })}
+                        onConfirm={() => {
+                            delRun({ dictCodes: [record.dictCode as number] });
+                            dictCache.delete(record.dictType)
+                        }}
                     >
                         <a style={{ color: 'red' }}>删除</a>
                     </Popconfirm>
@@ -132,12 +133,13 @@ export default function index() {
         </Space>
     );
 
+    const request = useTableRequest(dictList);
     return (
         <ProTable
             headerTitle={headerTitle}
             rowKey={'dictCode'}
             columns={columns}
-            request={async (params, sort) => fetchDictData(params, sort)}
+            request={request}
             cardBordered
             actionRef={actionRef}
             pagination={{ pageSize: 10 }}
@@ -174,8 +176,9 @@ export default function index() {
                     {...props}
                     actionRef={actionRef}
                     onDelete={(keys) =>
-                        dictRemove({ dictCodes: keys as number[] })
+                        dictRemove({ dictCodes: keys as number[] }) 
                     }
+                    afterSuccess={()=>dictCache.delete(dictType)}
                 />
             )}
         />

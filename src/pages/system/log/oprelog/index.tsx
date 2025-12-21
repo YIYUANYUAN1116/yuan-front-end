@@ -1,20 +1,25 @@
 
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
-import { Modal, Space, Table } from 'antd';
+import { Space, Table } from 'antd';
 import { useRef } from 'react';
-
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
-import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils';
 import { sysOperLogList, sysOperLogRemove } from '@/services/yuan/sysOperLogController';
-import { useDictDataTagMap, useDictDataValueEnum } from '@/hook/DictHook';
 import { DictEnum } from '@/const/dict-enum';
 import OpreLogDrawer from './components/OpreLogDrawer';
 import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
+import { useTableRequest } from '@/hooks/table/useTableRequest';
+import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
+import { useDictDataTagMap } from '@/hooks/dict/useDictDataTagMap';
+
 export default () => {
     const actionRef = useRef<ActionType | null>(null);
     const statusEnum = useDictDataValueEnum(DictEnum.SYS_OPRE_STATUS)
     const opreTypetagMap = useDictDataTagMap(DictEnum.SYS_OPER_TYPE)
+    const renderBusinessType = (value: string | number) => {
+        const tag = opreTypetagMap[String(value)];
+        return tag?.render?.() ?? value;
+    };
 
     const columns: ProColumns<API.SysOperLogVo>[] = [
         {
@@ -35,11 +40,10 @@ export default () => {
 
         },
         {
-            title: '业务类型',
+            title: '操作业务',
             dataIndex: 'businessType',
             ellipsis: true,
-            render: (_, record) =>
-                opreTypetagMap[record.businessType || 0]?.render() ?? record.businessType,
+            render: (_, record) => renderBusinessType(record.businessType || 0),
         },
         {
             disable: true,
@@ -120,17 +124,12 @@ export default () => {
             ),
         },
     ];
-
-    const fetchDictData = createFetchList<
-        Record<string, any>,
-        API.SysOperLogVo
-    >(sysOperLogList as any);
-
+    const request = useTableRequest(sysOperLogList);
     return (
         <ProTable<API.SysOperLogVo>
             columns={columns}
             actionRef={actionRef}
-            request={async (params, sort) => fetchDictData(params, sort)}
+            request={request}
             columnsState={{
                 persistenceKey: 'sys-opre-log-pro-table',
                 persistenceType: 'localStorage',

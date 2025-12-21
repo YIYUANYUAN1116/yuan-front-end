@@ -6,6 +6,7 @@ import { useRef } from 'react';
 import { ActionType } from '@ant-design/pro-components';
 import { Button, Space } from 'antd';
 import { history } from '@umijs/max';
+import { useTableRequest } from '@/hooks/table/useTableRequest';
 
 export default () => {
   const [searchParams] = useSearchParams();
@@ -24,12 +25,13 @@ export default () => {
             <span>{roleName}-已分配用户列表</span>
         </Space>
     );
-    
+   
+ const request = useTableRequest(allocatedUserList);
   return (
     <RoleUserTable
       title={headerTitle}
       roleId={roleId}
-      request={allocatedUserList}
+      request={request}
       actionText="批量取消授权"
       confirmText={(n) => `确认取消授权选中的 ${n} 条用户吗？`}
       onBatchAction={(keys) => cancelAuthUserAll({ roleId, userIds: keys })}

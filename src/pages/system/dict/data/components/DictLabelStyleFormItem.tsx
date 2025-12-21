@@ -18,22 +18,22 @@ interface DictLabelStyleFormItemProps {
 const PRESET_OPTIONS = [
   {
     label: <Tag color="success">启用/成功: Success</Tag>,
-    value: 'Success',
+    value: 'success',
   },
   {
     label: <Tag color="error">禁用/失败: Error</Tag>,
-    value: 'Error',
+    value: 'error',
   },
   {
     label: <Tag color="warning">警告: Warning</Tag>,
-    value: 'Warning',
+    value: 'warning',
   },
   {
     label: <Tag color="processing">处理中: Processing</Tag>,
-    value: 'Processing',
+    value: 'processing',
   },
   {
-    label: <Tag>默认: Default</Tag>,
+    label: <Tag color="default">默认: Default</Tag>,
     value: 'default',
   },
 ]

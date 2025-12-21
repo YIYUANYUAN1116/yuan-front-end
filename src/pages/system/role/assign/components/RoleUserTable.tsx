@@ -2,8 +2,8 @@ import { useRef } from 'react';
 import type { ActionType } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
 import { Modal, Space, Table } from 'antd';
-import { createFetchList } from '@/util/DataRequestUtils';
 import { userBaseColumns } from './userColumns';
+import { useTableRequest } from '@/hooks/table/useTableRequest';
 
 type RoleUserTableProps = {
   roleId: number;
@@ -30,8 +30,7 @@ const RoleUserTable = ({
 }: RoleUserTableProps) => {
   const internalActionRef = useRef<ActionType | null>(null);
   const ref = actionRef || internalActionRef;
-
-  const fetchList = createFetchList<Record<string, any>, API.SysUserVo>(request);
+  const fetchRequest =  useTableRequest(request)
 
   return (
     <ProTable<API.SysUserVo>
@@ -39,7 +38,7 @@ const RoleUserTable = ({
       columns={userBaseColumns}
       rowKey="userId"
       params={{ roleId }}
-      request={(params, sort) => fetchList(params, sort)}
+      request={fetchRequest}
       search={{ labelWidth: 'auto' }}
       pagination={{ pageSize: 10 }}
       headerTitle={title}

@@ -6,12 +6,14 @@ import { useRef } from 'react'
 import DictModalForm from './components/DictModalForm'
 import { OperationModes } from '@/const/Const'
 import { PlusOutlined } from '@ant-design/icons'
-import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils'
 import { dictTypeList, dictTypeRemove } from '@/services/yuan/sysDictTypeController';
 import { history } from '@umijs/max';
 import { DictEnum } from '@/const/dict-enum';
-import { useDictDataValueEnum } from '@/hook/DictHook';
+import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
+import { useTableRequest } from '@/hooks/table/useTableRequest';
+import { useActionRequest } from '@/hooks/action/useActionRequest';
+import { dictCache } from '@/hooks/dict/dictCache';
 
 const index = () => {
     const actionRef = useRef<ActionType | null>(null);
@@ -88,7 +90,10 @@ const index = () => {
                         okText="确认"
                         cancelText="取消"
                         okButtonProps={{ loading: deleteLoading }}
-                        onConfirm={() => deleteRun({ dictIds: [record.dictId as number] })}
+                        onConfirm={() => {
+                            deleteRun({ dictIds: [record.dictId as number] })
+                            dictCache.delete(record.dictType)
+                        }}
                     >
                         <a style={{ color: 'red' }}>删除</a>
                     </Popconfirm>
@@ -97,18 +102,14 @@ const index = () => {
         },
     ]
 
-    const fetchDictData = createFetchList<
-        Record<string, any>,
-        API.SysDictTypeVo
-    >(dictTypeList as any);
-
-    const { run: deleteRun, loading: deleteLoading } = createLoadingRequest(dictTypeRemove, actionRef.current?.reload)
+    const { run: deleteRun, loading: deleteLoading } = useActionRequest(dictTypeRemove, actionRef.current?.reload)
+    const request = useTableRequest(dictTypeList);
 
     return (
         <ProTable
             columns={columns}
             rowKey={"dictId"}
-            request={async (params, sort) => fetchDictData(params, sort)}
+            request={request}
             cardBordered
             actionRef={actionRef}
             pagination={{ pageSize: 10 }}

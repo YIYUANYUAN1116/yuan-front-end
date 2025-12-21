@@ -1,6 +1,6 @@
 declare namespace API {
   type allocatedUserListParams = {
-    user: SysUserBo;
+    bo: SysUserBo;
     pageQuery: PageQuery;
   };
 
@@ -965,7 +965,7 @@ declare namespace API {
   };
 
   type unallocatedUserListParams = {
-    user: SysUserBo;
+    bo: SysUserBo;
     pageQuery: PageQuery;
   };
 

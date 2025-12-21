@@ -1,11 +1,8 @@
-
 import { OperationMode, OperationModes } from '@/const/Const';
+import { useActionRequest } from '@/hooks/action/useActionRequest';
 import { dictTypeAdd, dictTypeEdit } from '@/services/yuan/sysDictTypeController';
-import { createLoadingRequest } from '@/util/DataRequestUtils';
 
 import { ActionType, ModalForm, ProForm, ProFormText } from '@ant-design/pro-components';
-import { useRequest } from '@umijs/max';
-import { run } from 'node:test';
 import React from 'react'
 
 interface DictModalFormProps {
@@ -18,7 +15,7 @@ interface DictModalFormProps {
 const DictModalForm = (props: DictModalFormProps) => {
     const { mode, trigger, reload, record } = props;
     const isEdit = mode == OperationModes.EDIT
-    const { run: run, loading: loading } = createLoadingRequest(isEdit ? dictTypeEdit : dictTypeAdd, reload)
+    const { run: run, loading: loading } = useActionRequest(isEdit ? dictTypeEdit : dictTypeAdd, reload)
 
     return (
         <ModalForm
@@ -26,7 +23,7 @@ const DictModalForm = (props: DictModalFormProps) => {
             trigger={trigger}
             initialValues={{ ...record }}
             onFinish={async (values) => {
-                await run(values);
+                run(values);
                 return true;
             }}
             width={400}

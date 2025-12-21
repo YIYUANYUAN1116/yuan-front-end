@@ -10,6 +10,7 @@ interface BatchDeleteAlertProps<T = any> {
   onDelete: (keys: React.Key[], rows: T[]) => Promise<any>;
   /** 文案 */
   title?: string;
+  afterSuccess?: () => void;
 }
 
 export default function BatchDeleteAlert<T>({
@@ -19,6 +20,7 @@ export default function BatchDeleteAlert<T>({
   actionRef,
   onDelete,
   title = '确认删除',
+  afterSuccess
 }: BatchDeleteAlertProps<T>) {
   if (!selectedRowKeys.length) return null;
 
@@ -40,6 +42,7 @@ export default function BatchDeleteAlert<T>({
               await onDelete(selectedRowKeys, selectedRows);
               onCleanSelected();
               actionRef?.current?.reload();
+              afterSuccess?.();
             },
           });
         }}

@@ -1,7 +1,7 @@
 import { dictDictType } from "@/services/yuan/sysDictDataController";
 import { useRequest } from "@umijs/max";
 import { Tag } from 'antd';
-import { JSX, useState } from 'react'
+import { JSX, useEffect, useState } from 'react'
 
 export interface ValueEnumItem {
   text: string;
@@ -50,7 +50,7 @@ export type DictTagMap = Record<string, DictTagItem>;
 // 全局缓存，每种 dictType 只请求一次
 export const tagCacheMap: Record<string, DictTagMap> = {};
 
-export const useDictDataTagMap = (dictType: string) => {
+export const useDictDataTagCacheMap = (dictType: string) => {
   const [map, setMap] = useState<DictTagMap>(tagCacheMap[dictType] || {});
 
   // 顶层调用 useRequest，遵守 Hook 规则
@@ -87,33 +87,3 @@ export const useDictDataTagMap = (dictType: string) => {
 
   return map;
 };
-
-
-
-//缓存版的字典
-// const cache: Record<string, Record<string, any>> = {};
-// export const useDictDataValueEnum = (dictType: string) => {
-//     const { data } = useRequest(
-//         () => dictDictType({ dictType }),
-//         {
-//             formatResult: (res) => {
-//                 const enumData: Record<string, any> = {};
-
-//                 res.data?.forEach(item => {
-//                     const dictValue = item.dictValue as string
-//                     enumData[dictValue] = {
-//                         text: item.dictLabel,
-//                         status: item.listClass?.startsWith('#') ? undefined : item.listClass,
-//                         color: item.listClass?.startsWith('#') ? item.listClass : undefined,
-//                     };
-//                 });
-//                 cache[dictType] = enumData;
-//                 return enumData;
-//             },
-//             cacheKey: dictType,
-//             refreshDeps: [], // dictType 变更时刷新
-//         }
-//     );
-
-//     return cache[dictType] || data || {};
-// }

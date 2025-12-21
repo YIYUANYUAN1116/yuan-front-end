@@ -1,19 +1,18 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
-import { Button, Dropdown, MenuProps, message, Popconfirm, Space, Table, Tag } from 'antd';
-import { useRef, useState } from 'react';
-import api from '@/services/yuan/index'
+import { Button, Dropdown, MenuProps, Popconfirm, Space, Table, Tag } from 'antd';
+import { useRef } from 'react';
 import RoleModalForm from './components/RoleModalForm';
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
-import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils';
 import { sysRoleList, sysRoleRemove } from '@/services/yuan/sysRoleController';
 import { DictEnum } from '@/const/dict-enum';
-import { useDictDataValueEnum } from '@/hook/DictHook';
+import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 import DataScopeModalForm from './components/DataScopeModalForm';
 import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
 import { history } from '@umijs/max';
-
+import { useTableRequest } from '@/hooks/table/useTableRequest';
+import { useActionRequest } from '@/hooks/action/useActionRequest';
 
 export const authScopeOptions = [
   { color: 'green', label: '全部数据权限', value: '1' },
@@ -29,11 +28,8 @@ export default () => {
   const statusEnum = useDictDataValueEnum(DictEnum.SYS_NORMAL_DISABLE)
 
 
-  const { run: deleteRun, loading: deleteLoading } = createLoadingRequest(sysRoleRemove, actionRef.current?.reload)
-  const fetchDictData = createFetchList<
-    Record<string, any>,
-    API.SysRoleVo
-  >(sysRoleList as any);
+  const { run: deleteRun, loading: deleteLoading } = useActionRequest(sysRoleRemove, actionRef.current?.reload)
+
 
   const columns: ProColumns<API.SysRoleVo>[] = [
     {
@@ -141,7 +137,7 @@ export default () => {
               okText="确认"
               cancelText="取消"
               okButtonProps={{ loading: deleteLoading }}
-              onConfirm={() => deleteRun({ roleIds: record.roleId as number })}
+              onConfirm={() => deleteRun({ roleIds: [record.roleId as number]})}
             >
               <a style={{ color: 'red' }}>删除</a>
             </Popconfirm>
@@ -160,12 +156,16 @@ export default () => {
     },
   ];
 
+
+  const request = useTableRequest(sysRoleList);
+
+
   return (
     <div>
       <ProTable<API.SysRoleVo>
         columns={columns}
         actionRef={actionRef}
-        request={async (params, sort) => fetchDictData(params, sort)}
+        request={request}
         columnsState={{
           persistenceKey: 'sys-role-pro-table',
           persistenceType: 'localStorage',

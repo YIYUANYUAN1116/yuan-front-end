@@ -1,8 +1,8 @@
 import { DictEnum } from "@/const/dict-enum";
-import { useDictDataTagMap, useDictDataValueEnum } from "@/hook/DictHook";
-import { DrawerForm, ProDescriptions, ProFormDigit, ProFormRadio, ProFormText, ProFormTreeSelect } from "@ant-design/pro-components";
+import { useDictDataTagMap } from "@/hooks/dict/useDictDataTagMap";
+import { DrawerForm, ProDescriptions } from "@ant-design/pro-components";
 import { Space, Tag } from "antd";
-
+import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 
 const OpreLogDrawer = ({ trigger, record }: any) => {
     const opreTypetagMap = useDictDataTagMap(DictEnum.SYS_OPER_TYPE)
@@ -38,7 +38,7 @@ const OpreLogDrawer = ({ trigger, record }: any) => {
                         ellipsis: true,
                         render: (_, record) => (
                             <Space>
-                                {opreTypetagMap[record.businessType || 0]?.render()}
+                                {opreTypetagMap[record.businessType]?.render()}
                                 <span>{record.title}</span>
                             </Space>
                         ),

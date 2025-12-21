@@ -1,7 +1,6 @@
+import { useActionRequest } from '@/hooks/action/useActionRequest';
 import { sysUserAdd, sysUserEdit } from '@/services/yuan/sysUserController';
-import { createLoadingRequest } from '@/util/DataRequestUtils';
 import { type ActionType, ModalForm, ProForm, ProFormSelect, ProFormText, ProFormTextArea } from '@ant-design/pro-components';
-import { useRequest } from '@umijs/max';
 import { Form } from 'antd';
 import type { FC } from 'react';
 
@@ -20,9 +19,9 @@ const UserModalForm: FC<UserModalFormProps> = ({
   record,
 }) => {
   const isEdit = mode === 'edit';
-  const { run: run, loading: loading } = createLoadingRequest(isEdit ? sysUserEdit : sysUserAdd, reload)
+  const { run: run, loading: loading } = useActionRequest(isEdit ? sysUserEdit : sysUserAdd, reload)
   const [form] = Form.useForm<API.SysUserBo>();
-
+  
   return (
     <ModalForm<API.SysUserBo>
       title={isEdit ? '编辑用户' : '新建用户'}

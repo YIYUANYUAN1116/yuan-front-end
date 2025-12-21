@@ -72,8 +72,8 @@ export async function allocatedUserList(
       method: "GET",
       params: {
         ...params,
-        user: undefined,
-        ...params["user"],
+        bo: undefined,
+        ...params["bo"],
         pageQuery: undefined,
         ...params["pageQuery"],
       },
@@ -124,8 +124,8 @@ export async function unallocatedUserList(
       method: "GET",
       params: {
         ...params,
-        user: undefined,
-        ...params["user"],
+        bo: undefined,
+        ...params["bo"],
         pageQuery: undefined,
         ...params["pageQuery"],
       },

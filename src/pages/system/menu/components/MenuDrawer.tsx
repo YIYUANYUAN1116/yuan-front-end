@@ -1,15 +1,13 @@
+import { useActionRequest } from "@/hooks/action/useActionRequest";
 import { sysMenuAdd, sysMenuEdit, sysMenuTreeselect } from "@/services/yuan/sysMenuController";
-import { createLoadingRequest } from "@/util/DataRequestUtils";
 import { convertTree } from "@/util/TreeUtils";
 import { DrawerForm, ProFormDigit, ProFormRadio, ProFormText, ProFormTextArea, ProFormTreeSelect } from "@ant-design/pro-components";
-import { Form } from "antd";
-import { values } from "lodash";
 import { useState } from "react";
 
 const MenuDrawer = ({ mode, trigger, record, reload }: any) => {
   const [treeData, setTreeData] = useState<any[]>([]);
   const isEdit = mode === 'edit';
-  const { run: run, loading: loading } = createLoadingRequest(isEdit ? sysMenuEdit : sysMenuAdd, reload)
+  const { run: run, loading: loading } = useActionRequest(isEdit ? sysMenuEdit : sysMenuAdd, reload)
   const [currentMenuType, setCurrentMenuType] = useState<string>(record?.menuType || 'C'); // 默认菜单
 
   return (

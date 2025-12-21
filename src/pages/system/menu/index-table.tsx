@@ -4,7 +4,9 @@ import type { ColumnsType } from 'antd/es/table';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import MenuModalForm from './components/MenuDrawer';
 import { sysMenuListTree, sysMenuRemove } from '@/services/yuan/sysMenuController';
-import { menuTypeMap, statusMap } from '@/utils/constMap';
+import { DictEnum } from '@/const/dict-enum';
+import { useDictDataTagMap } from '@/hooks/dict/useDictDataTagMap';
+
 
 
 
@@ -73,6 +75,8 @@ export default () => {
     }
     return { text: '未知', color: 'default' };
   };
+
+  const statusMap =  useDictDataTagMap(DictEnum.STATUS_TYPE)
 
   const columns = useMemo<ColumnsType<API.SysMenuVo>>(() => [
     {

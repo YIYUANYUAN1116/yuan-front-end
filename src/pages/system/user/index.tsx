@@ -1,18 +1,17 @@
-import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
-import { Button, message, Modal, Popconfirm, Result, Space, Table } from 'antd';
-import { useContext, useEffect, useRef, useState } from 'react';
-import api from '@/services/yuan/index';
+import { Button, Popconfirm, Result, Space, Table } from 'antd';
+import { use, useRef } from 'react';
 import UserModalForm from './components/UserModalForm';
 import UserRoleModalForm from './components/UserRoleModalForm';
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
-import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils';
 import { sysUserList, sysUserRemove } from '@/services/yuan/sysUserController';
 import { DictEnum } from '@/const/dict-enum';
-import { useDictDataValueEnum } from '@/hook/DictHook';
 import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
 import { Access, useAccess } from '@umijs/max';
+import { useTableRequest } from '@/hooks/table/useTableRequest';
+import { useActionRequest } from '@/hooks/action/useActionRequest';
+import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 export default () => {
 
   /**权限控制 */
@@ -22,7 +21,7 @@ export default () => {
   }
 
   const actionRef = useRef<ActionType | null>(null);
-  const { run: deleteRun, loading: deleteLoading } = createLoadingRequest(sysUserRemove, actionRef.current?.reload)
+  const { run: deleteRun, loading: deleteLoading } = useActionRequest(sysUserRemove, actionRef.current?.reload)
   const sexEnum = useDictDataValueEnum(DictEnum.SYS_USER_SEX)
   const statusEnum = useDictDataValueEnum(DictEnum.SYS_NORMAL_DISABLE)
 
@@ -131,17 +130,12 @@ export default () => {
       ),
     },
   ];
-
-  const fetchDictData = createFetchList<
-    Record<string, any>,
-    API.SysUserVo
-  >(sysUserList as any);
-
+  const request = useTableRequest(sysUserList);
   return (
     <ProTable<API.SysUserVo>
       columns={columns}
       actionRef={actionRef}
-      request={async (params, sort) => fetchDictData(params, sort)}
+      request={request}
       columnsState={{
         persistenceKey: 'sys-user-pro-table',
         persistenceType: 'localStorage',
@@ -154,16 +148,17 @@ export default () => {
       pagination={{ pageSize: 10 }}
       headerTitle="用户管理"
       toolBarRender={() => [
-        <UserModalForm
-          mode="add"
-          trigger={
-            <Access accessible={access.canAccess('system:user:add') || false}>
+        <Access accessible={access.canAccess('system:user:add')}>
+          <UserModalForm
+            mode="add"
+            trigger={
               <Button type="primary">新增</Button>
-            </Access>
-          }
-          reload={actionRef.current?.reload}
-          key="add"
-        />,
+            }
+            reload={actionRef.current?.reload}
+            key="add"
+          />
+        </Access>
+
       ]}
       rowSelection={{
         // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
@@ -172,7 +167,7 @@ export default () => {
       }}
       tableAlertOptionRender={false}
       tableAlertRender={(props) => (
-        <Access accessible={access.canAccess('system:user:remove') || false}>
+        <Access accessible={access.canAccess('system:user:remove')}>
           <BatchDeleteAlert<API.SysUserVo>
             {...props}
             actionRef={actionRef}

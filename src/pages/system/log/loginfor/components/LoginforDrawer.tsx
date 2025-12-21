@@ -1,11 +1,8 @@
 import { DictEnum } from "@/const/dict-enum";
-import { useDictDataTagMap, useDictDataValueEnum } from "@/hook/DictHook";
-import { DrawerForm, ProDescriptions, ProFormDigit, ProFormRadio, ProFormText, ProFormTreeSelect } from "@ant-design/pro-components";
-import { Space, Tag } from "antd";
+import { DrawerForm, ProDescriptions } from "@ant-design/pro-components";
+import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 
-
-const LoginforDrawer = ({ trigger, record }: any) => {
-    const opreTypetagMap = useDictDataTagMap(DictEnum.SYS_OPER_TYPE)
+const LoginforDrawer = ({ trigger, record }: any) => {    
     const statusEnum = useDictDataValueEnum(DictEnum.SYS_OPRE_STATUS)
     return (
         <DrawerForm

@@ -1,11 +1,8 @@
 import { type ActionType, ModalForm, ProForm, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect } from '@ant-design/pro-components';
 import { Form } from 'antd';
-import { useState, type FC } from 'react';
-import { sysMenuTreeselect } from '@/services/yuan/sysMenuController';
-import { DataNode } from 'antd/es/tree';
-import { convertTree } from '@/util/TreeUtils';
+import {  type FC } from 'react';
 import { sysRoleEdit, sysRoleAdd } from '@/services/yuan/sysRoleController';
-import { createLoadingRequest } from '@/util/DataRequestUtils';
+import { useActionRequest } from '@/hooks/action/useActionRequest';
 import { authScopeOptions } from '..';
 
 interface RoleModalFormProps {
@@ -20,7 +17,7 @@ const DataScopeModalForm: FC<RoleModalFormProps> = ({
   record,
 }) => {
   const [form] = Form.useForm<API.SysRoleBo>();
-  const { run: run, loading: loading } = createLoadingRequest(sysRoleEdit )
+  const { run: run, loading: loading } = useActionRequest(sysRoleEdit )
 
 
   return (

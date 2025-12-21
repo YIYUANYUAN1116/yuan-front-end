@@ -1,17 +1,15 @@
 
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
-import { Modal, Space, Table } from 'antd';
+import {  Space, Table } from 'antd';
 import { useRef } from 'react';
-
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
-import { createFetchList, createLoadingRequest } from '@/util/DataRequestUtils';
-import { sysOperLogList, sysOperLogRemove } from '@/services/yuan/sysOperLogController';
-import { useDictDataTagMap, useDictDataValueEnum } from '@/hook/DictHook';
+import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 import { DictEnum } from '@/const/dict-enum';
 import LoginforDrawer from './components/LoginforDrawer';
 import { sysLogininforList, sysLogininforRemove } from '@/services/yuan/sysLogininforController';
 import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
+import { useTableRequest } from '@/hooks/table/useTableRequest';
 
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
@@ -98,16 +96,13 @@ export default () => {
     },
   ];
 
-  const fetchDictData = createFetchList<
-    Record<string, any>,
-    API.SysLogininforVo
-  >(sysLogininforList as any);
+  const request = useTableRequest(sysLogininforList);
 
   return (
     <ProTable<API.SysLogininforVo>
       columns={columns}
       actionRef={actionRef}
-      request={async (params, sort) => fetchDictData(params, sort)}
+      request={request}
       columnsState={{
         persistenceKey: 'sys-loginfor-log-pro-table',
         persistenceType: 'localStorage',

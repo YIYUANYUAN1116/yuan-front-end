@@ -1,10 +1,9 @@
 import { ActionType, ModalForm, ProFormSelect } from '@ant-design/pro-components';
-import { useRequest } from '@umijs/max';
 import { Form } from 'antd';
 import { sysRoleOptionselect } from '@/services/yuan/sysRoleController';
 import { sysUserInsertAuthRole } from '@/services/yuan/sysUserController';
 import { useState } from 'react';
-import { createLoadingRequest } from '@/util/DataRequestUtils';
+import { useActionRequest } from '@/hooks/action/useActionRequest';
 
 interface UserRoleModalFormProps {
     userId: number;
@@ -13,9 +12,8 @@ interface UserRoleModalFormProps {
 
 const UserRoleModalForm = ({ userId, reload }: UserRoleModalFormProps) => {
     const [roles, setRoles] = useState<{ label: string; value: number }[]>([]);
-
     const [form] = Form.useForm<{ roleIds: number[] }>();
-    const { run: run, loading: loading } = createLoadingRequest(sysUserInsertAuthRole, reload)
+    const { run: run, loading: loading } = useActionRequest(sysUserInsertAuthRole, reload)
 
     return (
         <ModalForm

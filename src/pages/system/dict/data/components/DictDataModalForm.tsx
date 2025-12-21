@@ -1,11 +1,10 @@
 import { OperationMode, OperationModes } from '@/const/Const'
 import { dictAdd, dictEdit } from '@/services/yuan/sysDictDataController'
-import { createLoadingRequest } from '@/util/DataRequestUtils'
-import { ActionType, ModalForm, ProForm, ProFormDependency, ProFormInstance, ProFormRadio, ProFormSelect, ProFormText } from '@ant-design/pro-components'
-import { useRequest } from '@umijs/max'
-import { ColorPicker, Space, Tag } from 'antd'
-import React, { useEffect, useRef } from 'react'
+import { ActionType, ModalForm, ProForm, ProFormInstance, ProFormRadio, ProFormText } from '@ant-design/pro-components'
+import React, { useRef } from 'react'
 import DictLabelStyleFormItem from './DictLabelStyleFormItem'
+import { useActionRequest } from '@/hooks/action/useActionRequest'
+import { dictCache } from '@/hooks/dict/dictCache'
 
 
 
@@ -21,7 +20,7 @@ interface DictDataModalFormProps {
 export default function DictDataModalForm(props: DictDataModalFormProps) {
     const { mode, trigger, record, reload, dictName, dictType } = props;
     const isEdit = mode == OperationModes.EDIT
-    const { run: run, loading: loading } = createLoadingRequest(isEdit ? dictEdit : dictAdd, reload)
+    const { run: run, loading: loading } = useActionRequest(isEdit ? dictEdit : dictAdd, reload)
     const formRef = useRef<ProFormInstance | undefined>(undefined)
 
 
@@ -32,7 +31,9 @@ export default function DictDataModalForm(props: DictDataModalFormProps) {
             trigger={trigger}
             initialValues={{ ...record }}
             onFinish={async (values) => {
-                await run(values);
+                run(values);
+                console.log(record?.dictType)
+                dictCache.delete(record?.dictType)
                 return true;
             }}
             width={520}
@@ -51,7 +52,6 @@ export default function DictDataModalForm(props: DictDataModalFormProps) {
             <DictLabelStyleFormItem
                 name="listClass"
                 record={record}
-                formRef={formRef}
             />
 
             <ProForm.Group>
@@ -77,8 +77,11 @@ export default function DictDataModalForm(props: DictDataModalFormProps) {
                         { label: '启用', value: '0' },
                         { label: '禁用', value: '1' },
                     ]}
-                    initialValue={record?.status || '0'}
                     radioType="button"
+                    fieldProps={{
+                        buttonStyle: "solid",
+                        defaultValue: '0'
+                    }}
                 />
                 <ProFormRadio.Group
                     name="isDefault"
@@ -87,7 +90,10 @@ export default function DictDataModalForm(props: DictDataModalFormProps) {
                         { label: '是', value: 'Y' },
                         { label: '否', value: 'N' },
                     ]}
-                    initialValue={record?.isDefault == 'Y'?'Y':'N'}
+                    fieldProps={{
+                        buttonStyle: "solid",
+                        defaultValue: 'Y'
+                    }}
                     radioType="button"
                 />
             </ProForm.Group>

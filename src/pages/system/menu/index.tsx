@@ -1,21 +1,26 @@
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { ProTable, DrawerForm, ProFormText, ProFormSelect, ProFormDigit } from '@ant-design/pro-components';
+import { ProTable } from '@ant-design/pro-components';
 import { Button, Popconfirm, Space, Tag, message } from 'antd';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { sysMenuListTree, sysMenuRemove, sysMenuEdit } from '@/services/yuan/sysMenuController';
 import MenuDrawer from './components/MenuDrawer';
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
-import { createLoadingRequest } from '@/util/DataRequestUtils';
 import { DictEnum } from '@/const/dict-enum';
-import { useDictDataTagMap, useDictDataValueEnum } from '@/hook/DictHook';
-import { text } from 'stream/consumers';
+import { useActionRequest } from '@/hooks/action/useActionRequest';
+import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
+import { useDictDataTagMap } from '@/hooks/dict/useDictDataTagMap';
 
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
   const statusEnum = useDictDataValueEnum(DictEnum.SYS_NORMAL_DISABLE)
-  const { run: deleteRun, loading: deleteLoading } = createLoadingRequest(sysMenuRemove, actionRef.current?.reload)
+  const { run: deleteRun, loading: deleteLoading } = useActionRequest(sysMenuRemove, actionRef.current?.reload)
   const showHideMap = useDictDataTagMap(DictEnum.SYS_SHOW_HIDE)
+
+  const renderVisible = (value: string | number) => {
+    const tag = showHideMap[String(value)];
+    return tag?.render?.() ?? value;
+  };
 
   const RowActions = React.memo(({ record, reload }: any) => {
     return (
@@ -74,12 +79,12 @@ export default () => {
       valueEnum: statusEnum,
     },
 
-        {
+    {
       disable: true,
       title: '隐藏状态',
       dataIndex: 'visible',
       ellipsis: true,
-      render:(text,record)=> showHideMap[record.visible || 0]?.render() ?? record.visible,
+      render: (_, record) => renderVisible(record.visible || 0),
     },
 
     {
@@ -105,7 +110,7 @@ export default () => {
       dataIndex: 'perms',
       ellipsis: true,
       hideInSearch: true,
-      render: (text, record) =>  <Tag>{text}</Tag>,
+      render: (text, record) => <Tag>{text}</Tag>,
     },
     {
       title: '显示顺序',
@@ -132,7 +137,7 @@ export default () => {
       width: 140,
       render: (_, record) => <RowActions record={record} reload={reload} />,
     },
-  ], [reload,statusEnum]);
+  ], [reload, statusEnum]);
 
 
   const fetchDictData = async (params: any) => {

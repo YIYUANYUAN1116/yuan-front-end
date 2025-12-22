@@ -6,9 +6,10 @@ import { DataNode } from 'antd/es/tree';
 import { convertTree } from '@/util/TreeUtils';
 import { sysRoleEdit, sysRoleAdd } from '@/services/yuan/sysRoleController';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
+import { OperationMode, OperationModes } from '@/const/Const';
 
 interface RoleModalFormProps {
-  mode: 'add' | 'edit';
+  mode: OperationMode;
   trigger?: React.ReactNode;
   reload?: ActionType['reload'];
   record?: API.SysRoleVo;
@@ -21,7 +22,7 @@ const UserModalForm: FC<RoleModalFormProps> = ({
   record,
 }) => {
   const [menuTree, setMenuTree] = useState<DataNode[]>([]);
-  const isEdit = mode === 'edit';
+  const isEdit = mode === OperationModes.EDIT;
   const [form] = Form.useForm<API.SysRoleBo>();
   const { run: run, loading: loading } = useActionRequest(isEdit ? sysRoleEdit : sysRoleAdd, reload)
 

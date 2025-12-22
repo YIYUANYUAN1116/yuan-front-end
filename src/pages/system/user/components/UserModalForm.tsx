@@ -1,3 +1,4 @@
+import { OperationMode, OperationModes } from '@/const/Const';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
 import { sysUserAdd, sysUserEdit } from '@/services/yuan/sysUserController';
 import { type ActionType, ModalForm, ProForm, ProFormSelect, ProFormText, ProFormTextArea } from '@ant-design/pro-components';
@@ -6,7 +7,7 @@ import type { FC } from 'react';
 
 
 interface UserModalFormProps {
-  mode: 'add' | 'edit';
+  mode: OperationMode;
   trigger?: React.ReactNode;
   reload?: ActionType['reload'];
   record?: API.SysUserVo;
@@ -18,7 +19,7 @@ const UserModalForm: FC<UserModalFormProps> = ({
   reload,
   record,
 }) => {
-  const isEdit = mode === 'edit';
+  const isEdit = mode === OperationModes.EDIT;
   const { run: run, loading: loading } = useActionRequest(isEdit ? sysUserEdit : sysUserAdd, reload)
   const [form] = Form.useForm<API.SysUserBo>();
   
@@ -30,7 +31,7 @@ const UserModalForm: FC<UserModalFormProps> = ({
       initialValues={record}
       modalProps={{ okButtonProps: { loading } }}
       onFinish={async (values) => {
-        await run(values);
+        run(values);
         return true;
       }}
     >

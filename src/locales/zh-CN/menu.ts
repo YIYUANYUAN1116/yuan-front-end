@@ -57,4 +57,7 @@ export default {
   'menu.system.log': '日志管理',
   'menu.system.log.oprelog': '操作日志',
   'menu.system.log.loginfor': '登录日志',
+  'menu.system.dept': '部门管理',
+  'menu.system.post': '岗位管理',
+  'menu.system.tenant': '租户管理',
 };

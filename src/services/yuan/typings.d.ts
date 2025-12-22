@@ -91,11 +91,6 @@ declare namespace API {
     userInfo?: LoginUser;
   };
 
-  type MenuTreeSelectVo = {
-    checkedKeys?: number[];
-    menus?: TreeLong[];
-  };
-
   type PageQuery = {
     pageSize?: number;
     pageNum?: number;
@@ -118,6 +113,30 @@ declare namespace API {
     code?: number;
     msg?: string;
     data?: ReactRouterVo[];
+  };
+
+  type RListSysDeptVo = {
+    code?: number;
+    msg?: string;
+    data?: {
+      deptId?: number;
+      tenantId?: string;
+      parentId?: number;
+      ancestors?: string;
+      deptName?: string;
+      orderNum?: number;
+      leader?: string;
+      phone?: string;
+      email?: string;
+      status?: string;
+      delFlag?: string;
+      createDept?: number;
+      createBy?: number;
+      createTime?: string;
+      updateBy?: number;
+      updateTime?: string;
+      children?: any[];
+    }[];
   };
 
   type RListSysDictDataVo = {
@@ -165,12 +184,6 @@ declare namespace API {
     code?: number;
     msg?: string;
     data?: LoginVo;
-  };
-
-  type RMenuTreeSelectVo = {
-    code?: number;
-    msg?: string;
-    data?: MenuTreeSelectVo;
   };
 
   type RoleDTO = {
@@ -264,6 +277,12 @@ declare namespace API {
     data?: SysUserPostVo;
   };
 
+  type RTreeSelectVo = {
+    code?: number;
+    msg?: string;
+    data?: TreeSelectVo;
+  };
+
   type RUserInfoVo = {
     code?: number;
     msg?: string;
@@ -318,8 +337,16 @@ declare namespace API {
     pageQuery: PageQuery;
   };
 
+  type sysDeptListTreeParams = {
+    bo: SysDeptBo;
+  };
+
   type sysDeptRemoveParams = {
     deptIds: number[];
+  };
+
+  type sysDeptTreeselectParams = {
+    bo: SysDeptBo;
   };
 
   type SysDeptVo = {
@@ -339,6 +366,7 @@ declare namespace API {
     createTime?: string;
     updateBy?: number;
     updateTime?: string;
+    children?: any[];
   };
 
   type SysDictDataBo = {
@@ -934,7 +962,25 @@ declare namespace API {
 
   type TableDataInfoSysDeptVo = {
     total?: number;
-    rows?: SysDeptVo[];
+    rows?: {
+      deptId?: number;
+      tenantId?: string;
+      parentId?: number;
+      ancestors?: string;
+      deptName?: string;
+      orderNum?: number;
+      leader?: string;
+      phone?: string;
+      email?: string;
+      status?: string;
+      delFlag?: string;
+      createDept?: number;
+      createBy?: number;
+      createTime?: string;
+      updateBy?: number;
+      updateTime?: string;
+      children?: any[];
+    }[];
     code?: number;
     msg?: string;
   };
@@ -1062,6 +1108,11 @@ declare namespace API {
     nameKey?: string;
     childrenKey?: string;
     deep?: number;
+  };
+
+  type TreeSelectVo = {
+    checkedKeys?: number[];
+    treeList?: TreeLong[];
   };
 
   type unallocatedUserListParams = {

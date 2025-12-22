@@ -31,7 +31,7 @@ const MenuDrawer = ({ mode, trigger, record, reload }: any) => {
               title: '根目录',   // 显示名称
               value: 0,         // 对应 parentId
               key: 0,
-              children: convertTree(res.data?.menus || [])
+              children: convertTree(res.data?.treeList || [])
             }
           ];
           setTreeData(treeWithRoot);

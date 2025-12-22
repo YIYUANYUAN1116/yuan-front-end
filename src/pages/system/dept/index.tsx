@@ -8,7 +8,8 @@ import { Access, useAccess } from "@umijs/max";
 import { Button, Popconfirm, Space, Table } from "antd";
 import { useRef } from "react";
 import { DeptModalForm } from "./components/DeptModalForm";
-import { sysDeptList, sysDeptRemove } from "@/services/yuan/sysDeptController";
+import { sysDeptList, sysDeptListTree, sysDeptRemove } from "@/services/yuan/sysDeptController";
+import { PlusOutlined } from "@ant-design/icons";
 export default () => {
   /**权限控制 */
   const access = useAccess();
@@ -20,32 +21,6 @@ export default () => {
       title: "deptId",
       dataIndex: "deptId",
       ...HIDE_COLUMN,
-    },
-    {
-      title: "序号",
-      dataIndex: "index",
-      valueType: "indexBorder",
-      width: 48,
-    },
-    {
-      title: "租户编号",
-      dataIndex: "tenantId",
-      hideInSearch: true,
-    },
-    {
-      title: "父部门id",
-      dataIndex: "parentId",
-      hideInSearch: true,
-    },
-    {
-      title: "祖级列表",
-      dataIndex: "ancestors",
-      hideInSearch: true,
-    },
-    {
-      title: "显示顺序",
-      dataIndex: "orderNum",
-      hideInSearch: true,
     },
     {
       title: "部门名称",
@@ -63,19 +38,26 @@ export default () => {
       hideInSearch: true,
     },
     {
-      title: "负责人",
-      dataIndex: "leader",
-      hideInSearch: true,
-    },
-    {
       title: "邮箱",
       dataIndex: "email",
       hideInSearch: true,
     },
+    // {
+    //   title: "父部门id",
+    //   dataIndex: "parentId",
+    //   hideInSearch: true,
+    // },
+    // {
+    //   title: "祖级列表",
+    //   dataIndex: "ancestors",
+    //   hideInSearch: true,
+    // },
     {
-      title: "备注",
-      dataIndex: "remark",
+      title: "显示顺序",
+      dataIndex: "orderNum",
       hideInSearch: true,
+      sorter: true,
+      defaultSortOrder: 'descend', 
     },
     {
       title: "操作",
@@ -113,49 +95,43 @@ export default () => {
     sysDeptRemove,
     actionRef.current?.reload
   );
-  const request = useTableRequest(sysDeptList);
+
+  const fetchDictData = async (params: any) => {
+    const res = await sysDeptListTree({ bo: params } as API.sysDeptListTreeParams);
+    return { data: res.data || [], success: true };
+  }
 
   return (
-    <ProTable<API.SysDeptVo>
+    <ProTable
+      rowKey="deptId"
       columns={columns}
       actionRef={actionRef}
-      request={request}
+      cardBordered
+      request={async (params) => fetchDictData(params)}
+      pagination={false}
+      headerTitle="部门管理"
+      expandable={{
+        rowExpandable: (record) => !!record.children?.length,
+        expandRowByClick: false, // ✅ 禁用整行点击展开
+      }}
       columnsState={{
-        persistenceKey: "sys-tenant-pro-table",
-        persistenceType: "localStorage",
+        persistenceKey: 'sys-dept-pro-table',
+        persistenceType: 'localStorage',
         defaultValue: {
-          option: { fixed: "right", disable: true },
+          option: { fixed: 'right', disable: true },
         },
       }}
-      rowKey="id"
-      search={{ labelWidth: "auto" }}
-      pagination={{ pageSize: 10 }}
-      headerTitle="部门管理"
       toolBarRender={() => [
-        <Access key="add" accessible={access.canAccess("system:dept:add")}>
+        <Access accessible={access.canAccess('system:dept:add')}>
           <DeptModalForm
+            key="deptadd"
             mode="add"
-            trigger={<Button type="primary">新增</Button>}
             reload={actionRef.current?.reload}
-            key="add"
+            trigger={<Button type="primary" icon={<PlusOutlined />}
+            >新建部门</Button>}
           />
-        </Access>,
+        </Access >
       ]}
-      rowSelection={{
-        // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
-        // 注释该行则默认不显示下拉选项
-        selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
-      }}
-      tableAlertOptionRender={false}
-      tableAlertRender={(props) => (
-        <Access key="delete" accessible={access.canAccess("system:dept:remove")}>
-          <BatchDeleteAlert<API.SysDeptVo>
-            {...props}
-            actionRef={actionRef}
-            onDelete={(keys) => sysDeptRemove({ deptIds: keys as number[] })}
-          />
-        </Access>
-      )}
     />
   );
 };

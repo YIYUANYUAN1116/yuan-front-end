@@ -117,15 +117,17 @@ export default () => {
       dataIndex: 'perms',
       ellipsis: true,
       hideInSearch: true,
-      width:200,
+      width: 200,
       render: (text, record) => <Tag>{text}</Tag>,
     },
     {
       title: '显示顺序',
       dataIndex: 'orderNum',
       ellipsis: true,
-      width:100,
+      width: 100,
       hideInSearch: true,
+      sorter: true,
+      defaultSortOrder: 'ascend', // 默认降序
     },
     {
       title: '备注',

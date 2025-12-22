@@ -95,3 +95,37 @@ export async function sysDeptList(
     ...(options || {}),
   });
 }
+
+/** 查询树型菜单列表 GET /system/sysDept/listTree */
+export async function sysDeptListTree(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.sysDeptListTreeParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.RListSysDeptVo>("/system/sysDept/listTree", {
+    method: "GET",
+    params: {
+      ...params,
+      bo: undefined,
+      ...params["bo"],
+    },
+    ...(options || {}),
+  });
+}
+
+/** 获取菜单下拉树列表 GET /system/sysDept/treeselect */
+export async function sysDeptTreeselect(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.sysDeptTreeselectParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.RTreeSelectVo>("/system/sysDept/treeselect", {
+    method: "GET",
+    params: {
+      ...params,
+      bo: undefined,
+      ...params["bo"],
+    },
+    ...(options || {}),
+  });
+}

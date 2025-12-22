@@ -9,11 +9,14 @@ import { Access, useAccess } from "@umijs/max";
 import { Button, Popconfirm, Space, Table } from "antd";
 import { useRef } from "react";
 import { PostModalForm } from "./components/PostModalForm";
+import { DictEnum } from "@/const/dict-enum";
+import { useDictDataValueEnum } from "@/hooks/dict/useDictDataValueEnum";
 export default () => {
   /**权限控制 */
   const access = useAccess();
 
   const actionRef = useRef<ActionType | null>(null);
+  const statusEnum = useDictDataValueEnum(DictEnum.SYS_NORMAL_DISABLE)
 
   const columns: ProColumns<API.SysPostVo>[] = [
     {
@@ -34,13 +37,11 @@ export default () => {
     },
     {
       title: "岗位编码",
-      dataIndex: "postCode",
-      hideInSearch: true,
+      dataIndex: "postCode"
     },
     {
       title: "岗位名称",
-      dataIndex: "postName",
-      hideInSearch: true,
+      dataIndex: "postName"
     },
     {
       title: "显示顺序",
@@ -50,7 +51,8 @@ export default () => {
     {
       title: "状态",
       dataIndex: "status",
-      hideInSearch: true,
+      valueType: 'select',
+      valueEnum: statusEnum
     },
     {
       title: "创建时间",
@@ -106,7 +108,7 @@ export default () => {
       actionRef={actionRef}
       request={request}
       columnsState={{
-        persistenceKey: "sys-tenant-pro-table",
+        persistenceKey: "sys-post-pro-table",
         persistenceType: "localStorage",
         defaultValue: {
           option: { fixed: "right", disable: true },

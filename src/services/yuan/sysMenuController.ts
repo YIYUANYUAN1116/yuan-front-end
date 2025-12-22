@@ -128,7 +128,7 @@ export async function sysMenuRoleMenuTreeselect(
   options?: { [key: string]: any }
 ) {
   const { roleId: param0, ...queryParams } = params;
-  return request<API.RMenuTreeSelectVo>(
+  return request<API.RTreeSelectVo>(
     `/system/sysMenu/roleMenuTreeselect/${param0}`,
     {
       method: "GET",
@@ -144,7 +144,7 @@ export async function sysMenuTreeselect(
   params: API.sysMenuTreeselectParams,
   options?: { [key: string]: any }
 ) {
-  return request<API.RMenuTreeSelectVo>("/system/sysMenu/treeselect", {
+  return request<API.RTreeSelectVo>("/system/sysMenu/treeselect", {
     method: "GET",
     params: {
       ...params,

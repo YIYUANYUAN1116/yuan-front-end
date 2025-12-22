@@ -37,13 +37,11 @@ export default () => {
     {
       title: '用户名称',
       dataIndex: 'nickName',
-      ellipsis: true,
       hideInSearch: true,
     },
     {
       title: '登录名称',
       dataIndex: 'userName',
-      ellipsis: true,
       hideInSearch: true,
     },
     {
@@ -52,7 +50,6 @@ export default () => {
       dataIndex: 'status',
       filters: true,
       onFilter: true,
-      ellipsis: true,
       valueType: 'select',
       valueEnum: statusEnum
     },
@@ -63,25 +60,21 @@ export default () => {
       width: 100,
       filters: true,
       onFilter: true,
-      ellipsis: true,
       valueType: 'select',
       valueEnum: sexEnum
     },
     {
       title: '用户邮箱',
       dataIndex: 'email',
-      ellipsis: true,
     },
     {
       title: '手机号',
       dataIndex: 'phonenumber',
-      ellipsis: true,
       hideInSearch: true,
     },
     {
       title: '部门',
       dataIndex: 'deptName',
-      ellipsis: true,
       hideInSearch: true,
     },
     {

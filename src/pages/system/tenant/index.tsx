@@ -10,6 +10,8 @@ import { Button, Popconfirm, Space, Table } from "antd";
 import { useRef } from "react";
 import { TenantModalForm } from "./components/TenantModalForm";
 import { sysTenantList, sysTenantRemove } from "@/services/yuan/sysTenantController";
+import { useDictDataValueEnum } from "@/hooks/dict/useDictDataValueEnum";
+import { DictEnum } from "@/const/dict-enum";
 export default () => {
   /**权限控制 */
   const access = useAccess();
@@ -19,6 +21,8 @@ export default () => {
     sysTenantRemove,
     actionRef.current?.reload
   );
+  const statusEnum = useDictDataValueEnum(DictEnum.SYS_NORMAL_DISABLE)
+
 
   const columns: ProColumns<API.SysTenantVo>[] = [
     {
@@ -38,6 +42,15 @@ export default () => {
       hideInSearch: true,
     },
     {
+      title: "企业名称",
+      dataIndex: "companyName",
+    },
+    {
+      title: "统一社会信用代码",
+      dataIndex: "licenseNumber",
+      hideInSearch: true,
+    },
+    {
       title: "联系人",
       dataIndex: "contactUserName",
       hideInSearch: true,
@@ -47,24 +60,16 @@ export default () => {
       dataIndex: "contactPhone",
       hideInSearch: true,
     },
+
     {
-      title: "企业名称",
-      dataIndex: "companyName",
-      hideInSearch: true,
+      title: "状态",
+      dataIndex: "status",
+      valueType: 'select',
+      valueEnum: statusEnum
     },
     {
-      title: "统一社会信用代码",
-      dataIndex: "licenseNumber",
-      hideInSearch: true,
-    },
-        {
       title: "地址",
       dataIndex: "address",
-      hideInSearch: true,
-    },
-    {
-      title: "企业简介",
-      dataIndex: "intro",
       hideInSearch: true,
     },
     {
@@ -75,6 +80,13 @@ export default () => {
     {
       title: "备注",
       dataIndex: "remark",
+      hideInSearch: true,
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createTime',
+      valueType: 'dateTime',
+      sorter: true,
       hideInSearch: true,
     },
     {

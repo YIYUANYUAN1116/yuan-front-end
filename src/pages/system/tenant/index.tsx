@@ -84,7 +84,7 @@ export default () => {
       hideInSearch: true,
       render: (text, record) => (
         <Space size="small">
-          <Access accessible={access.canAccess("system:tenant:edit") || false}>
+          <Access key="edit" accessible={access.canAccess("system:tenant:edit") || false}>
             <TenantModalForm
               mode="edit"
               trigger={<a>编辑</a>}
@@ -93,7 +93,7 @@ export default () => {
             />
           </Access>
 
-          <Access accessible={access.canAccess("system:tenant:remove")}>
+          <Access key="delete" accessible={access.canAccess("system:tenant:remove")}>
             <Popconfirm
               title="删除"
               description={`确认删除：${record.companyName}`}
@@ -129,7 +129,7 @@ export default () => {
       pagination={{ pageSize: 10 }}
       headerTitle="租户管理"
       toolBarRender={() => [
-        <Access accessible={access.canAccess("system:tenant:add")}>
+        <Access key="add" accessible={access.canAccess("system:tenant:add")}>
           <TenantModalForm
             mode="add"
             trigger={<Button type="primary">新增</Button>}
@@ -145,7 +145,7 @@ export default () => {
       }}
       tableAlertOptionRender={false}
       tableAlertRender={(props) => (
-        <Access accessible={access.canAccess("system:tenant:remove")}>
+        <Access key="delete" accessible={access.canAccess("system:tenant:remove")}>
           <BatchDeleteAlert<API.SysTenantVo>
             {...props}
             actionRef={actionRef}

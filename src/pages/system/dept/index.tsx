@@ -84,7 +84,7 @@ export default () => {
       hideInSearch: true,
       render: (text, record) => (
         <Space size="small">
-          <Access accessible={access.canAccess("system:dept:edit") || false}>
+          <Access key="edit" accessible={access.canAccess("system:dept:edit") || false}>
             <DeptModalForm
               mode="edit"
               trigger={<a>编辑</a>}
@@ -93,7 +93,7 @@ export default () => {
             />
           </Access>
 
-          <Access accessible={access.canAccess("system:dept:remove")}>
+          <Access key="delete" accessible={access.canAccess("system:dept:remove")}>
             <Popconfirm
               title="删除"
               description={`确认删除：${record.deptName}`}
@@ -132,7 +132,7 @@ export default () => {
       pagination={{ pageSize: 10 }}
       headerTitle="部门管理"
       toolBarRender={() => [
-        <Access accessible={access.canAccess("system:dept:add")}>
+        <Access key="add" accessible={access.canAccess("system:dept:add")}>
           <DeptModalForm
             mode="add"
             trigger={<Button type="primary">新增</Button>}
@@ -148,7 +148,7 @@ export default () => {
       }}
       tableAlertOptionRender={false}
       tableAlertRender={(props) => (
-        <Access accessible={access.canAccess("system:dept:remove")}>
+        <Access key="delete" accessible={access.canAccess("system:dept:remove")}>
           <BatchDeleteAlert<API.SysDeptVo>
             {...props}
             actionRef={actionRef}

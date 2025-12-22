@@ -69,7 +69,7 @@ export default () => {
       hideInSearch: true,
       render: (text, record) => (
         <Space size="small">
-          <Access accessible={access.canAccess("system:post:edit") || false}>
+          <Access key="edit" accessible={access.canAccess("system:post:edit") || false}>
             <PostModalForm
               mode="edit"
               trigger={<a>编辑</a>}
@@ -78,7 +78,7 @@ export default () => {
             />
           </Access>
 
-          <Access accessible={access.canAccess("system:post:remove")}>
+          <Access key="delete" accessible={access.canAccess("system:post:remove")}>
             <Popconfirm
               title="删除"
               description={`确认删除：${record.postName}`}
@@ -117,7 +117,7 @@ export default () => {
       pagination={{ pageSize: 10 }}
       headerTitle="职位管理"
       toolBarRender={() => [
-        <Access accessible={access.canAccess("system:post:add")}>
+        <Access key="add" accessible={access.canAccess("system:post:add")}>
           <PostModalForm
             mode="add"
             trigger={<Button type="primary">新增</Button>}
@@ -133,7 +133,7 @@ export default () => {
       }}
       tableAlertOptionRender={false}
       tableAlertRender={(props) => (
-        <Access accessible={access.canAccess("system:post:remove")}>
+        <Access key="delete" accessible={access.canAccess("system:post:remove")}>
           <BatchDeleteAlert<API.SysPostVo>
             {...props}
             actionRef={actionRef}

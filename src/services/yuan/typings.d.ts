@@ -222,6 +222,12 @@ declare namespace API {
     data?: SysOperLogVo;
   };
 
+  type RSysPostVo = {
+    code?: number;
+    msg?: string;
+    data?: SysPostVo;
+  };
+
   type RSysRoleDeptVo = {
     code?: number;
     msg?: string;
@@ -250,6 +256,12 @@ declare namespace API {
     code?: number;
     msg?: string;
     data?: SysUserInfoVo;
+  };
+
+  type RSysUserPostVo = {
+    code?: number;
+    msg?: string;
+    data?: SysUserPostVo;
   };
 
   type RUserInfoVo = {
@@ -567,6 +579,53 @@ declare namespace API {
     costTime?: number;
   };
 
+  type SysPostBo = {
+    postId?: number;
+    tenantId?: string;
+    postCode: string;
+    postName: string;
+    postSort: number;
+    status: string;
+    createDept?: number;
+    createBy?: number;
+    createTime?: string;
+    updateBy?: number;
+    updateTime?: string;
+    remark?: string;
+  };
+
+  type SysPostExportParams = {
+    bo: SysPostBo;
+  };
+
+  type SysPostGetInfoParams = {
+    postId: number;
+  };
+
+  type SysPostListParams = {
+    bo: SysPostBo;
+    pageQuery: PageQuery;
+  };
+
+  type SysPostRemoveParams = {
+    postIds: number[];
+  };
+
+  type SysPostVo = {
+    postId?: number;
+    tenantId?: string;
+    postCode?: string;
+    postName?: string;
+    postSort?: number;
+    status?: string;
+    createDept?: number;
+    createBy?: number;
+    createTime?: string;
+    updateBy?: number;
+    updateTime?: string;
+    remark?: string;
+  };
+
   type SysRoleBo = {
     roleId?: number;
     tenantId?: string;
@@ -808,6 +867,33 @@ declare namespace API {
     pageQuery: PageQuery;
   };
 
+  type SysUserPostBo = {
+    userId?: number;
+    postId?: number;
+  };
+
+  type SysUserPostExportParams = {
+    bo: SysUserPostBo;
+  };
+
+  type SysUserPostGetInfoParams = {
+    postId: number;
+  };
+
+  type SysUserPostListParams = {
+    bo: SysUserPostBo;
+    pageQuery: PageQuery;
+  };
+
+  type SysUserPostRemoveParams = {
+    postIds: number[];
+  };
+
+  type SysUserPostVo = {
+    userId?: number;
+    postId?: number;
+  };
+
   type sysUserRemoveParams = {
     userIds: number[];
   };
@@ -911,6 +997,13 @@ declare namespace API {
     msg?: string;
   };
 
+  type TableDataInfoSysPostVo = {
+    total?: number;
+    rows?: SysPostVo[];
+    code?: number;
+    msg?: string;
+  };
+
   type TableDataInfoSysRoleDeptVo = {
     total?: number;
     rows?: SysRoleDeptVo[];
@@ -939,6 +1032,13 @@ declare namespace API {
     msg?: string;
   };
 
+  type TableDataInfoSysUserPostVo = {
+    total?: number;
+    rows?: SysUserPostVo[];
+    code?: number;
+    msg?: string;
+  };
+
   type TableDataInfoSysUserVo = {
     total?: number;
     rows?: SysUserVo[];
@@ -950,8 +1050,8 @@ declare namespace API {
     name?: { empty?: boolean };
     id?: number;
     parentId?: number;
-    weight?: any;
     config?: TreeNodeConfig;
+    weight?: any;
     empty?: boolean;
   };
 

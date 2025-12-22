@@ -18,5 +18,8 @@ export default function access(
     canSystemLoginforList: has('system:loginfor:list'),
     canDashboardWorkplace: has('dashboard:workplace'),
     canDashboardAnalysis: has('dashboard:analysis'),
+    canSystemTenantList: has('system:tenant:list'),
+    canSystemDeptList: has('system:dept:list'),
+    canSystemPostList: has('system:post:list'),
   };
 }

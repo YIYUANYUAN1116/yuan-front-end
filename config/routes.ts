@@ -88,6 +88,24 @@ export default [
         access: 'canSystemUserList',
       },
       {
+        path: '/system/tenant',
+        name: 'tenant',
+        component: './system/tenant',
+        access: 'canSystemTenantList',
+      },
+      {
+        path: '/system/dept',
+        name: 'dept',
+        component: './system/dept',
+        access: 'canSystemDeptList',
+      },
+       {
+        path: '/system/post',
+        name: 'post',
+        component: './system/post',
+        access: 'canSystemPostList',
+      },
+      {
         path: '/system/role',
         name: 'role',
         component: './system/role',

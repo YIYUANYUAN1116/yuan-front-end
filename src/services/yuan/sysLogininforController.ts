@@ -2,7 +2,7 @@
 /* eslint-disable */
 import { request } from "@umijs/max";
 
-/** 修改loginlog PUT /system/sysLogininfor */
+/** 修改loginlog 修改loginlog PUT /system/sysLogininfor */
 export async function sysLogininforEdit(
   body: API.SysLogininforBo,
   options?: { [key: string]: any }
@@ -17,7 +17,7 @@ export async function sysLogininforEdit(
   });
 }
 
-/** 新增loginlog POST /system/sysLogininfor */
+/** 新增loginlog 新增loginlog POST /system/sysLogininfor */
 export async function sysLogininforAdd(
   body: API.SysLogininforBo,
   options?: { [key: string]: any }
@@ -32,7 +32,7 @@ export async function sysLogininforAdd(
   });
 }
 
-/** 获取loginlog详细信息 GET /system/sysLogininfor/${param0} */
+/** 获取loginlog详细信息 获取loginlog详细信息 GET /system/sysLogininfor/${param0} */
 export async function sysLogininforGetInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.SysLogininforGetInfoParams,
@@ -46,7 +46,7 @@ export async function sysLogininforGetInfo(
   });
 }
 
-/** 删除loginlog DELETE /system/sysLogininfor/${param0} */
+/** 删除loginlog 删除loginlog DELETE /system/sysLogininfor/${param0} */
 export async function sysLogininforRemove(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.SysLogininforRemoveParams,
@@ -60,7 +60,7 @@ export async function sysLogininforRemove(
   });
 }
 
-/** 导出loginlog列表 POST /system/sysLogininfor/export */
+/** 导出loginlog列表 导出loginlog列表 POST /system/sysLogininfor/export */
 export async function sysLogininforExport(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.SysLogininforExportParams,
@@ -77,7 +77,7 @@ export async function sysLogininforExport(
   });
 }
 
-/** 查询loginlog列表 GET /system/sysLogininfor/list */
+/** 查询loginlog列表 查询loginlog列表 GET /system/sysLogininfor/list */
 export async function sysLogininforList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.SysLogininforListParams,

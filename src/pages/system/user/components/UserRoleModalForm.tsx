@@ -6,13 +6,13 @@ import { useState } from 'react';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
 
 interface UserRoleModalFormProps {
-    userId: number;
+    userId: string;
     reload?: ActionType['reload'];
 }
 
 const UserRoleModalForm = ({ userId, reload }: UserRoleModalFormProps) => {
-    const [roles, setRoles] = useState<{ label: string; value: number }[]>([]);
-    const [form] = Form.useForm<{ roleIds: number[] }>();
+    const [roles, setRoles] = useState<{ label: string; value: string }[]>([]);
+    const [form] = Form.useForm<{ roleIds: string[] }>();
     const { run: run, loading: loading } = useActionRequest(sysUserInsertAuthRole, reload)
 
     return (
@@ -39,7 +39,7 @@ const UserRoleModalForm = ({ userId, reload }: UserRoleModalFormProps) => {
                 }
             }}
             onFinish={async (values) => {
-                await run({ userId, roleIds: values.roleIds }); // ✅ 调接口
+                run({ userId, roleIds: values.roleIds }); // ✅ 调接口
                 return true;
             }}
         >

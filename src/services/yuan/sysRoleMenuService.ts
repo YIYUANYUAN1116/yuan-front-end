@@ -2,7 +2,7 @@
 /* eslint-disable */
 import { request } from "@umijs/max";
 
-/** 修改角色菜单 PUT /system/sysRoleMenu */
+/** 修改角色菜单 修改角色菜单 PUT /system/sysRoleMenu */
 export async function sysRoleMenuEdit(
   body: API.SysRoleMenuBo,
   options?: { [key: string]: any }
@@ -17,7 +17,7 @@ export async function sysRoleMenuEdit(
   });
 }
 
-/** 新增角色菜单 POST /system/sysRoleMenu */
+/** 新增角色菜单 新增角色菜单 POST /system/sysRoleMenu */
 export async function sysRoleMenuAdd(
   body: API.SysRoleMenuBo,
   options?: { [key: string]: any }
@@ -32,7 +32,7 @@ export async function sysRoleMenuAdd(
   });
 }
 
-/** 获取角色菜单详细信息 GET /system/sysRoleMenu/${param0} */
+/** 获取角色菜单详细信息 获取角色菜单详细信息 GET /system/sysRoleMenu/${param0} */
 export async function sysRoleMenuGetInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysRoleMenuGetInfoParams,
@@ -46,7 +46,7 @@ export async function sysRoleMenuGetInfo(
   });
 }
 
-/** 删除角色菜单 DELETE /system/sysRoleMenu/${param0} */
+/** 删除角色菜单 删除角色菜单 DELETE /system/sysRoleMenu/${param0} */
 export async function sysRoleMenuRemove(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysRoleMenuRemoveParams,
@@ -60,7 +60,7 @@ export async function sysRoleMenuRemove(
   });
 }
 
-/** 导出角色菜单列表 POST /system/sysRoleMenu/export */
+/** 导出角色菜单列表 导出角色菜单列表 POST /system/sysRoleMenu/export */
 export async function sysRoleMenuExport(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysRoleMenuExportParams,
@@ -77,7 +77,7 @@ export async function sysRoleMenuExport(
   });
 }
 
-/** 查询角色菜单列表 GET /system/sysRoleMenu/list */
+/** 查询角色菜单列表 查询角色菜单列表 GET /system/sysRoleMenu/list */
 export async function sysRoleMenuList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysRoleMenuListParams,

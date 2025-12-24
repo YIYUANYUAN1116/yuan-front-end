@@ -2,7 +2,7 @@
 /* eslint-disable */
 import { request } from "@umijs/max";
 
-/** 修改部门 PUT /system/sysDept */
+/** 修改部门 修改部门 PUT /system/sysDept */
 export async function sysDeptEdit(
   body: API.SysDeptBo,
   options?: { [key: string]: any }
@@ -17,7 +17,7 @@ export async function sysDeptEdit(
   });
 }
 
-/** 新增部门 POST /system/sysDept */
+/** 新增部门 新增部门 POST /system/sysDept */
 export async function sysDeptAdd(
   body: API.SysDeptBo,
   options?: { [key: string]: any }
@@ -32,7 +32,7 @@ export async function sysDeptAdd(
   });
 }
 
-/** 导出部门列表 GET /system/sysDept/${param0} */
+/** 导出部门列表 获取部门详细信息 GET /system/sysDept/${param0} */
 export async function sysDeptGetInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysDeptGetInfoParams,
@@ -46,7 +46,7 @@ export async function sysDeptGetInfo(
   });
 }
 
-/** 删除部门 DELETE /system/sysDept/${param0} */
+/** 删除部门 删除部门 DELETE /system/sysDept/${param0} */
 export async function sysDeptRemove(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysDeptRemoveParams,
@@ -60,7 +60,7 @@ export async function sysDeptRemove(
   });
 }
 
-/** 导出部门列表 POST /system/sysDept/export */
+/** 导出部门列表 导出部门列表 POST /system/sysDept/export */
 export async function sysDeptExport(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysDeptExportParams,
@@ -77,7 +77,7 @@ export async function sysDeptExport(
   });
 }
 
-/** 查询部门列表 GET /system/sysDept/list */
+/** 查询部门列表 查询部门列表 GET /system/sysDept/list */
 export async function sysDeptList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysDeptListParams,
@@ -96,13 +96,13 @@ export async function sysDeptList(
   });
 }
 
-/** 查询树型菜单列表 GET /system/sysDept/listTree */
+/** 查询树型菜单列表 查询树型菜单列表 GET /system/sysDept/listTree */
 export async function sysDeptListTree(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysDeptListTreeParams,
   options?: { [key: string]: any }
 ) {
-  return request<API.RListSysDeptVo>("/system/sysDept/listTree", {
+  return request<API.TableDataInfoSysDeptVo>("/system/sysDept/listTree", {
     method: "GET",
     params: {
       ...params,
@@ -113,7 +113,7 @@ export async function sysDeptListTree(
   });
 }
 
-/** 获取菜单下拉树列表 GET /system/sysDept/treeselect */
+/** 获取菜单下拉树列表 获取菜单下拉树列表 GET /system/sysDept/treeselect */
 export async function sysDeptTreeselect(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysDeptTreeselectParams,

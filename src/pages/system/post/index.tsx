@@ -87,7 +87,7 @@ export default () => {
               okText="确认"
               cancelText="取消"
               okButtonProps={{ loading: deleteLoading }}
-              onConfirm={() => deleteRun({ postIds: [record.postId as number] })}
+              onConfirm={() => deleteRun({ postIds: [record.postId] })}
             >
               <a style={{ color: "red" }}>删除</a>
             </Popconfirm>
@@ -114,7 +114,7 @@ export default () => {
           option: { fixed: "right", disable: true },
         },
       }}
-      rowKey="id"
+      rowKey="postId"
       search={{ labelWidth: "auto" }}
       pagination={{ pageSize: 10 }}
       headerTitle="职位管理"
@@ -139,7 +139,7 @@ export default () => {
           <BatchDeleteAlert<API.SysPostVo>
             {...props}
             actionRef={actionRef}
-            onDelete={(keys) => sysPostRemove({ postIds: keys as number[] })}
+            onDelete={(keys) => sysPostRemove({ postIds: keys as string[] })}
           />
         </Access>
       )}

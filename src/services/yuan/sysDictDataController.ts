@@ -2,7 +2,7 @@
 /* eslint-disable */
 import { request } from "@umijs/max";
 
-/** 修改保存字典类型 PUT /system/dict/data */
+/** 修改保存字典类型 修改保存字典类型 PUT /system/dict/data */
 export async function dictEdit(
   body: API.SysDictDataBo,
   options?: { [key: string]: any }
@@ -17,7 +17,7 @@ export async function dictEdit(
   });
 }
 
-/** 新增字典类型 POST /system/dict/data */
+/** 新增字典类型 新增字典类型 POST /system/dict/data */
 export async function dictAdd(
   body: API.SysDictDataBo,
   options?: { [key: string]: any }
@@ -32,7 +32,7 @@ export async function dictAdd(
   });
 }
 
-/** 查询字典数据列表 GET /system/dict/data/${param0} */
+/** 查询字典数据列表 查询字典数据详细 GET /system/dict/data/${param0} */
 export async function dictGetInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.dictGetInfoParams,
@@ -46,7 +46,7 @@ export async function dictGetInfo(
   });
 }
 
-/** 删除字典类型 DELETE /system/dict/data/${param0} */
+/** 删除字典类型 删除字典类型 DELETE /system/dict/data/${param0} */
 export async function dictRemove(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.dictRemoveParams,
@@ -60,7 +60,7 @@ export async function dictRemove(
   });
 }
 
-/** 查询字典数据列表 POST /system/dict/data/export */
+/** 查询字典数据列表 导出字典数据列表 POST /system/dict/data/export */
 export async function dictExport(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.dictExportParams,
@@ -77,7 +77,7 @@ export async function dictExport(
   });
 }
 
-/** 查询字典数据列表 GET /system/dict/data/list */
+/** 查询字典数据列表 查询字典数据列表 GET /system/dict/data/list */
 export async function dictList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.dictListParams,
@@ -96,7 +96,7 @@ export async function dictList(
   });
 }
 
-/** 根据字典类型查询字典数据信息 GET /system/dict/data/type/${param0} */
+/** 根据字典类型查询字典数据信息 根据字典类型查询字典数据信息 GET /system/dict/data/type/${param0} */
 export async function dictDictType(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.dictDictTypeParams,

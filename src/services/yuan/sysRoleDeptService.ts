@@ -2,7 +2,7 @@
 /* eslint-disable */
 import { request } from "@umijs/max";
 
-/** 修改部门角色 PUT /system/sysRoleDept */
+/** 修改部门角色 修改部门角色 PUT /system/sysRoleDept */
 export async function sysRoleDeptEdit(
   body: API.SysRoleDeptBo,
   options?: { [key: string]: any }
@@ -17,7 +17,7 @@ export async function sysRoleDeptEdit(
   });
 }
 
-/** 新增部门角色 POST /system/sysRoleDept */
+/** 新增部门角色 新增部门角色 POST /system/sysRoleDept */
 export async function sysRoleDeptAdd(
   body: API.SysRoleDeptBo,
   options?: { [key: string]: any }
@@ -32,7 +32,7 @@ export async function sysRoleDeptAdd(
   });
 }
 
-/** 获取部门角色详细信息 GET /system/sysRoleDept/${param0} */
+/** 获取部门角色详细信息 获取部门角色详细信息 GET /system/sysRoleDept/${param0} */
 export async function sysRoleDeptGetInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysRoleDeptGetInfoParams,
@@ -46,7 +46,7 @@ export async function sysRoleDeptGetInfo(
   });
 }
 
-/** 删除部门角色 DELETE /system/sysRoleDept/${param0} */
+/** 删除部门角色 删除部门角色 DELETE /system/sysRoleDept/${param0} */
 export async function sysRoleDeptRemove(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysRoleDeptRemoveParams,
@@ -60,7 +60,7 @@ export async function sysRoleDeptRemove(
   });
 }
 
-/** 导出部门角色列表 POST /system/sysRoleDept/export */
+/** 导出部门角色列表 导出部门角色列表 POST /system/sysRoleDept/export */
 export async function sysRoleDeptExport(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysRoleDeptExportParams,
@@ -77,7 +77,7 @@ export async function sysRoleDeptExport(
   });
 }
 
-/** 查询部门角色列表 GET /system/sysRoleDept/list */
+/** 查询部门角色列表 查询部门角色列表 GET /system/sysRoleDept/list */
 export async function sysRoleDeptList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysRoleDeptListParams,

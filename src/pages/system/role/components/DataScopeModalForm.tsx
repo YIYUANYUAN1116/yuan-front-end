@@ -28,7 +28,7 @@ const DataScopeModalForm: FC<RoleModalFormProps> = ({
       initialValues={{ ...record }}
       modalProps={{ okButtonProps: { loading } }}
       onFinish={async (values) => {
-        await run(values);
+        run(values);
         return true;
       }}
     >

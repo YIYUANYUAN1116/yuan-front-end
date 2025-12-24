@@ -2,7 +2,7 @@
 /* eslint-disable */
 import { request } from "@umijs/max";
 
-/** 修改oprelog PUT /system/sysOperLog */
+/** 修改oprelog 修改oprelog PUT /system/sysOperLog */
 export async function sysOperLogEdit(
   body: API.SysOperLogBo,
   options?: { [key: string]: any }
@@ -17,7 +17,7 @@ export async function sysOperLogEdit(
   });
 }
 
-/** 新增oprelog POST /system/sysOperLog */
+/** 新增oprelog 新增oprelog POST /system/sysOperLog */
 export async function sysOperLogAdd(
   body: API.SysOperLogBo,
   options?: { [key: string]: any }
@@ -32,7 +32,7 @@ export async function sysOperLogAdd(
   });
 }
 
-/** 获取oprelog详细信息 GET /system/sysOperLog/${param0} */
+/** 获取oprelog详细信息 获取oprelog详细信息 GET /system/sysOperLog/${param0} */
 export async function sysOperLogGetInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.SysOperLogGetInfoParams,
@@ -46,7 +46,7 @@ export async function sysOperLogGetInfo(
   });
 }
 
-/** 删除oprelog DELETE /system/sysOperLog/${param0} */
+/** 删除oprelog 删除oprelog DELETE /system/sysOperLog/${param0} */
 export async function sysOperLogRemove(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.SysOperLogRemoveParams,
@@ -60,7 +60,7 @@ export async function sysOperLogRemove(
   });
 }
 
-/** 导出oprelog列表 POST /system/sysOperLog/export */
+/** 导出oprelog列表 导出oprelog列表 POST /system/sysOperLog/export */
 export async function sysOperLogExport(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.SysOperLogExportParams,
@@ -77,7 +77,7 @@ export async function sysOperLogExport(
   });
 }
 
-/** 查询oprelog列表 GET /system/sysOperLog/list */
+/** 查询oprelog列表 查询oprelog列表 GET /system/sysOperLog/list */
 export async function sysOperLogList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.SysOperLogListParams,

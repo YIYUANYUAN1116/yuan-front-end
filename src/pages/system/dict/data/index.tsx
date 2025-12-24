@@ -110,7 +110,7 @@ export default function index() {
                         cancelText="取消"
                         okButtonProps={{ loading: delLoading }}
                         onConfirm={() => {
-                            delRun({ dictCodes: [record.dictCode as number] });
+                            delRun({ dictCodes: [record.dictCode] });
                             dictCache.delete(record.dictType)
                         }}
                     >
@@ -176,7 +176,7 @@ export default function index() {
                     {...props}
                     actionRef={actionRef}
                     onDelete={(keys) =>
-                        dictRemove({ dictCodes: keys as number[] }) 
+                        dictRemove({ dictCodes: keys as string[] }) 
                     }
                     afterSuccess={()=>dictCache.delete(dictType)}
                 />

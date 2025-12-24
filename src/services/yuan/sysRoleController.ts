@@ -2,7 +2,7 @@
 /* eslint-disable */
 import { request } from "@umijs/max";
 
-/** 修改角色 PUT /system/sysRole */
+/** 修改角色 修改角色 PUT /system/sysRole */
 export async function sysRoleEdit(
   body: API.SysRoleBo,
   options?: { [key: string]: any }
@@ -17,7 +17,7 @@ export async function sysRoleEdit(
   });
 }
 
-/** 新增角色 POST /system/sysRole */
+/** 新增角色 新增角色 POST /system/sysRole */
 export async function sysRoleAdd(
   body: API.SysRoleBo,
   options?: { [key: string]: any }
@@ -32,7 +32,7 @@ export async function sysRoleAdd(
   });
 }
 
-/** 获取角色详细信息 GET /system/sysRole/${param0} */
+/** 获取角色详细信息 获取角色详细信息 GET /system/sysRole/${param0} */
 export async function sysRoleGetInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysRoleGetInfoParams,
@@ -46,7 +46,7 @@ export async function sysRoleGetInfo(
   });
 }
 
-/** 删除角色 DELETE /system/sysRole/${param0} */
+/** 删除角色 删除角色 DELETE /system/sysRole/${param0} */
 export async function sysRoleRemove(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysRoleRemoveParams,
@@ -60,7 +60,7 @@ export async function sysRoleRemove(
   });
 }
 
-/** 获取角色已分配用户列表 GET /system/sysRole/authUser/allocatedList */
+/** 获取角色已分配用户列表 查询已分配用户角色列表 GET /system/sysRole/authUser/allocatedList */
 export async function allocatedUserList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.allocatedUserListParams,
@@ -82,7 +82,7 @@ export async function allocatedUserList(
   );
 }
 
-/** 批量取消授权用户 PUT /system/sysRole/authUser/cancelAll */
+/** 批量取消授权用户 批量取消授权用户 PUT /system/sysRole/authUser/cancelAll */
 export async function cancelAuthUserAll(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.cancelAuthUserAllParams,
@@ -97,7 +97,7 @@ export async function cancelAuthUserAll(
   });
 }
 
-/** 批量选择用户授权 PUT /system/sysRole/authUser/selectAll */
+/** 批量选择用户授权 批量选择用户授权 PUT /system/sysRole/authUser/selectAll */
 export async function selectAuthUserAll(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.selectAuthUserAllParams,
@@ -112,7 +112,7 @@ export async function selectAuthUserAll(
   });
 }
 
-/** 获取角色未分配用户列表 GET /system/sysRole/authUser/unallocatedList */
+/** 获取角色未分配用户列表 查询未分配用户角色列表 GET /system/sysRole/authUser/unallocatedList */
 export async function unallocatedUserList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.unallocatedUserListParams,
@@ -134,7 +134,7 @@ export async function unallocatedUserList(
   );
 }
 
-/** 导出角色列表 POST /system/sysRole/export */
+/** 导出角色列表 导出角色列表 POST /system/sysRole/export */
 export async function sysRoleExport(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysRoleExportParams,
@@ -151,7 +151,7 @@ export async function sysRoleExport(
   });
 }
 
-/** 查询角色列表 GET /system/sysRole/list */
+/** 查询角色列表 查询角色列表 GET /system/sysRole/list */
 export async function sysRoleList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysRoleListParams,
@@ -170,7 +170,7 @@ export async function sysRoleList(
   });
 }
 
-/** 获取角色选择框列表 GET /system/sysRole/optionselect */
+/** 获取角色选择框列表 获取角色选择框列表 GET /system/sysRole/optionselect */
 export async function sysRoleOptionselect(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysRoleOptionselectParams,

@@ -2,7 +2,7 @@
 /* eslint-disable */
 import { request } from "@umijs/max";
 
-/** 修改post PUT /system/sysPost */
+/** 修改post 修改post PUT /system/sysPost */
 export async function sysPostEdit(
   body: API.SysPostBo,
   options?: { [key: string]: any }
@@ -17,7 +17,7 @@ export async function sysPostEdit(
   });
 }
 
-/** 新增post POST /system/sysPost */
+/** 新增post 新增post POST /system/sysPost */
 export async function sysPostAdd(
   body: API.SysPostBo,
   options?: { [key: string]: any }
@@ -32,7 +32,7 @@ export async function sysPostAdd(
   });
 }
 
-/** 获取post详细信息 GET /system/sysPost/${param0} */
+/** 获取post详细信息 获取post详细信息 GET /system/sysPost/${param0} */
 export async function sysPostGetInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.SysPostGetInfoParams,
@@ -46,7 +46,7 @@ export async function sysPostGetInfo(
   });
 }
 
-/** 删除post DELETE /system/sysPost/${param0} */
+/** 删除post 删除post DELETE /system/sysPost/${param0} */
 export async function sysPostRemove(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.SysPostRemoveParams,
@@ -60,7 +60,7 @@ export async function sysPostRemove(
   });
 }
 
-/** 导出post列表 POST /system/sysPost/export */
+/** 导出post列表 导出post列表 POST /system/sysPost/export */
 export async function sysPostExport(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.SysPostExportParams,
@@ -77,7 +77,7 @@ export async function sysPostExport(
   });
 }
 
-/** 查询post列表 GET /system/sysPost/list */
+/** 查询post列表 查询post列表 GET /system/sysPost/list */
 export async function sysPostList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.SysPostListParams,

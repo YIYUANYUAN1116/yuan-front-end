@@ -2,7 +2,7 @@
 /* eslint-disable */
 import { request } from "@umijs/max";
 
-/** 修改用户 PUT /system/sysUser */
+/** 修改用户 修改用户 PUT /system/sysUser */
 export async function sysUserEdit(
   body: API.SysUserBo,
   options?: { [key: string]: any }
@@ -17,7 +17,7 @@ export async function sysUserEdit(
   });
 }
 
-/** 新增用户 POST /system/sysUser */
+/** 新增用户 新增用户 POST /system/sysUser */
 export async function sysUserAdd(
   body: API.SysUserBo,
   options?: { [key: string]: any }
@@ -32,7 +32,7 @@ export async function sysUserAdd(
   });
 }
 
-/** 获取用户详细信息 GET /system/sysUser/${param0} */
+/** 获取用户详细信息 获取用户详细信息 GET /system/sysUser/${param0} */
 export async function sysUserGetInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysUserGetInfoParams,
@@ -46,7 +46,7 @@ export async function sysUserGetInfo(
   });
 }
 
-/** 删除用户 DELETE /system/sysUser/${param0} */
+/** 删除用户 删除用户 DELETE /system/sysUser/${param0} */
 export async function sysUserRemove(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysUserRemoveParams,
@@ -60,7 +60,7 @@ export async function sysUserRemove(
   });
 }
 
-/** 用户授权角色 PUT /system/sysUser/authRole */
+/** 用户授权角色 用户授权角色 PUT /system/sysUser/authRole */
 export async function sysUserInsertAuthRole(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysUserInsertAuthRoleParams,
@@ -75,7 +75,7 @@ export async function sysUserInsertAuthRole(
   });
 }
 
-/** 根据用户编号获取授权角色 GET /system/sysUser/authRole/${param0} */
+/** 根据用户编号获取授权角色 根据用户编号获取授权角色 GET /system/sysUser/authRole/${param0} */
 export async function sysUserGetAuthRole(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysUserGetAuthRoleParams,
@@ -89,7 +89,7 @@ export async function sysUserGetAuthRole(
   });
 }
 
-/** 导出用户列表 POST /system/sysUser/export */
+/** 导出用户列表 导出用户列表 POST /system/sysUser/export */
 export async function sysUserExport(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysUserExportParams,
@@ -106,7 +106,7 @@ export async function sysUserExport(
   });
 }
 
-/** 获取用户详细信息 GET /system/sysUser/getInfo */
+/** 获取用户详细信息 获取用户详细信息 GET /system/sysUser/getInfo */
 export async function sysUserGetCurrentInfo(options?: { [key: string]: any }) {
   return request<API.RUserInfoVo>("/system/sysUser/getInfo", {
     method: "GET",
@@ -114,7 +114,7 @@ export async function sysUserGetCurrentInfo(options?: { [key: string]: any }) {
   });
 }
 
-/** 查询用户列表 GET /system/sysUser/list */
+/** 查询用户列表 查询用户列表 GET /system/sysUser/list */
 export async function sysUserList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysUserListParams,

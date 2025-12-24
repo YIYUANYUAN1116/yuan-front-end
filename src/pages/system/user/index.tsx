@@ -91,7 +91,7 @@ export default () => {
       hideInSearch: true,
       render: (text, record) => (
         <Space size="small">
-          <Access accessible={access.canAccess('system:user:edit') || false}>
+          <Access key = 'edit' accessible={access.canAccess('system:user:edit') || false}>
             <UserModalForm
               mode="edit"
               trigger={<a>编辑</a>}
@@ -100,18 +100,18 @@ export default () => {
             />
           </Access>
 
-          <Access accessible={access.canAccess('system:user:assign')}>
+          <Access key = 'assign' accessible={access.canAccess('system:user:assign')}>
             <UserRoleModalForm userId={record.userId!} reload={actionRef.current?.reload} />
           </Access>
 
-          <Access accessible={access.canAccess('system:user:remove')}>
+          <Access key = 'remove' accessible={access.canAccess('system:user:remove')}>
             <Popconfirm
               title="用户删除"
               description={`确认删除用户：${record.nickName}`}
               okText="确认"
               cancelText="取消"
               okButtonProps={{ loading: deleteLoading }}
-              onConfirm={() => deleteRun({ userIds: [record.userId as number] })}
+              onConfirm={() => deleteRun({ userIds: [record.userId]})}
             >
               <a style={{ color: 'red' }}>删除</a>
             </Popconfirm>
@@ -138,14 +138,13 @@ export default () => {
       pagination={{ pageSize: 10 }}
       headerTitle="用户管理"
       toolBarRender={() => [
-        <Access accessible={access.canAccess('system:user:add')}>
+        <Access key="add" accessible={access.canAccess('system:user:add')}>
           <UserModalForm
             mode="add"
             trigger={
               <Button type="primary">新增</Button>
             }
             reload={actionRef.current?.reload}
-            key="add"
           />
         </Access>
 
@@ -157,12 +156,12 @@ export default () => {
       }}
       tableAlertOptionRender={false}
       tableAlertRender={(props) => (
-        <Access accessible={access.canAccess('system:user:remove')}>
+        <Access key="remove" accessible={access.canAccess('system:user:remove')}>
           <BatchDeleteAlert<API.SysUserVo>
             {...props}
             actionRef={actionRef}
             onDelete={(keys) =>
-              sysUserRemove({ userIds: keys as number[] })
+              sysUserRemove({ userIds: keys as string[]})
             }
           />
         </Access>

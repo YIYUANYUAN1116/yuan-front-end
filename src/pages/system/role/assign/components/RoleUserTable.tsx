@@ -4,23 +4,24 @@ import { ProTable } from '@ant-design/pro-components';
 import { Modal, Space, Table } from 'antd';
 import { userBaseColumns } from './userColumns';
 import { useTableRequest } from '@/hooks/table/useTableRequest';
+import { allocatedUserList, unallocatedUserList } from '@/services/yuan/sysRoleController';
 
 type RoleUserTableProps = {
-  roleId: number;
+  model: string;
+  roleId: string;
   title: any;
-  request: any;
   actionText: string;
   confirmText: (count: number) => string;
-  onBatchAction: (keys: number[]) => Promise<API.RVoid>;
+  onBatchAction: (keys: string[]) => Promise<API.RVoid>;
   reloadParent?: () => void;
   toolBarRender?: () => React.ReactNode[];
   actionRef?: React.RefObject<ActionType | null>;
 };
 
 const RoleUserTable = ({
+  model,
   roleId,
   title,
-  request,
   actionText,
   confirmText,
   onBatchAction,
@@ -30,15 +31,15 @@ const RoleUserTable = ({
 }: RoleUserTableProps) => {
   const internalActionRef = useRef<ActionType | null>(null);
   const ref = actionRef || internalActionRef;
-  const fetchRequest =  useTableRequest(request)
-
+  const isAllocatedUser = model === "Y";
+  const request = useTableRequest(isAllocatedUser ? allocatedUserList : unallocatedUserList);
   return (
     <ProTable<API.SysUserVo>
       actionRef={ref}
       columns={userBaseColumns}
       rowKey="userId"
       params={{ roleId }}
-      request={fetchRequest}
+      request={request}
       search={{ labelWidth: 'auto' }}
       pagination={{ pageSize: 10 }}
       headerTitle={title}
@@ -60,7 +61,7 @@ const RoleUserTable = ({
                 title: actionText,
                 content: confirmText(selectedRowKeys.length),
                 onOk: async () => {
-                  await onBatchAction(selectedRowKeys as number[]);
+                  await onBatchAction(selectedRowKeys as string[]);
                   onCleanSelected();
                   ref.current?.reload();
                   reloadParent?.();
@@ -72,7 +73,7 @@ const RoleUserTable = ({
           </a>
         </Space>
       )}
-      toolBarRender={(action, rows) => toolBarRender?.() || []}
+      toolBarRender={toolBarRender}
     />
   );
 };

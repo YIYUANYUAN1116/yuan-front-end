@@ -11,6 +11,7 @@ import { useActionRequest } from '@/hooks/action/useActionRequest';
 import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 import { useDictDataTagMap } from '@/hooks/dict/useDictDataTagMap';
 import { Access, useAccess } from '@umijs/max';
+import { useTableRequest } from '@/hooks/table/useTableRequest';
 
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
@@ -39,7 +40,7 @@ export default () => {
           <Popconfirm
             title="确认删除？"
             okButtonProps={{ loading: deleteLoading }}
-            onConfirm={() => deleteRun({ menuIds: [record.menuId as number] })}
+            onConfirm={() => deleteRun({ menuIds: [record.menuId] })}
             okText="确认"
             cancelText="取消"
           >
@@ -150,19 +151,14 @@ export default () => {
     },
   ], [reload, statusEnum]);
 
-
-  const fetchDictData = async (params: any) => {
-    const res = await sysMenuListTree({ bo: params } as API.sysMenuListTreeParams);
-    return { data: res.data || [], success: true };
-  }
-
+  const request = useTableRequest(sysMenuListTree);
   return (
     <ProTable
       rowKey="menuId"
       columns={columns}
       actionRef={actionRef}
       cardBordered
-      request={async (params) => fetchDictData(params)}
+      request={request}
       pagination={false}
       headerTitle="菜单管理"
       expandable={{

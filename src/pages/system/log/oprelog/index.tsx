@@ -155,7 +155,7 @@ export default () => {
                         {...props}
                         actionRef={actionRef}
                         onDelete={(keys) =>
-                            sysOperLogRemove({ operIds: keys as number[] })
+                            sysOperLogRemove({ operIds: keys as string[] })
                         }
                     />
                 </Access>

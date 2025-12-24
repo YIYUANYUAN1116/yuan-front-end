@@ -2,7 +2,7 @@
 /* eslint-disable */
 import { request } from "@umijs/max";
 
-/** 修改菜单 PUT /system/sysMenu */
+/** 修改菜单 修改菜单 PUT /system/sysMenu */
 export async function sysMenuEdit(
   body: API.SysMenuBo,
   options?: { [key: string]: any }
@@ -17,7 +17,7 @@ export async function sysMenuEdit(
   });
 }
 
-/** 新增菜单 POST /system/sysMenu */
+/** 新增菜单 新增菜单 POST /system/sysMenu */
 export async function sysMenuAdd(
   body: API.SysMenuBo,
   options?: { [key: string]: any }
@@ -32,7 +32,7 @@ export async function sysMenuAdd(
   });
 }
 
-/** 获取菜单详细信息 GET /system/sysMenu/${param0} */
+/** 获取菜单详细信息 获取菜单详细信息 GET /system/sysMenu/${param0} */
 export async function sysMenuGetInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysMenuGetInfoParams,
@@ -46,7 +46,7 @@ export async function sysMenuGetInfo(
   });
 }
 
-/** 删除菜单 DELETE /system/sysMenu/${param0} */
+/** 删除菜单 删除菜单 DELETE /system/sysMenu/${param0} */
 export async function sysMenuRemove(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysMenuRemoveParams,
@@ -60,7 +60,7 @@ export async function sysMenuRemove(
   });
 }
 
-/** 导出菜单列表 POST /system/sysMenu/export */
+/** 导出菜单列表 导出菜单列表 POST /system/sysMenu/export */
 export async function sysMenuExport(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysMenuExportParams,
@@ -77,7 +77,7 @@ export async function sysMenuExport(
   });
 }
 
-/** 查询菜单列表 GET /system/sysMenu/list */
+/** 查询菜单列表 查询菜单列表 GET /system/sysMenu/list */
 export async function sysMenuList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysMenuListParams,
@@ -96,13 +96,13 @@ export async function sysMenuList(
   });
 }
 
-/** 查询树型菜单列表 GET /system/sysMenu/listTree */
+/** 查询树型菜单列表 查询树型菜单列表 GET /system/sysMenu/listTree */
 export async function sysMenuListTree(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysMenuListTreeParams,
   options?: { [key: string]: any }
 ) {
-  return request<API.RListSysMenuVo>("/system/sysMenu/listTree", {
+  return request<API.TableDataInfoSysMenuVo>("/system/sysMenu/listTree", {
     method: "GET",
     params: {
       ...params,
@@ -113,7 +113,7 @@ export async function sysMenuListTree(
   });
 }
 
-/** 获取菜单路由 GET /system/sysMenu/menuRouters */
+/** 获取菜单路由 获取路由信息 GET /system/sysMenu/menuRouters */
 export async function menuRouters(options?: { [key: string]: any }) {
   return request<API.RListReactRouterVo>("/system/sysMenu/menuRouters", {
     method: "GET",
@@ -138,7 +138,7 @@ export async function sysMenuRoleMenuTreeselect(
   );
 }
 
-/** 获取菜单下拉树列表 GET /system/sysMenu/treeselect */
+/** 获取菜单下拉树列表 获取菜单下拉树列表 GET /system/sysMenu/treeselect */
 export async function sysMenuTreeselect(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysMenuTreeselectParams,

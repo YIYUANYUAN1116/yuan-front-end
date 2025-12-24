@@ -2,7 +2,7 @@
 /* eslint-disable */
 import { request } from "@umijs/max";
 
-/** 修改字典类型 PUT /system/dict/type */
+/** 修改字典类型 修改字典类型 PUT /system/dict/type */
 export async function dictTypeEdit(
   body: API.SysDictTypeBo,
   options?: { [key: string]: any }
@@ -17,7 +17,7 @@ export async function dictTypeEdit(
   });
 }
 
-/** 新增字典类型 POST /system/dict/type */
+/** 新增字典类型 新增字典类型 POST /system/dict/type */
 export async function dictTypeAdd(
   body: API.SysDictTypeBo,
   options?: { [key: string]: any }
@@ -32,7 +32,7 @@ export async function dictTypeAdd(
   });
 }
 
-/** 查询字典类型详细 GET /system/dict/type/${param0} */
+/** 查询字典类型详细 查询字典类型详细 GET /system/dict/type/${param0} */
 export async function dictTypeGetInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.dictTypeGetInfoParams,
@@ -46,7 +46,7 @@ export async function dictTypeGetInfo(
   });
 }
 
-/** 删除字典类型 DELETE /system/dict/type/${param0} */
+/** 删除字典类型 删除字典类型 DELETE /system/dict/type/${param0} */
 export async function dictTypeRemove(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.dictTypeRemoveParams,
@@ -60,7 +60,7 @@ export async function dictTypeRemove(
   });
 }
 
-/** 查询所有字典类型列表 GET /system/dict/type/all */
+/** 查询所有字典类型列表 查询所有字典类型列表 GET /system/dict/type/all */
 export async function dictTypeAll(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.dictTypeAllParams,
@@ -79,7 +79,7 @@ export async function dictTypeAll(
   });
 }
 
-/** 导出字典类型列表 POST /system/dict/type/export */
+/** 导出字典类型列表 导出字典类型列表 POST /system/dict/type/export */
 export async function dictTypeExport(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.dictTypeExportParams,
@@ -96,7 +96,7 @@ export async function dictTypeExport(
   });
 }
 
-/** 查询字典类型列表 GET /system/dict/type/list */
+/** 查询字典类型列表 查询字典类型列表 GET /system/dict/type/list */
 export async function dictTypeList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.dictTypeListParams,
@@ -115,7 +115,7 @@ export async function dictTypeList(
   });
 }
 
-/** 获取字典选择框列表 GET /system/dict/type/optionselect */
+/** 获取字典选择框列表 获取字典选择框列表 GET /system/dict/type/optionselect */
 export async function dictTypeOptionselect(options?: { [key: string]: any }) {
   return request<API.RListSysDictTypeVo>("/system/dict/type/optionselect", {
     method: "GET",
@@ -123,7 +123,7 @@ export async function dictTypeOptionselect(options?: { [key: string]: any }) {
   });
 }
 
-/** 刷新字典缓存 DELETE /system/dict/type/refreshCache */
+/** 刷新字典缓存 刷新字典缓存 DELETE /system/dict/type/refreshCache */
 export async function dictTypeRefreshCache(options?: { [key: string]: any }) {
   return request<API.RVoid>("/system/dict/type/refreshCache", {
     method: "DELETE",

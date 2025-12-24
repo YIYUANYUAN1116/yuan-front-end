@@ -45,7 +45,7 @@ const UserModalForm: FC<RoleModalFormProps> = ({
             roleId: record?.roleId
           } as API.sysMenuTreeselectParams);
 
-          setMenuTree(convertTree(res.data?.menus || []))
+          setMenuTree(convertTree(res.data?.treeList || []))
           form.setFieldsValue({
             menuIds: res.data?.checkedKeys as []// 这里必须是数组
           })

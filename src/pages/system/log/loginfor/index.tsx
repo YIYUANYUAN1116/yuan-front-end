@@ -128,7 +128,7 @@ export default () => {
             {...props}
             actionRef={actionRef}
             onDelete={(keys) =>
-              sysLogininforRemove({ infoIds: keys as number[] })
+              sysLogininforRemove({ infoIds: keys as string[] })
             }
           />
         </Access>

@@ -139,7 +139,7 @@ export default () => {
                 okText="确认"
                 cancelText="取消"
                 okButtonProps={{ loading: deleteLoading }}
-                onConfirm={() => deleteRun({ roleIds: [record.roleId as number] })}
+                onConfirm={() => deleteRun({ roleIds: [record.roleId] })}
               >
                 <a style={{ color: 'red' }}>删除</a>
               </Popconfirm>
@@ -209,7 +209,7 @@ export default () => {
               {...props}
               actionRef={actionRef}
               onDelete={(keys) =>
-                sysRoleRemove({ roleIds: keys as number[] })
+                sysRoleRemove({ roleIds: keys as string[] })
               }
             />
           </Access>

@@ -113,7 +113,7 @@ export default () => {
               cancelText="取消"
               okButtonProps={{ loading: deleteLoading }}
               onConfirm={() =>
-                deleteRun({ ids: [record.id as number] })
+                deleteRun({ ids: [record.id] })
               }
             >
               <a style={{ color: "red" }}>删除</a>
@@ -161,7 +161,7 @@ export default () => {
           <BatchDeleteAlert<API.SysTenantVo>
             {...props}
             actionRef={actionRef}
-            onDelete={(keys) => sysUserRemove({ userIds: keys as number[] })}
+            onDelete={(keys) => sysTenantRemove({ ids: keys as string[] })}
           />
         </Access>
       )}

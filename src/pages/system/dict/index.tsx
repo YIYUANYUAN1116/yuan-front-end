@@ -100,7 +100,7 @@ const index = () => {
                             cancelText="取消"
                             okButtonProps={{ loading: deleteLoading }}
                             onConfirm={() => {
-                                deleteRun({ dictIds: [record.dictId as number] })
+                                deleteRun({ dictIds: [record.dictId] })
                                 dictCache.delete(record.dictType)
                             }}
                         >
@@ -158,7 +158,7 @@ const index = () => {
                         {...props}
                         actionRef={actionRef}
                         onDelete={(keys) =>
-                            dictTypeRemove({ dictIds: keys as number[] })
+                            dictTypeRemove({ dictIds: keys as string[] })
                         }
                     />
                 </Access>

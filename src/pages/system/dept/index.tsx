@@ -57,7 +57,7 @@ export default () => {
       dataIndex: "orderNum",
       hideInSearch: true,
       sorter: true,
-      defaultSortOrder: 'descend', 
+      defaultSortOrder: 'descend',
     },
     {
       title: "操作",
@@ -82,7 +82,7 @@ export default () => {
               okText="确认"
               cancelText="取消"
               okButtonProps={{ loading: deleteLoading }}
-              onConfirm={() => deleteRun({ deptIds: [record.deptId as number] })}
+              onConfirm={() => deleteRun({ deptIds: [record.deptId] })}
             >
               <a style={{ color: "red" }}>删除</a>
             </Popconfirm>
@@ -96,18 +96,15 @@ export default () => {
     actionRef.current?.reload
   );
 
-  const fetchDictData = async (params: any) => {
-    const res = await sysDeptListTree({ bo: params } as API.sysDeptListTreeParams);
-    return { data: res.data || [], success: true };
-  }
+  const request = useTableRequest(sysDeptListTree);
 
   return (
-    <ProTable
+    <ProTable<API.SysDeptVo>
       rowKey="deptId"
       columns={columns}
       actionRef={actionRef}
       cardBordered
-      request={async (params) => fetchDictData(params)}
+      request={request}
       pagination={false}
       headerTitle="部门管理"
       expandable={{

@@ -5,7 +5,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import { selectAuthUserAll, unallocatedUserList } from "@/services/yuan/sysRoleController";
 
 type Props = {
-  roleId:  number;
+  roleId:  string;
   reload: () => void;
   triggerText?: string;
 };
@@ -26,9 +26,9 @@ const AuthUserListDrawerForm = ({ triggerText = "新增", roleId, reload }: Prop
       submitter={false}
     >
       <RoleUserTable
-        roleId={Number(roleId)}
+        model="N"
+        roleId={roleId}
         title="未分配用户列表"
-        request={unallocatedUserList}
         actionText="批量授权"
         confirmText={(n) => `确认授权选中的 ${n} 条用户吗？`}
         onBatchAction={(keys) => selectAuthUserAll({ roleId, userIds: keys })}

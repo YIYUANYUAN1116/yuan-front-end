@@ -2,7 +2,7 @@
 /* eslint-disable */
 import { request } from "@umijs/max";
 
-/** 修改多租户 PUT /system/sysTenant */
+/** 修改多租户 修改多租户 PUT /system/sysTenant */
 export async function sysTenantEdit(
   body: API.SysTenantBo,
   options?: { [key: string]: any }
@@ -17,7 +17,7 @@ export async function sysTenantEdit(
   });
 }
 
-/** 新增多租户 POST /system/sysTenant */
+/** 新增多租户 新增多租户 POST /system/sysTenant */
 export async function sysTenantAdd(
   body: API.SysTenantBo,
   options?: { [key: string]: any }
@@ -32,7 +32,7 @@ export async function sysTenantAdd(
   });
 }
 
-/** 获取多租户详细信息 GET /system/sysTenant/${param0} */
+/** 获取多租户详细信息 获取多租户详细信息 GET /system/sysTenant/${param0} */
 export async function sysTenantGetInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysTenantGetInfoParams,
@@ -46,7 +46,7 @@ export async function sysTenantGetInfo(
   });
 }
 
-/** 删除多租户 DELETE /system/sysTenant/${param0} */
+/** 删除多租户 删除多租户 DELETE /system/sysTenant/${param0} */
 export async function sysTenantRemove(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysTenantRemoveParams,
@@ -60,7 +60,7 @@ export async function sysTenantRemove(
   });
 }
 
-/** 导出多租户列表 POST /system/sysTenant/export */
+/** 导出多租户列表 导出多租户列表 POST /system/sysTenant/export */
 export async function sysTenantExport(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysTenantExportParams,
@@ -77,7 +77,7 @@ export async function sysTenantExport(
   });
 }
 
-/** 查询多租户列表 GET /system/sysTenant/list */
+/** 查询多租户列表 查询多租户列表 GET /system/sysTenant/list */
 export async function sysTenantList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.sysTenantListParams,

@@ -596,6 +596,7 @@ declare namespace API {
     updateTime?: string;
     /** 备注 */
     remark?: string;
+    scope?: string;
     menuTypes?: string[];
   };
 
@@ -673,6 +674,7 @@ declare namespace API {
     updateTime?: string;
     /** 备注 */
     remark?: string;
+    scope?: string;
     children?: any[];
   };
 
@@ -783,6 +785,8 @@ declare namespace API {
     postSort: number;
     /** 状态（0正常 1停用） */
     status: string;
+    /** 数据范围（1：所有数据权限；2：自定义数据权限；3：本部门数据权限；4：本部门及以下数据权限；5：仅本人数据权限） */
+    dataScope?: string;
     /** 创建部门 */
     createDept?: string;
     /** 创建者 */
@@ -828,6 +832,8 @@ declare namespace API {
     postSort?: number;
     /** 状态（0正常 1停用） */
     status?: string;
+    /** 数据范围（1：所有数据权限；2：自定义数据权限；3：本部门数据权限；4：本部门及以下数据权限；5：仅本人数据权限） */
+    dataScope?: string;
     /** 创建部门 */
     createDept?: string;
     /** 创建者 */
@@ -879,6 +885,7 @@ declare namespace API {
     menuIdList?: string[];
     menuNames?: string[];
     amount?: number;
+    superAdmin?: boolean;
   };
 
   type SysRoleDeptBo = {
@@ -1001,7 +1008,7 @@ declare namespace API {
   type SysTenantBo = {
     id?: string;
     /** 租户编号 */
-    tenantId: string;
+    tenantId?: string;
     /** 联系人 */
     contactUserName?: string;
     /** 联系电话 */
@@ -1295,6 +1302,7 @@ declare namespace API {
     roles?: SysRoleVo[];
     /** 部门对象 */
     dept?: SysDeptVo;
+    deptName?: string;
   };
 
   type TableDataInfoSysDeptVo = {
@@ -1385,6 +1393,7 @@ declare namespace API {
       updateBy?: number;
       updateTime?: string;
       remark?: string;
+      scope?: string;
       children?: any[];
     }[];
     /** 消息状态码 */
@@ -1484,8 +1493,8 @@ declare namespace API {
   type TreeLong = {
     name?: { empty?: boolean };
     id?: string;
-    parentId?: string;
     config?: TreeNodeConfig;
+    parentId?: string;
     weight?: any;
     empty?: boolean;
   };

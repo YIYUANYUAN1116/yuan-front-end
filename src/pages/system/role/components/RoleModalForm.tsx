@@ -103,13 +103,12 @@ const UserModalForm: FC<RoleModalFormProps> = ({
           fieldProps={{
             treeData: menuTree, // ← 接口返回的菜单树
             treeCheckable: true,
-            treeCheckStrictly: true,
             showCheckedStrategy: TreeSelect.SHOW_ALL,
             showSearch: true
           }}
-          transform={(value) => ({
-            menuIds: value?.map((v: any) => v.value),
-          })}
+          // transform={(value) => ({
+          //   menuIds: value?.map((v: any) => v.value),
+          // })}
         />
       </>
     </ModalForm>

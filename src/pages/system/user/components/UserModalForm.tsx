@@ -1,9 +1,11 @@
 import { OperationMode, OperationModes } from '@/const/Const';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
+import { sysDeptTreeselect } from '@/services/yuan/sysDeptController';
 import { sysUserAdd, sysUserEdit } from '@/services/yuan/sysUserController';
-import { type ActionType, ModalForm, ProForm, ProFormSelect, ProFormText, ProFormTextArea } from '@ant-design/pro-components';
+import { convertTree } from '@/util/TreeUtils';
+import { type ActionType, ModalForm, ProForm, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect } from '@ant-design/pro-components';
 import { Form } from 'antd';
-import type { FC } from 'react';
+import { useState, type FC } from 'react';
 
 
 interface UserModalFormProps {
@@ -22,7 +24,9 @@ const UserModalForm: FC<UserModalFormProps> = ({
   const isEdit = mode === OperationModes.EDIT;
   const { run: run, loading: loading } = useActionRequest(isEdit ? sysUserEdit : sysUserAdd, reload)
   const [form] = Form.useForm<API.SysUserBo>();
-  
+  const [treeData, setTreeData] = useState<any[]>([]);
+
+
   return (
     <ModalForm<API.SysUserBo>
       title={isEdit ? '编辑用户' : '新建用户'}
@@ -33,6 +37,14 @@ const UserModalForm: FC<UserModalFormProps> = ({
       onFinish={async (values) => {
         run(values);
         return true;
+      }}
+      onOpenChange={async (visible) => {
+        if (visible) {
+          const res = await sysDeptTreeselect({
+            bo: {}
+          } as API.sysMenuTreeselectParams);
+          setTreeData(convertTree(res.data?.treeList || []));
+        }
       }}
     >
       <>
@@ -93,7 +105,18 @@ const UserModalForm: FC<UserModalFormProps> = ({
           />
         </ProForm.Group>
 
-        <ProFormText name="deptName" label="部门" placeholder="请输入部门" />
+        <ProFormTreeSelect
+          name="deptId"
+          label="部门"
+          placeholder="请选择部门"
+          fieldProps={{
+            treeData: treeData, // ← 接口返回的菜单树
+            showSearch: true,
+            treeNodeFilterProp: "deptName",
+          }}
+          rules={[{ required: true, message: "请选择部门" }]}
+        />
+
         <ProFormTextArea name="remark" label="备注" placeholder="请输入备注" />
 
         {/* 隐藏的userId，只在编辑时用 */}

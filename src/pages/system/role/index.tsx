@@ -14,14 +14,7 @@ import { Access, history, useAccess } from '@umijs/max';
 import { useTableRequest } from '@/hooks/table/useTableRequest';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
 
-export const authScopeOptions = [
-  { color: 'green', label: '全部数据权限', value: '1' },
-  { color: 'default', label: '自定数据权限', value: '2' },
-  { color: 'orange', label: '本部门数据权限', value: '3' },
-  { color: 'cyan', label: '本部门及以下数据权限', value: '4' },
-  { color: 'error', label: '仅本人数据权限', value: '5' },
-  { color: 'default', label: '部门及以下或本人数据权限', value: '6' },
-];
+
 
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
@@ -64,21 +57,13 @@ export default () => {
       valueEnum: statusEnum,
     },
     {
-      title: '数据范围',
-      dataIndex: 'dataScope',
+      title: '显示顺序',
+      dataIndex: 'roleSort',
       ellipsis: true,
       hideInSearch: true,
-      render: (_, record) => {
-        const found = authScopeOptions.find(
-          (item) => item.value === record.dataScope,
-        );
-        if (found) {
-          return <Tag color={found.color}>{found.label}</Tag>;
-        }
-        return <Tag>{record.dataScope}</Tag>;
-      },
+      sorter: true,
+      defaultSortOrder: 'ascend', 
     },
-
     {
       title: '备注',
       dataIndex: 'remark',

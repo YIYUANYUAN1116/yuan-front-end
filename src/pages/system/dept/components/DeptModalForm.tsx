@@ -23,10 +23,12 @@ export const DeptModalForm = (props: ModalFormProps) => {
       title={isEdit ? '编辑岗位' : '新增岗位'}
       trigger={trigger}
       width={520}
-      initialValues={{
-        ...record,
-        status: record?.status ?? '0', // ⭐ 新增默认启用
-      }}
+      initialValues={isEdit
+        ? { ...record } // 编辑：完整回填
+        : {
+          status: '0',            // 新增默认启用
+          parentId: record?.deptId, // 新增时父节点
+        }}
       drawerProps={{
         destroyOnClose: true,
         closable: true, // 默认就是 true

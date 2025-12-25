@@ -73,9 +73,13 @@ export default () => {
       hideInSearch: true,
     },
     {
+      title: '部门id',
+      dataIndex: 'deptId',
+      ...HIDE_COLUMN
+    },
+    {
       title: '部门',
-      dataIndex: 'deptName',
-      hideInSearch: true,
+      dataIndex: 'deptName'
     },
     {
       title: '创建时间',

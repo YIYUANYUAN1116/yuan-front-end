@@ -6,11 +6,21 @@ import { HIDE_COLUMN } from "@/util/ColumsUtils";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
 import { Access, useAccess } from "@umijs/max";
-import { Button, Popconfirm, Space, Table } from "antd";
+import { Button, Popconfirm, Space, Table, Tag } from "antd";
 import { useRef } from "react";
 import { PostModalForm } from "./components/PostModalForm";
 import { DictEnum } from "@/const/dict-enum";
 import { useDictDataValueEnum } from "@/hooks/dict/useDictDataValueEnum";
+
+export const authScopeOptions = [
+  { color: 'green', label: '全部数据权限', value: '1' },
+  { color: 'default', label: '自定数据权限', value: '2' },
+  { color: 'orange', label: '本部门数据权限', value: '3' },
+  { color: 'cyan', label: '本部门及以下数据权限', value: '4' },
+  { color: 'error', label: '仅本人数据权限', value: '5' },
+  { color: 'default', label: '部门及以下或本人数据权限', value: '6' },
+];
+
 export default () => {
   /**权限控制 */
   const access = useAccess();
@@ -31,24 +41,34 @@ export default () => {
       width: 48,
     },
     {
-      title: "租户编号",
-      dataIndex: "tenantId",
-      hideInSearch: true,
+      title: "岗位名称",
+      dataIndex: "postName"
     },
     {
       title: "岗位编码",
       dataIndex: "postCode"
     },
-    {
-      title: "岗位名称",
-      dataIndex: "postName"
+     {
+      title: '数据范围',
+      dataIndex: 'dataScope',
+      ellipsis: true,
+      hideInSearch: true,
+      render: (_, record) => {
+        const found = authScopeOptions.find(
+          (item) => item.value === record.dataScope,
+        );
+        if (found) {
+          return <Tag color={found.color}>{found.label}</Tag>;
+        }
+        return <Tag>{record.dataScope}</Tag>;
+      },
     },
     {
       title: "显示顺序",
       dataIndex: "postSort",
       hideInSearch: true,
     },
-    {
+    { 
       title: "状态",
       dataIndex: "status",
       valueType: 'select',

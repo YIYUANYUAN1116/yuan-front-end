@@ -3,7 +3,7 @@ import { Form } from 'antd';
 import {  type FC } from 'react';
 import { sysRoleEdit, sysRoleAdd } from '@/services/yuan/sysRoleController';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
-import { authScopeOptions } from '..';
+
 
 interface RoleModalFormProps {
   trigger?: React.ReactNode;
@@ -52,13 +52,6 @@ const DataScopeModalForm: FC<RoleModalFormProps> = ({
             placeholder="请输入权限字符"
           />
         </ProForm.Group>
-        <ProFormSelect
-          name="dataScope"
-          label="数据权限"
-          placeholder="请选择数据权限"
-          options={authScopeOptions}
-          rules={[{ required: true, message: "请选择数据权限" }]}
-        />
       </>
     </ModalForm>
   );

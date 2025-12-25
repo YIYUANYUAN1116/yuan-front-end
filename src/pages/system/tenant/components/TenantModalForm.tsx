@@ -21,7 +21,7 @@ export const TenantModalForm = (props: TenantModalFormProps) => {
     <ModalForm<API.SysTenantBo>
       title={isEdit ? '编辑租户' : '新增租户'}
       trigger={trigger}
-       initialValues={{
+      initialValues={{
         ...record,
         status: record?.status ?? '0', // ⭐ 新增默认启用
       }}
@@ -32,7 +32,7 @@ export const TenantModalForm = (props: TenantModalFormProps) => {
       }}
     >
       <ProFormText name="id" hidden />
-      <ProForm.Group>
+      {/* <ProForm.Group>
         <ProFormText
           width="md"
           name="tenantId"
@@ -53,7 +53,7 @@ export const TenantModalForm = (props: TenantModalFormProps) => {
           ]}
           radioType="button"
         />
-      </ProForm.Group>
+      </ProForm.Group> */}
 
       <ProForm.Group>
         <ProFormText
@@ -77,13 +77,15 @@ export const TenantModalForm = (props: TenantModalFormProps) => {
           name="contactUserName"
           label="联系人"
           placeholder="请输入联系人"
+           rules={[{ required: true, message: '请输入联系人' }]}
         />
         <ProFormText
           width="md"
           name="contactPhone"
           label="联系电话"
           placeholder="请输入联系电话"
-        
+           rules={[{ required: true, message: '请输入联系电话' }]}
+
         />
       </ProForm.Group>
 
@@ -102,6 +104,18 @@ export const TenantModalForm = (props: TenantModalFormProps) => {
           tooltip="-1不限制"
         />
       </ProForm.Group>
+
+      <ProFormRadio.Group
+        width="md"
+        name="status"
+        label="租户状态"
+        fieldProps={{
+          buttonStyle: 'solid'
+        }}
+        options={[
+          { label: '启用', value: '0' },
+          { label: '禁用', value: '1' }
+        ]} />
 
       <ProFormText
         width="xl"

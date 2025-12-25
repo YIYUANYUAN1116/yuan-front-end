@@ -25,7 +25,6 @@ export default () => {
     {
       title: "部门名称",
       dataIndex: "deptName",
-      hideInSearch: true,
     },
     {
       title: "负责人",
@@ -66,7 +65,17 @@ export default () => {
       hideInSearch: true,
       render: (text, record) => (
         <Space size="small">
-          <Access key="edit" accessible={access.canAccess("system:dept:edit") || false}>
+
+          <Access key="add" accessible={access.canAccess("system:dept:edit")}>
+            <DeptModalForm
+              mode="add"
+              trigger={<a>新增</a>}
+              record={record}
+              reload={actionRef.current?.reload}
+            />
+          </Access>
+
+          <Access key="edit" accessible={access.canAccess("system:dept:edit")}>
             <DeptModalForm
               mode="edit"
               trigger={<a>编辑</a>}
@@ -111,6 +120,7 @@ export default () => {
         rowExpandable: (record) => !!record.children?.length,
         expandRowByClick: false, // ✅ 禁用整行点击展开
       }}
+
       columnsState={{
         persistenceKey: 'sys-dept-pro-table',
         persistenceType: 'localStorage',

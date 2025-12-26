@@ -5,10 +5,9 @@ import ProfileSettingTabs from './components/ProfileSettingTabs';
 
 const index = () => {
   return (
-    <ProCard 
-        bordered 
-        headerBordered 
-        gutter={16}
+    <ProCard
+      ghost
+      gutter={16}
     >
       <ProCard colSpan="30%" style={{ height: '100%' }} bordered>
         <ProfileInfoCard />

@@ -1,6 +1,6 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { ProTable } from '@ant-design/pro-components';
+import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { Button, Dropdown, MenuProps, Popconfirm, Space, Table, Tag } from 'antd';
 import { useRef } from 'react';
 import RoleModalForm from './components/RoleModalForm';
@@ -62,7 +62,7 @@ export default () => {
       ellipsis: true,
       hideInSearch: true,
       sorter: true,
-      defaultSortOrder: 'ascend', 
+      defaultSortOrder: 'ascend',
     },
     {
       title: '备注',
@@ -151,7 +151,7 @@ export default () => {
 
 
   return (
-    <div>
+    <PageContainer>
       <ProTable<API.SysRoleVo>
         columns={columns}
         actionRef={actionRef}
@@ -201,9 +201,7 @@ export default () => {
 
         )}
       />
-
-
-    </div>
+    </PageContainer>
 
   );
 };

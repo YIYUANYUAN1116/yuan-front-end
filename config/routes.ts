@@ -157,6 +157,22 @@ export default [
       },
     ]
   },
+  {
+    path: '/account',
+    name: 'account',
+    icon: 'crown',
+    routes: [
+      {
+        path: '/account',
+        redirect: '/account/settings',
+      },
+      {
+        path: '/account/settings',
+        name: 'settings',
+        component: './account/settings',
+      },
+    ],
+  },
 
   {
     path: '/',

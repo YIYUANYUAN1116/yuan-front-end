@@ -1,6 +1,6 @@
 
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { ProTable } from '@ant-design/pro-components';
+import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { Space, Table } from 'antd';
 import { useRef } from 'react';
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
@@ -101,39 +101,41 @@ export default () => {
   const request = useTableRequest(sysLogininforList);
 
   return (
-    <ProTable<API.SysLogininforVo>
-      columns={columns}
-      actionRef={actionRef}
-      request={request}
-      columnsState={{
-        persistenceKey: 'sys-loginfor-log-pro-table',
-        persistenceType: 'localStorage',
-        defaultValue: {
-          option: { fixed: 'right', disable: true },
-        },
-      }}
-      rowKey="infoId"
-      search={{ labelWidth: 'auto' }}
-      pagination={{ pageSize: 10 }}
-      headerTitle="登录日志"
-      rowSelection={{
-        // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
-        // 注释该行则默认不显示下拉选项
-        selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
-      }}
-      tableAlertOptionRender={false}
-      tableAlertRender={(props) => (
-        <Access accessible={access.canAccess('system:loginfor:remove')}>
-          <BatchDeleteAlert<API.SysLogininforVo>
-            {...props}
-            actionRef={actionRef}
-            onDelete={(keys) =>
-              sysLogininforRemove({ infoIds: keys as string[] })
-            }
-          />
-        </Access>
-      )}
+    <PageContainer>
+      <ProTable<API.SysLogininforVo>
+        columns={columns}
+        actionRef={actionRef}
+        request={request}
+        columnsState={{
+          persistenceKey: 'sys-loginfor-log-pro-table',
+          persistenceType: 'localStorage',
+          defaultValue: {
+            option: { fixed: 'right', disable: true },
+          },
+        }}
+        rowKey="infoId"
+        search={{ labelWidth: 'auto' }}
+        pagination={{ pageSize: 10 }}
+        headerTitle="登录日志"
+        rowSelection={{
+          // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
+          // 注释该行则默认不显示下拉选项
+          selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
+        }}
+        tableAlertOptionRender={false}
+        tableAlertRender={(props) => (
+          <Access accessible={access.canAccess('system:loginfor:remove')}>
+            <BatchDeleteAlert<API.SysLogininforVo>
+              {...props}
+              actionRef={actionRef}
+              onDelete={(keys) =>
+                sysLogininforRemove({ infoIds: keys as string[] })
+              }
+            />
+          </Access>
+        )}
 
-    />
+      />
+    </PageContainer>
   );
 };

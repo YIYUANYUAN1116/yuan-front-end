@@ -4,7 +4,7 @@ import { useTableRequest } from "@/hooks/table/useTableRequest";
 import { sysUserRemove } from "@/services/yuan/sysUserController";
 import { HIDE_COLUMN } from "@/util/ColumsUtils";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
-import { ProTable } from "@ant-design/pro-components";
+import { PageContainer, ProTable } from "@ant-design/pro-components";
 import { Access, useAccess } from "@umijs/max";
 import { Button, Popconfirm, Space, Table } from "antd";
 import { useRef } from "react";
@@ -125,46 +125,48 @@ export default () => {
   ];
   const request = useTableRequest(sysTenantList);
   return (
-    <ProTable<API.SysTenantVo>
-      columns={columns}
-      actionRef={actionRef}
-      request={request}
-      columnsState={{
-        persistenceKey: "sys-tenant-pro-table",
-        persistenceType: "localStorage",
-        defaultValue: {
-          option: { fixed: "right", disable: true },
-        },
-      }}
-      rowKey="id"
-      search={{ labelWidth: "auto" }}
-      pagination={{ pageSize: 10 }}
-      headerTitle="租户管理"
-      toolBarRender={() => [
-        <Access key="add" accessible={access.canAccess("system:tenant:add")}>
-          <TenantModalForm
-            mode="add"
-            trigger={<Button type="primary">新增</Button>}
-            reload={actionRef.current?.reload}
-            key="add"
-          />
-        </Access>,
-      ]}
-      rowSelection={{
-        // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
-        // 注释该行则默认不显示下拉选项
-        selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
-      }}
-      tableAlertOptionRender={false}
-      tableAlertRender={(props) => (
-        <Access key="delete" accessible={access.canAccess("system:tenant:remove")}>
-          <BatchDeleteAlert<API.SysTenantVo>
-            {...props}
-            actionRef={actionRef}
-            onDelete={(keys) => sysTenantRemove({ ids: keys as string[] })}
-          />
-        </Access>
-      )}
-    />
+    <PageContainer>
+      <ProTable<API.SysTenantVo>
+        columns={columns}
+        actionRef={actionRef}
+        request={request}
+        columnsState={{
+          persistenceKey: "sys-tenant-pro-table",
+          persistenceType: "localStorage",
+          defaultValue: {
+            option: { fixed: "right", disable: true },
+          },
+        }}
+        rowKey="id"
+        search={{ labelWidth: "auto" }}
+        pagination={{ pageSize: 10 }}
+        headerTitle="租户管理"
+        toolBarRender={() => [
+          <Access key="add" accessible={access.canAccess("system:tenant:add")}>
+            <TenantModalForm
+              mode="add"
+              trigger={<Button type="primary">新增</Button>}
+              reload={actionRef.current?.reload}
+              key="add"
+            />
+          </Access>,
+        ]}
+        rowSelection={{
+          // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
+          // 注释该行则默认不显示下拉选项
+          selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
+        }}
+        tableAlertOptionRender={false}
+        tableAlertRender={(props) => (
+          <Access key="delete" accessible={access.canAccess("system:tenant:remove")}>
+            <BatchDeleteAlert<API.SysTenantVo>
+              {...props}
+              actionRef={actionRef}
+              onDelete={(keys) => sysTenantRemove({ ids: keys as string[] })}
+            />
+          </Access>
+        )}
+      />
+    </PageContainer>
   );
 };

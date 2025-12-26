@@ -1,6 +1,6 @@
 
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { ProTable } from '@ant-design/pro-components';
+import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { Space, Table } from 'antd';
 import { useRef } from 'react';
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
@@ -128,39 +128,41 @@ export default () => {
     ];
     const request = useTableRequest(sysOperLogList);
     return (
-        <ProTable<API.SysOperLogVo>
-            columns={columns}
-            actionRef={actionRef}
-            request={request}
-            columnsState={{
-                persistenceKey: 'sys-opre-log-pro-table',
-                persistenceType: 'localStorage',
-                defaultValue: {
-                    option: { fixed: 'right', disable: true },
-                },
-            }}
-            rowKey="operId"
-            search={{ labelWidth: 'auto' }}
-            pagination={{ pageSize: 10 }}
-            headerTitle="操作日志"
-            rowSelection={{
-                // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
-                // 注释该行则默认不显示下拉选项
-                selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
-            }}
-            tableAlertOptionRender={false}
-            tableAlertRender={(props) => (
-                <Access accessible={access.canAccess('system:operlog:remove')}>
-                    <BatchDeleteAlert<API.SysOperLogVo>
-                        {...props}
-                        actionRef={actionRef}
-                        onDelete={(keys) =>
-                            sysOperLogRemove({ operIds: keys as string[] })
-                        }
-                    />
-                </Access>
-            )}
+        <PageContainer>
+            <ProTable<API.SysOperLogVo>
+                columns={columns}
+                actionRef={actionRef}
+                request={request}
+                columnsState={{
+                    persistenceKey: 'sys-opre-log-pro-table',
+                    persistenceType: 'localStorage',
+                    defaultValue: {
+                        option: { fixed: 'right', disable: true },
+                    },
+                }}
+                rowKey="operId"
+                search={{ labelWidth: 'auto' }}
+                pagination={{ pageSize: 10 }}
+                headerTitle="操作日志"
+                rowSelection={{
+                    // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
+                    // 注释该行则默认不显示下拉选项
+                    selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
+                }}
+                tableAlertOptionRender={false}
+                tableAlertRender={(props) => (
+                    <Access accessible={access.canAccess('system:operlog:remove')}>
+                        <BatchDeleteAlert<API.SysOperLogVo>
+                            {...props}
+                            actionRef={actionRef}
+                            onDelete={(keys) =>
+                                sysOperLogRemove({ operIds: keys as string[] })
+                            }
+                        />
+                    </Access>
+                )}
 
-        />
+            />
+        </PageContainer>
     );
 };

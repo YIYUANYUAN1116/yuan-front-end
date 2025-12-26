@@ -3,7 +3,7 @@ import { useActionRequest } from "@/hooks/action/useActionRequest";
 import { useTableRequest } from "@/hooks/table/useTableRequest";
 import { HIDE_COLUMN } from "@/util/ColumsUtils";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
-import { ProTable } from "@ant-design/pro-components";
+import { PageContainer, ProTable } from "@ant-design/pro-components";
 import { Access, useAccess } from "@umijs/max";
 import { Button, Popconfirm, Space, Table } from "antd";
 import { useRef } from "react";
@@ -108,37 +108,39 @@ export default () => {
   const request = useTableRequest(sysDeptListTree);
 
   return (
-    <ProTable<API.SysDeptVo>
-      rowKey="deptId"
-      columns={columns}
-      actionRef={actionRef}
-      cardBordered
-      request={request}
-      pagination={false}
-      headerTitle="部门管理"
-      expandable={{
-        rowExpandable: (record) => !!record.children?.length,
-        expandRowByClick: false, // ✅ 禁用整行点击展开
-      }}
+    <PageContainer>
+      <ProTable<API.SysDeptVo>
+        rowKey="deptId"
+        columns={columns}
+        actionRef={actionRef}
+        cardBordered
+        request={request}
+        pagination={false}
+        headerTitle="部门管理"
+        expandable={{
+          rowExpandable: (record) => !!record.children?.length,
+          expandRowByClick: false, // ✅ 禁用整行点击展开
+        }}
 
-      columnsState={{
-        persistenceKey: 'sys-dept-pro-table',
-        persistenceType: 'localStorage',
-        defaultValue: {
-          option: { fixed: 'right', disable: true },
-        },
-      }}
-      toolBarRender={() => [
-        <Access accessible={access.canAccess('system:dept:add')}>
-          <DeptModalForm
-            key="deptadd"
-            mode="add"
-            reload={actionRef.current?.reload}
-            trigger={<Button type="primary" icon={<PlusOutlined />}
-            >新建部门</Button>}
-          />
-        </Access >
-      ]}
-    />
+        columnsState={{
+          persistenceKey: 'sys-dept-pro-table',
+          persistenceType: 'localStorage',
+          defaultValue: {
+            option: { fixed: 'right', disable: true },
+          },
+        }}
+        toolBarRender={() => [
+          <Access accessible={access.canAccess('system:dept:add')}>
+            <DeptModalForm
+              key="deptadd"
+              mode="add"
+              reload={actionRef.current?.reload}
+              trigger={<Button type="primary" icon={<PlusOutlined />}
+              >新建部门</Button>}
+            />
+          </Access >
+        ]}
+      />
+    </PageContainer>
   );
 };

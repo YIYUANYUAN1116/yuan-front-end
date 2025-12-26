@@ -1,6 +1,6 @@
 
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
-import { ActionType, ProColumns, ProTable, ProTableProps } from '@ant-design/pro-components'
+import { ActionType, PageContainer, ProColumns, ProTable, ProTableProps } from '@ant-design/pro-components'
 import { Button, Popconfirm, Space, Table } from 'antd'
 import { useRef } from 'react'
 import DictModalForm from './components/DictModalForm'
@@ -117,54 +117,56 @@ const index = () => {
     const request = useTableRequest(dictTypeList);
 
     return (
-        <ProTable
-            columns={columns}
-            rowKey={"dictId"}
-            request={request}
-            cardBordered
-            actionRef={actionRef}
-            pagination={{ pageSize: 10 }}
-            headerTitle="字典类型"
-            columnsState={{
-                persistenceKey: 'sys-dict-type-pro-table',
-                persistenceType: 'localStorage',
-                defaultValue: {
-                    option: { fixed: 'right', disable: true },
-                },
-            }}
-            toolBarRender={() => [
-                <Access accessible={access.canAccess('system:dict:add')}>
-                    <DictModalForm
-                        mode={OperationModes.ADD}
-                        reload={actionRef.current?.reload}
-                        trigger={
-                            <Button type="primary" icon={<PlusOutlined />}>
-                                新建字典
-                            </Button>
-                        }
-                        key="add"
-                    />
-                </Access>
-            ]}
-            rowSelection={{
-                // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
-                // 注释该行则默认不显示下拉选项
-                selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
-            }}
-            tableAlertOptionRender={false}
-            tableAlertRender={(props) => (
-                <Access accessible={access.canAccess('system:dict:remove')}>
-                    <BatchDeleteAlert<API.SysDictTypeVo>
-                        {...props}
-                        actionRef={actionRef}
-                        onDelete={(keys) =>
-                            dictTypeRemove({ dictIds: keys as string[] })
-                        }
-                    />
-                </Access>
+        <PageContainer>
+            <ProTable
+                columns={columns}
+                rowKey={"dictId"}
+                request={request}
+                cardBordered
+                actionRef={actionRef}
+                pagination={{ pageSize: 10 }}
+                headerTitle="字典类型"
+                columnsState={{
+                    persistenceKey: 'sys-dict-type-pro-table',
+                    persistenceType: 'localStorage',
+                    defaultValue: {
+                        option: { fixed: 'right', disable: true },
+                    },
+                }}
+                toolBarRender={() => [
+                    <Access accessible={access.canAccess('system:dict:add')}>
+                        <DictModalForm
+                            mode={OperationModes.ADD}
+                            reload={actionRef.current?.reload}
+                            trigger={
+                                <Button type="primary" icon={<PlusOutlined />}>
+                                    新建字典
+                                </Button>
+                            }
+                            key="add"
+                        />
+                    </Access>
+                ]}
+                rowSelection={{
+                    // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
+                    // 注释该行则默认不显示下拉选项
+                    selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
+                }}
+                tableAlertOptionRender={false}
+                tableAlertRender={(props) => (
+                    <Access accessible={access.canAccess('system:dict:remove')}>
+                        <BatchDeleteAlert<API.SysDictTypeVo>
+                            {...props}
+                            actionRef={actionRef}
+                            onDelete={(keys) =>
+                                dictTypeRemove({ dictIds: keys as string[] })
+                            }
+                        />
+                    </Access>
 
-            )}
-        />
+                )}
+            />
+        </PageContainer>
     )
 }
 

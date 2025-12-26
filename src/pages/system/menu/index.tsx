@@ -1,6 +1,6 @@
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { ProTable } from '@ant-design/pro-components';
+import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { Button, Popconfirm, Space, Tag, message } from 'antd';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { sysMenuListTree, sysMenuRemove, sysMenuEdit } from '@/services/yuan/sysMenuController';
@@ -153,36 +153,38 @@ export default () => {
 
   const request = useTableRequest(sysMenuListTree);
   return (
-    <ProTable
-      rowKey="menuId"
-      columns={columns}
-      actionRef={actionRef}
-      cardBordered
-      request={request}
-      pagination={false}
-      headerTitle="菜单管理"
-      expandable={{
-        rowExpandable: (record) => !!record.children?.length,
-        expandRowByClick: false, // ✅ 禁用整行点击展开
-      }}
-      columnsState={{
-        persistenceKey: 'sys-menu-pro-table',
-        persistenceType: 'localStorage',
-        defaultValue: {
-          option: { fixed: 'right', disable: true },
-        },
-      }}
-      toolBarRender={() => [
-        <Access accessible={access.canAccess('system:menu:add')}>
-          <MenuDrawer
-            key="menuAdd"
-            mode="add"
-            reload={reload}
-            trigger={<Button type="primary" icon={<PlusOutlined />}
-            >新建菜单</Button>}
-          />
-        </Access >
-      ]}
-    />
+    <PageContainer>
+      <ProTable
+        rowKey="menuId"
+        columns={columns}
+        actionRef={actionRef}
+        cardBordered
+        request={request}
+        pagination={false}
+        headerTitle="菜单管理"
+        expandable={{
+          rowExpandable: (record) => !!record.children?.length,
+          expandRowByClick: false, // ✅ 禁用整行点击展开
+        }}
+        columnsState={{
+          persistenceKey: 'sys-menu-pro-table',
+          persistenceType: 'localStorage',
+          defaultValue: {
+            option: { fixed: 'right', disable: true },
+          },
+        }}
+        toolBarRender={() => [
+          <Access accessible={access.canAccess('system:menu:add')}>
+            <MenuDrawer
+              key="menuAdd"
+              mode="add"
+              reload={reload}
+              trigger={<Button type="primary" icon={<PlusOutlined />}
+              >新建菜单</Button>}
+            />
+          </Access >
+        ]}
+      />
+    </PageContainer>
   );
 };

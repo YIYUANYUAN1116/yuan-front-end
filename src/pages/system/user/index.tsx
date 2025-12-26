@@ -1,5 +1,5 @@
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { ProTable } from '@ant-design/pro-components';
+import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { Button, Popconfirm, Result, Space, Table } from 'antd';
 import { use, useRef } from 'react';
 import UserModalForm from './components/UserModalForm';
@@ -95,7 +95,7 @@ export default () => {
       hideInSearch: true,
       render: (text, record) => (
         <Space size="small">
-          <Access key = 'edit' accessible={access.canAccess('system:user:edit') || false}>
+          <Access key='edit' accessible={access.canAccess('system:user:edit') || false}>
             <UserModalForm
               mode="edit"
               trigger={<a>编辑</a>}
@@ -104,18 +104,18 @@ export default () => {
             />
           </Access>
 
-          <Access key = 'assign' accessible={access.canAccess('system:user:assign')}>
+          <Access key='assign' accessible={access.canAccess('system:user:assign')}>
             <UserRoleModalForm userId={record.userId!} reload={actionRef.current?.reload} />
           </Access>
 
-          <Access key = 'remove' accessible={access.canAccess('system:user:remove')}>
+          <Access key='remove' accessible={access.canAccess('system:user:remove')}>
             <Popconfirm
               title="用户删除"
               description={`确认删除用户：${record.nickName}`}
               okText="确认"
               cancelText="取消"
               okButtonProps={{ loading: deleteLoading }}
-              onConfirm={() => deleteRun({ userIds: [record.userId]})}
+              onConfirm={() => deleteRun({ userIds: [record.userId] })}
             >
               <a style={{ color: 'red' }}>删除</a>
             </Popconfirm>
@@ -126,51 +126,54 @@ export default () => {
   ];
   const request = useTableRequest(sysUserList);
   return (
-    <ProTable<API.SysUserVo>
-      columns={columns}
-      actionRef={actionRef}
-      request={request}
-      columnsState={{
-        persistenceKey: 'sys-user-pro-table',
-        persistenceType: 'localStorage',
-        defaultValue: {
-          option: { fixed: 'right', disable: true },
-        },
-      }}
-      rowKey="userId"
-      search={{ labelWidth: 'auto' }}
-      pagination={{ pageSize: 10 }}
-      headerTitle="用户管理"
-      toolBarRender={() => [
-        <Access key="add" accessible={access.canAccess('system:user:add')}>
-          <UserModalForm
-            mode="add"
-            trigger={
-              <Button type="primary">新增</Button>
-            }
-            reload={actionRef.current?.reload}
-          />
-        </Access>
+    <PageContainer>
+      <ProTable<API.SysUserVo>
+        columns={columns}
+        actionRef={actionRef}
+        request={request}
+        columnsState={{
+          persistenceKey: 'sys-user-pro-table',
+          persistenceType: 'localStorage',
+          defaultValue: {
+            option: { fixed: 'right', disable: true },
+          },
+        }}
+        rowKey="userId"
+        search={{ labelWidth: 'auto' }}
+        pagination={{ pageSize: 10 }}
+        headerTitle="用户管理"
+        toolBarRender={() => [
+          <Access key="add" accessible={access.canAccess('system:user:add')}>
+            <UserModalForm
+              mode="add"
+              trigger={
+                <Button type="primary">新增</Button>
+              }
+              reload={actionRef.current?.reload}
+            />
+          </Access>
 
-      ]}
-      rowSelection={{
-        // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
-        // 注释该行则默认不显示下拉选项
-        selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
-      }}
-      tableAlertOptionRender={false}
-      tableAlertRender={(props) => (
-        <Access key="remove" accessible={access.canAccess('system:user:remove')}>
-          <BatchDeleteAlert<API.SysUserVo>
-            {...props}
-            actionRef={actionRef}
-            onDelete={(keys) =>
-              sysUserRemove({ userIds: keys as string[]})
-            }
-          />
-        </Access>
+        ]}
+        rowSelection={{
+          // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
+          // 注释该行则默认不显示下拉选项
+          selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
+        }}
+        tableAlertOptionRender={false}
+        tableAlertRender={(props) => (
+          <Access key="remove" accessible={access.canAccess('system:user:remove')}>
+            <BatchDeleteAlert<API.SysUserVo>
+              {...props}
+              actionRef={actionRef}
+              onDelete={(keys) =>
+                sysUserRemove({ userIds: keys as string[] })
+              }
+            />
+          </Access>
+        )}
+      />
 
-      )}
-    />
+    </PageContainer>
+
   );
 };

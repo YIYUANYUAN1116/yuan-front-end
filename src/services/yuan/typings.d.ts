@@ -519,6 +519,8 @@ declare namespace API {
     infoId?: string;
     /** 租户编号 */
     tenantId?: string;
+    /** 用户Id */
+    userId?: string;
     /** 用户账号 */
     userName?: string;
     /** 登录IP地址 */
@@ -535,6 +537,7 @@ declare namespace API {
     msg?: string;
     /** 访问时间 */
     loginTime?: string;
+    onlySelf?: boolean;
   };
 
   type SysLogininforExportParams = {
@@ -562,6 +565,7 @@ declare namespace API {
     tenantId?: string;
     /** 用户账号 */
     userName?: string;
+    userId?: string;
     /** 登录IP地址 */
     ipaddr?: string;
     /** 登录地点 */
@@ -1548,8 +1552,8 @@ declare namespace API {
   type TreeLong = {
     name?: { empty?: boolean };
     id?: string;
-    parentId?: string;
     config?: TreeNodeConfig;
+    parentId?: string;
     weight?: any;
     empty?: boolean;
   };

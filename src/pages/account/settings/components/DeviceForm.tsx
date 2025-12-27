@@ -1,8 +1,12 @@
-import React from 'react'
+import LogininforTable from '@/pages/system/log/loginfor/components/LoginforProTable'
+
 
 const DeviceForm = () => {
   return (
-    <div>DeviceForm</div>
+    <LogininforTable
+        onlySelf={true}
+        showBatch={false}
+      />
   )
 }
 

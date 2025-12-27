@@ -15,7 +15,9 @@ const ProfileInfoCard = ({ data }:{data?:API.ProfileVo}) => {
             <ProDescriptions
                 column={1}
                 size="small"
-                labelStyle={{ color: '#999' }}
+                styles={{
+                    label:{ color: '#999' }
+                }}
                 dataSource={
                     data
                         ? {

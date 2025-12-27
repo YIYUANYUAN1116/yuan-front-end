@@ -13,7 +13,6 @@ import {
 } from '@/components';
 import defaultSettings from '../config/defaultSettings';
 import { errorConfig } from './requestErrorConfig';
-import '@ant-design/v5-patch-for-react-19';
 import api from '@/services/yuan/index'
 import { menuRouters } from './services/yuan/sysMenuController';
 

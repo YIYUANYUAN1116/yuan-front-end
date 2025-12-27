@@ -52,65 +52,63 @@ const UserModalForm: FC<RoleModalFormProps> = ({
         }
       }}
     >
-      <>
-        <ProForm.Group>
-          <ProFormText width="md" name="roleId" hidden />
+      <ProForm.Group>
+        <ProFormText width="md" name="roleId" hidden />
 
-          <ProFormText
-            width="md"
-            name="roleName"
-            label="角色名称"
-            placeholder="请输入角色名称"
-            rules={[{ required: true, message: '请输入角色名称' }]}
-          />
-
-          <ProFormText
-            width="md"
-            name="roleKey"
-            label="权限字符"
-            rules={[{ required: true, message: '请输入权限字符' }]}
-            placeholder="请输入权限字符"
-          />
-        </ProForm.Group>
-
-        <ProForm.Group>
-          <ProFormText
-            width="md"
-            name="roleSort"
-            label="显示顺序"
-            rules={[{ required: true, message: '请输入显示顺序' }]}
-            placeholder="显示顺序"
-          />
-
-          <ProFormSelect
-            width="md"
-            rules={[{ required: true, message: '请选择状态' }]}
-            options={[
-              { value: "0", label: '启用' },
-              { value: "1", label: '禁用' }
-            ]}
-            name="status"
-            label="状态"
-          />
-        </ProForm.Group>
-
-        <ProFormTextArea name="remark" label="备注" placeholder="请输入备注" />
-
-        <ProFormTreeSelect
-          name="menuIds"
-          label="菜单权限"
-          placeholder="请选择菜单权限"
-          fieldProps={{
-            treeData: menuTree, // ← 接口返回的菜单树
-            treeCheckable: true,
-            showCheckedStrategy: TreeSelect.SHOW_ALL,
-            showSearch: true
-          }}
-          // transform={(value) => ({
-          //   menuIds: value?.map((v: any) => v.value),
-          // })}
+        <ProFormText
+          width="md"
+          name="roleName"
+          label="角色名称"
+          placeholder="请输入角色名称"
+          rules={[{ required: true, message: '请输入角色名称' }]}
         />
-      </>
+
+        <ProFormText
+          width="md"
+          name="roleKey"
+          label="权限字符"
+          rules={[{ required: true, message: '请输入权限字符' }]}
+          placeholder="请输入权限字符"
+        />
+      </ProForm.Group>
+
+      <ProForm.Group>
+        <ProFormText
+          width="md"
+          name="roleSort"
+          label="显示顺序"
+          rules={[{ required: true, message: '请输入显示顺序' }]}
+          placeholder="显示顺序"
+        />
+
+        <ProFormSelect
+          width="md"
+          rules={[{ required: true, message: '请选择状态' }]}
+          options={[
+            { value: "0", label: '启用' },
+            { value: "1", label: '禁用' }
+          ]}
+          name="status"
+          label="状态"
+        />
+      </ProForm.Group>
+
+      <ProFormTextArea name="remark" label="备注" placeholder="请输入备注" />
+
+      <ProFormTreeSelect
+        name="menuIds"
+        label="菜单权限"
+        placeholder="请选择菜单权限"
+        fieldProps={{
+          treeData: menuTree, // ← 接口返回的菜单树
+          treeCheckable: true,
+          showCheckedStrategy: TreeSelect.SHOW_ALL,
+          showSearch: true
+        }}
+      // transform={(value) => ({
+      //   menuIds: value?.map((v: any) => v.value),
+      // })}
+      />
     </ModalForm>
   );
 };

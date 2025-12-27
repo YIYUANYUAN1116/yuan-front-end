@@ -5,7 +5,7 @@ import BindForm from './BindForm';
 import DeviceForm from './DeviceForm';
 import SecurityForm from './SecurityForm';
 
-const ProfileSettingTabs = () => {
+const ProfileSettingTabs = ({profileData}:{ profileData?: API.ProfileVo }) => {
     return (
         <ProCard
             tabs={{
@@ -13,7 +13,7 @@ const ProfileSettingTabs = () => {
                     {
                         label: `基本设置`,
                         key: 'base',
-                        children: <BaseSettingForm />,
+                        children: <BaseSettingForm initialValues={profileData?.user} />,
                     },
                     {
                         label: `安全设置`,

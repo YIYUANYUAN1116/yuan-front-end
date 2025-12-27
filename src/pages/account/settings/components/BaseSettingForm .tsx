@@ -1,23 +1,34 @@
+import { updateProfile } from "@/services/yuan/sysProfileController";
 import { ProForm, ProFormRadio, ProFormText } from "@ant-design/pro-components";
+import { Form } from "antd";
+import { useEffect } from "react";
 
-const BaseSettingForm = () => {
+const BaseSettingForm = ({ initialValues }: { initialValues?: API.SysUserVo }) => {
+  const [form] = Form.useForm();
+  useEffect(() => {
+    if (initialValues) {
+      form.setFieldsValue(initialValues);
+    }
+  }, [initialValues]);
   return (
     <ProForm
       size="middle"
       layout="horizontal"
       labelCol={{ span: 2 }}
       wrapperCol={{ span: 22 }}
-      initialValues={{
-        nickName: "admin",
-        email: "ageerle@163.com",
-        sex: "1",
-        phone: "15888888888",
-      }}
+      initialValues={initialValues}
       onFinish={async (values) => {
-        console.log(values);
+        await updateProfile(values);
         return true;
       }}
+      form={form}
     >
+      <ProFormText
+        name="userId"
+        width="md"
+        hidden
+      />
+
       <ProFormText
         name="nickName"
         label="昵称"
@@ -52,8 +63,8 @@ const BaseSettingForm = () => {
 
       <ProFormText
         width="md"
-        name="phone"
-      label="电话"
+        name="phonenumber"
+        label="电话"
         colProps={{ span: 24 }}
       />
     </ProForm>

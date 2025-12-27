@@ -4,6 +4,8 @@ declare namespace API {
     pageQuery: PageQuery;
   };
 
+  type AvatarVo = Record<string, any>;
+
   type cancelAuthUserAllParams = {
     /** 角色ID */
     roleId: string;
@@ -137,6 +139,21 @@ declare namespace API {
     isAsc?: string;
   };
 
+  type ProfileVo = {
+    /** 用户信息 */
+    user?: SysUserVo;
+    /** 用户所属角色组 */
+    roleGroup?: string;
+    /** 用户所属岗位组 */
+    postGroup?: string;
+  };
+
+  type RAvatarVo = {
+    code?: number;
+    msg?: string;
+    data?: AvatarVo;
+  };
+
   type ReactRouterVo = {
     name?: string;
     path?: string;
@@ -180,6 +197,12 @@ declare namespace API {
     roleKey?: string;
     /** 数据范围（1：所有数据权限；2：自定义数据权限；3：本部门数据权限；4：本部门及以下数据权限；5：仅本人数据权限） */
     dataScope?: string;
+  };
+
+  type RProfileVo = {
+    code?: number;
+    msg?: string;
+    data?: ProfileVo;
   };
 
   type RSelectRolesVo = {
@@ -1206,6 +1229,13 @@ declare namespace API {
     pageQuery: PageQuery;
   };
 
+  type SysUserPasswordBo = {
+    /** 旧密码 */
+    oldPassword: string;
+    /** 新密码 */
+    newPassword: string;
+  };
+
   type SysUserPostBo = {
     userId?: string;
     postId?: string;
@@ -1233,6 +1263,31 @@ declare namespace API {
   type SysUserPostVo = {
     userId: string;
     postId: string;
+  };
+
+  type SysUserProfileBo = {
+    /** 创建部门 */
+    createDept?: string;
+    /** 创建者 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 更新者 */
+    updateBy?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 请求参数 */
+    params?: Record<string, any>;
+    /** 用户ID */
+    userId?: string;
+    /** 用户昵称 */
+    nickName?: string;
+    /** 用户邮箱 */
+    email?: string;
+    /** 手机号码 */
+    phonenumber?: string;
+    /** 用户性别（0男 1女 2未知） */
+    sex?: string;
   };
 
   type sysUserRemoveParams = {
@@ -1493,8 +1548,8 @@ declare namespace API {
   type TreeLong = {
     name?: { empty?: boolean };
     id?: string;
-    config?: TreeNodeConfig;
     parentId?: string;
+    config?: TreeNodeConfig;
     weight?: any;
     empty?: boolean;
   };

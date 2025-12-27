@@ -3,6 +3,7 @@ import { useActionRequest } from '@/hooks/action/useActionRequest';
 import { sysDeptAdd, sysDeptEdit, sysDeptTreeselect } from '@/services/yuan/sysDeptController';
 import { convertTree } from '@/util/TreeUtils';
 import { ActionType, DrawerForm, ProFormRadio, ProFormText, ProFormTextArea, ProFormTreeSelect } from '@ant-design/pro-components';
+import { useRequest } from '@umijs/max';
 import React, { useState } from 'react'
 
 interface ModalFormProps {
@@ -16,7 +17,7 @@ export const DeptModalForm = (props: ModalFormProps) => {
   const [treeData, setTreeData] = useState<any[]>([]);
   const { mode, trigger, reload, record } = props;
   const isEdit = mode == OperationModes.EDIT
-  const { run: run, loading: loading } = useActionRequest(isEdit ? sysDeptEdit : sysDeptAdd, reload)
+  const { run: run} = useActionRequest(isEdit ? sysDeptEdit : sysDeptAdd, reload)
 
   return (
     <DrawerForm<API.SysDeptBo>

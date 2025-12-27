@@ -1,15 +1,16 @@
+import { updatePwd } from '@/services/yuan/sysProfileController';
 import { ProForm, ProFormText } from '@ant-design/pro-components';
 import React from 'react'
 
 const SecurityForm = () => {
     return (
-        <ProForm
+        <ProForm<API.SysUserPasswordBo>
             size="middle"
             layout="horizontal"
-            labelCol={{ span: 2 }}
-            wrapperCol={{ span: 22 }}
+            labelCol={{ span: 3 }}
+            wrapperCol={{ span: 21}}
             onFinish={async (values) => {
-                console.log(values);
+                await updatePwd(values);
                 return true;
             }}
         >

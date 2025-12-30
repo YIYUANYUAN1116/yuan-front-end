@@ -17,7 +17,21 @@ import * as sysRoleMenuService from "./sysRoleMenuService";
 import * as sysTenantController from "./sysTenantController";
 import * as sysUserController from "./sysUserController";
 import * as sysUserPostController from "./sysUserPostController";
+import * as wfBizRefController from "./wfBizRefController";
+import * as wfCcController from "./wfCcController";
+import * as wfDefinitionController from "./wfDefinitionController";
+import * as wfInstanceController from "./wfInstanceController";
+import * as wfNodeInstanceController from "./wfNodeInstanceController";
+import * as wfTaskController from "./wfTaskController";
+import * as wfTaskLogController from "./wfTaskLogController";
 export default {
+  wfTaskController,
+  wfTaskLogController,
+  wfNodeInstanceController,
+  wfInstanceController,
+  wfDefinitionController,
+  wfCcController,
+  wfBizRefController,
   sysProfileController,
   sysUserController,
   sysUserPostController,

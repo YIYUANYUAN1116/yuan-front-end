@@ -12,6 +12,7 @@ import { TenantModalForm } from "./components/TenantModalForm";
 import { sysTenantList, sysTenantRemove } from "@/services/yuan/sysTenantController";
 import { useDictDataValueEnum } from "@/hooks/dict/useDictDataValueEnum";
 import { DictEnum } from "@/const/dict-enum";
+import { PlusOutlined } from "@ant-design/icons";
 export default () => {
   /**权限控制 */
   const access = useAccess();
@@ -145,7 +146,7 @@ export default () => {
           <Access key="add" accessible={access.canAccess("system:tenant:add")}>
             <TenantModalForm
               mode="add"
-              trigger={<Button type="primary">新增</Button>}
+              trigger={<Button type="primary" icon={<PlusOutlined />}>新增租户</Button>}
               reload={actionRef.current?.reload}
               key="add"
             />

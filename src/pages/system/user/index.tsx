@@ -12,6 +12,7 @@ import { Access, useAccess } from '@umijs/max';
 import { useTableRequest } from '@/hooks/table/useTableRequest';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
 import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
+import { PlusOutlined } from '@ant-design/icons';
 export default () => {
 
   /**权限控制 */
@@ -147,7 +148,7 @@ export default () => {
             <UserModalForm
               mode="add"
               trigger={
-                <Button type="primary">新增</Button>
+                <Button type="primary" icon={<PlusOutlined />}>新增用户</Button>
               }
               reload={actionRef.current?.reload}
             />

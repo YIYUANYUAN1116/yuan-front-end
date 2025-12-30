@@ -11,6 +11,7 @@ import { useRef } from "react";
 import { PostModalForm } from "./components/PostModalForm";
 import { DictEnum } from "@/const/dict-enum";
 import { useDictDataValueEnum } from "@/hooks/dict/useDictDataValueEnum";
+import { PlusOutlined } from "@ant-design/icons";
 
 export const authScopeOptions = [
   { color: 'green', label: '全部数据权限', value: '1' },
@@ -143,7 +144,7 @@ export default () => {
           <Access key="add" accessible={access.canAccess("system:post:add")}>
             <PostModalForm
               mode="add"
-              trigger={<Button type="primary">新增</Button>}
+              trigger={<Button type="primary" icon={<PlusOutlined />}>新增岗位</Button>}
               reload={actionRef.current?.reload}
               key="add"
             />

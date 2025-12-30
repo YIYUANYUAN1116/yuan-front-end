@@ -307,6 +307,48 @@ declare namespace API {
     data?: any;
   };
 
+  type RWfBizRefVo = {
+    code?: number;
+    msg?: string;
+    data?: WfBizRefVo;
+  };
+
+  type RWfCcVo = {
+    code?: number;
+    msg?: string;
+    data?: WfCcVo;
+  };
+
+  type RWfDefinitionVo = {
+    code?: number;
+    msg?: string;
+    data?: WfDefinitionVo;
+  };
+
+  type RWfInstanceVo = {
+    code?: number;
+    msg?: string;
+    data?: WfInstanceVo;
+  };
+
+  type RWfNodeInstanceVo = {
+    code?: number;
+    msg?: string;
+    data?: WfNodeInstanceVo;
+  };
+
+  type RWfTaskLogVo = {
+    code?: number;
+    msg?: string;
+    data?: WfTaskLogVo;
+  };
+
+  type RWfTaskVo = {
+    code?: number;
+    msg?: string;
+    data?: WfTaskVo;
+  };
+
   type selectAuthUserAllParams = {
     /** 角色ID */
     roleId: string;
@@ -1549,11 +1591,88 @@ declare namespace API {
     msg?: string;
   };
 
+  type TableDataInfoWfBizRefVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: WfBizRefVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoWfCcVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: WfCcVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoWfDefinitionVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: WfDefinitionVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoWfInstanceVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: WfInstanceVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoWfNodeInstanceVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: WfNodeInstanceVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoWfTaskLogVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: WfTaskLogVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoWfTaskVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: WfTaskVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
   type TreeLong = {
     name?: { empty?: boolean };
     id?: string;
-    config?: TreeNodeConfig;
     parentId?: string;
+    config?: TreeNodeConfig;
     weight?: any;
     empty?: boolean;
   };
@@ -1586,5 +1705,416 @@ declare namespace API {
     permissions?: string[];
     /** 角色权限 */
     roles?: string[];
+  };
+
+  type WfBizRefBo = {
+    id?: string;
+    /** 业务类型，如 LEAVE/REIMBURSE */
+    bizType: string;
+    /** 业务主键 */
+    bizId: string;
+    /** 流程实例ID */
+    instanceId: string;
+    /** RUNNING/APPROVED/REJECTED/CANCELED */
+    status: string;
+    /** createdBy */
+    createdBy?: string;
+    /** createdTime */
+    createdTime: string;
+    /** updatedTime */
+    updatedTime: string;
+  };
+
+  type WfBizRefExportParams = {
+    bo: WfBizRefBo;
+  };
+
+  type WfBizRefGetInfoParams = {
+    /** 主键 */
+    id: string;
+  };
+
+  type WfBizRefListParams = {
+    bo: WfBizRefBo;
+    pageQuery: PageQuery;
+  };
+
+  type WfBizRefRemoveParams = {
+    /** 主键串 */
+    ids: string[];
+  };
+
+  type WfBizRefVo = {
+    id: string;
+    /** 业务类型，如 LEAVE/REIMBURSE */
+    bizType?: string;
+    /** 业务主键 */
+    bizId?: string;
+    /** 流程实例ID */
+    instanceId?: string;
+    /** RUNNING/APPROVED/REJECTED/CANCELED */
+    status?: string;
+    /** createdBy */
+    createdBy?: string;
+    /** createdTime */
+    createdTime?: string;
+    /** updatedTime */
+    updatedTime?: string;
+  };
+
+  type WfCcBo = {
+    id?: string;
+    /** 租户ID */
+    tenantId: string;
+    /** 流程实例ID */
+    instanceId: string;
+    /** 被抄送人 */
+    userId: string;
+    /** 是否已读(0未读 1已读) */
+    readFlag?: string;
+    /** createTime */
+    createTime?: string;
+  };
+
+  type WfCcExportParams = {
+    bo: WfCcBo;
+  };
+
+  type WfCcGetInfoParams = {
+    /** 主键 */
+    id: string;
+  };
+
+  type WfCcListParams = {
+    bo: WfCcBo;
+    pageQuery: PageQuery;
+  };
+
+  type WfCcRemoveParams = {
+    /** 主键串 */
+    ids: string[];
+  };
+
+  type WfCcVo = {
+    id: string;
+    /** 租户ID */
+    tenantId?: string;
+    /** 流程实例ID */
+    instanceId?: string;
+    /** 被抄送人 */
+    userId?: string;
+    /** 是否已读(0未读 1已读) */
+    readFlag?: string;
+    /** createTime */
+    createTime?: string;
+  };
+
+  type WfDefinitionBo = {
+    id?: string;
+    /** 租户ID */
+    tenantId: string;
+    /** 流程业务标识(leave, expense) */
+    definitionKey: string;
+    /** 流程名称 */
+    definitionName: string;
+    /** 版本号(递增) */
+    version: number;
+    /** 状态(DRAFT/PUBLISHED) */
+    status: string;
+    /** 表单定义(JSON Schema) */
+    formSchema?: string;
+    /** 流程定义JSON */
+    flowJson: string;
+    /** 备注 */
+    remark?: string;
+    /** createBy */
+    createBy?: string;
+    /** createTime */
+    createTime?: string;
+    /** updateTime */
+    updateTime?: string;
+  };
+
+  type WfDefinitionExportParams = {
+    bo: WfDefinitionBo;
+  };
+
+  type WfDefinitionGetInfoParams = {
+    /** 主键 */
+    id: string;
+  };
+
+  type WfDefinitionListParams = {
+    bo: WfDefinitionBo;
+    pageQuery: PageQuery;
+  };
+
+  type WfDefinitionRemoveParams = {
+    /** 主键串 */
+    ids: string[];
+  };
+
+  type WfDefinitionVo = {
+    id: string;
+    /** 租户ID */
+    tenantId?: string;
+    /** 流程业务标识(leave, expense) */
+    definitionKey?: string;
+    /** 流程名称 */
+    definitionName?: string;
+    /** 版本号(递增) */
+    version?: number;
+    /** 状态(DRAFT/PUBLISHED) */
+    status?: string;
+    /** 表单定义(JSON Schema) */
+    formSchema?: string;
+    /** 流程定义JSON */
+    flowJson?: string;
+    /** 备注 */
+    remark?: string;
+    /** createBy */
+    createBy?: string;
+    /** createTime */
+    createTime?: string;
+    /** updateTime */
+    updateTime?: string;
+  };
+
+  type WfInstanceBo = {
+    id?: string;
+    /** 租户ID */
+    tenantId: string;
+    /** 流程定义ID */
+    definitionId: string;
+    /** 流程业务标识 */
+    definitionKey: string;
+    /** 流程版本 */
+    version: number;
+    /** 业务单号(请假单ID等) */
+    businessKey?: string;
+    /** 状态(RUNNING/APPROVED/REJECTED/CANCELED) */
+    status: string;
+    /** 发起人 */
+    startUserId: string;
+    /** startTime */
+    startTime?: string;
+    /** 结束时间 */
+    endTime?: string;
+    variables?: string;
+  };
+
+  type WfInstanceExportParams = {
+    bo: WfInstanceBo;
+  };
+
+  type WfInstanceGetInfoParams = {
+    /** 主键 */
+    id: string;
+  };
+
+  type WfInstanceListParams = {
+    bo: WfInstanceBo;
+    pageQuery: PageQuery;
+  };
+
+  type WfInstanceRemoveParams = {
+    /** 主键串 */
+    ids: string[];
+  };
+
+  type WfInstanceVo = {
+    id: string;
+    /** 租户ID */
+    tenantId?: string;
+    /** 流程定义ID */
+    definitionId?: string;
+    /** 流程业务标识 */
+    definitionKey?: string;
+    /** 流程版本 */
+    version?: number;
+    /** 业务单号(请假单ID等) */
+    businessKey?: string;
+    /** 状态(RUNNING/APPROVED/REJECTED/CANCELED) */
+    status?: string;
+    /** 发起人 */
+    startUserId?: string;
+    /** startTime */
+    startTime?: string;
+    /** 结束时间 */
+    endTime?: string;
+    variables?: string;
+  };
+
+  type WfNodeInstanceBo = {
+    id?: string;
+    /** 流程实例ID */
+    instanceId: string;
+    /** 节点标识(start/approve_1) */
+    nodeKey: string;
+    /** 节点类型(START/APPROVAL/GATEWAY/END) */
+    nodeType: string;
+    /** 审批人类型(USER/ROLE/DEPT) */
+    assigneeType?: string;
+    /** 审批人值 */
+    assigneeValue?: string;
+    /** 状态(WAIT/DONE) */
+    status: string;
+    /** 执行顺序 */
+    orderNo: number;
+    /** createTime */
+    createTime?: string;
+  };
+
+  type WfNodeInstanceExportParams = {
+    bo: WfNodeInstanceBo;
+  };
+
+  type WfNodeInstanceGetInfoParams = {
+    /** 主键 */
+    id: string;
+  };
+
+  type WfNodeInstanceListParams = {
+    bo: WfNodeInstanceBo;
+    pageQuery: PageQuery;
+  };
+
+  type WfNodeInstanceRemoveParams = {
+    /** 主键串 */
+    ids: string[];
+  };
+
+  type WfNodeInstanceVo = {
+    id: string;
+    /** 流程实例ID */
+    instanceId?: string;
+    /** 节点标识(start/approve_1) */
+    nodeKey?: string;
+    /** 节点类型(START/APPROVAL/GATEWAY/END) */
+    nodeType?: string;
+    /** 审批人类型(USER/ROLE/DEPT) */
+    assigneeType?: string;
+    /** 审批人值 */
+    assigneeValue?: string;
+    /** 状态(WAIT/DONE) */
+    status?: string;
+    /** 执行顺序 */
+    orderNo?: number;
+    /** createTime */
+    createTime?: string;
+  };
+
+  type WfTaskBo = {
+    id?: string;
+    /** 租户ID */
+    tenantId: string;
+    /** 流程实例ID */
+    instanceId: string;
+    /** 节点实例ID */
+    nodeInstanceId: string;
+    /** 审批人ID */
+    assigneeId: string;
+    /** 状态(TODO/DONE/TRANSFERRED) */
+    status: string;
+    /** 操作(APPROVE/REJECT/TRANSFER) */
+    action?: string;
+    /** 审批意见 */
+    comment?: string;
+    /** createTime */
+    createTime?: string;
+    /** 完成时间 */
+    finishTime?: string;
+  };
+
+  type WfTaskExportParams = {
+    bo: WfTaskBo;
+  };
+
+  type WfTaskGetInfoParams = {
+    /** 主键 */
+    id: string;
+  };
+
+  type WfTaskListParams = {
+    bo: WfTaskBo;
+    pageQuery: PageQuery;
+  };
+
+  type WfTaskLogBo = {
+    id?: string;
+    /** 任务ID */
+    taskId: string;
+    /** 流程实例ID */
+    instanceId: string;
+    /** 操作(APPROVE/REJECT/TRANSFER) */
+    action: string;
+    /** 操作人 */
+    operatorId: string;
+    /** 操作意见 */
+    comment?: string;
+    /** operateTime */
+    operateTime?: string;
+  };
+
+  type WfTaskLogExportParams = {
+    bo: WfTaskLogBo;
+  };
+
+  type WfTaskLogGetInfoParams = {
+    /** 主键 */
+    id: string;
+  };
+
+  type WfTaskLogListParams = {
+    bo: WfTaskLogBo;
+    pageQuery: PageQuery;
+  };
+
+  type WfTaskLogRemoveParams = {
+    /** 主键串 */
+    ids: string[];
+  };
+
+  type WfTaskLogVo = {
+    id: string;
+    /** 任务ID */
+    taskId?: string;
+    /** 流程实例ID */
+    instanceId?: string;
+    /** 操作(APPROVE/REJECT/TRANSFER) */
+    action?: string;
+    /** 操作人 */
+    operatorId?: string;
+    /** 操作意见 */
+    comment?: string;
+    /** operateTime */
+    operateTime?: string;
+  };
+
+  type WfTaskRemoveParams = {
+    /** 主键串 */
+    ids: string[];
+  };
+
+  type WfTaskVo = {
+    id: string;
+    /** 租户ID */
+    tenantId?: string;
+    /** 流程实例ID */
+    instanceId?: string;
+    /** 节点实例ID */
+    nodeInstanceId?: string;
+    /** 审批人ID */
+    assigneeId?: string;
+    /** 状态(TODO/DONE/TRANSFERRED) */
+    status?: string;
+    /** 操作(APPROVE/REJECT/TRANSFER) */
+    action?: string;
+    /** 审批意见 */
+    comment?: string;
+    /** createTime */
+    createTime?: string;
+    /** 完成时间 */
+    finishTime?: string;
   };
 }

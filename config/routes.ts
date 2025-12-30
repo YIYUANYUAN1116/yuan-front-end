@@ -62,13 +62,13 @@ export default [
         path: '/dashboard/workplace',
         name: 'workplace',
         component: './dashboard/workplace',
-        access:'canDashboardWorkplace'
+        access: 'canDashboardWorkplace'
       },
       {
         path: '/dashboard/analysis',
         name: 'analysis',
         component: './dashboard/analysis',
-        access:'canDashboardAnalysis'
+        access: 'canDashboardAnalysis'
       },
     ]
   },
@@ -99,7 +99,7 @@ export default [
         component: './system/dept',
         access: 'canSystemDeptList',
       },
-       {
+      {
         path: '/system/post',
         name: 'post',
         component: './system/post',
@@ -158,29 +158,59 @@ export default [
     ]
   },
   {
-    path: '/account',
-    name: 'account',
+    path: '/workflow',
+    name: 'workflow',
     icon: 'crown',
     routes: [
       {
-        path: '/account',
-        redirect: '/account/settings',
+        path: '/workflow',
+        redirect: '/workflow/definition',
       },
       {
-        path: '/account/settings',
-        name: 'settings',
-        component: './account/settings',
+        path: '/workflow/definition',
+        name: 'definition',
+        component: './workflow/definition',
+        access: 'canWorkDefinition'
       },
+      {
+        path: '/workflow/instance',
+        name: 'instance',
+        component: './workflow/instance',
+        access: 'canWorkInstance'
+      },
+      {
+        path: '/workflow/designer',
+        name: 'designer',
+        component: './workflow/designer',
+        access: 'canWorkDesigner'
+      }
     ],
   },
 
-  {
-    path: '/',
+{
+  path: '/account',
+    name: 'account',
+      icon: 'crown',
+        routes: [
+          {
+            path: '/account',
+            redirect: '/account/settings',
+          },
+          {
+            path: '/account/settings',
+            name: 'settings',
+            component: './account/settings',
+          },
+        ],
+  },
+
+{
+  path: '/',
     redirect: '/welcome',
   },
-  {
-    path: '*',
+{
+  path: '*',
     layout: false,
-    component: './404',
+      component: './404',
   },
 ];

@@ -21,5 +21,12 @@ export default function access(
     canSystemTenantList: has('system:tenant:list'),
     canSystemDeptList: has('system:dept:list'),
     canSystemPostList: has('system:post:list'),
+
+    canWorkDefinition: has('workflow:definition:list'),
+    canWorkInstance: has('workflow:instance:list'),
+    canWorkNodeInstance: has('workflow:nodeInstance:list'),
+    canWorkTask: has('workflow:task:list'),
+    canWorkTaskLog: has('workflow:tasklog:list'),
+    canWorkDesigner: has('workflow:designer:list'),
   };
 }

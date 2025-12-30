@@ -60,4 +60,11 @@ export default {
   'menu.system.dept': '部门管理',
   'menu.system.post': '岗位管理',
   'menu.system.tenant': '租户管理',
+  
+  'menu.workflow': '工作流管理',
+  'menu.workflow.definition': '流程定义',
+  'menu.workflow.instance': '流程实例',
+  'menu.workflow.nodeInstance': '节点实例',
+  'menu.workflow.task': '任务管理',
+  'menu.workflow.tasklog': '任务日志',
 };

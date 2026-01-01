@@ -1,7 +1,7 @@
 import { useActionRequest } from "@/hooks/action/useActionRequest";
 import { sysMenuAdd, sysMenuEdit, sysMenuTreeselect } from "@/services/yuan/sysMenuController";
 import { convertTree } from "@/util/TreeUtils";
-import { DrawerForm, ProFormDigit, ProFormRadio, ProFormText, ProFormTextArea, ProFormTreeSelect } from "@ant-design/pro-components";
+import { DrawerForm, ProForm, ProFormDigit, ProFormRadio, ProFormText, ProFormTextArea, ProFormTreeSelect } from "@ant-design/pro-components";
 import { useState } from "react";
 
 const MenuDrawer = ({ mode, trigger, record, reload }: any) => {
@@ -14,6 +14,7 @@ const MenuDrawer = ({ mode, trigger, record, reload }: any) => {
     <DrawerForm
       title={isEdit ? '编辑菜单' : '新建菜单'}
       trigger={trigger}
+      size='middle'
       width={520}
       initialValues={record}
       drawerProps={{ destroyOnClose: true }}
@@ -80,33 +81,36 @@ const MenuDrawer = ({ mode, trigger, record, reload }: any) => {
         }}
         radioType="button"
       />
-      <ProFormRadio.Group
-        name="status"
-        label="菜单状态"
-        options={[
-          { label: '启用', value: '0' },
-          { label: '禁用', value: '1' }
-        ]}
-        fieldProps={{
-          buttonStyle: "solid",
-          defaultValue: '0'
-        }}
-        radioType="button"
-      />
+      <ProForm.Group>
+        <ProFormRadio.Group
+          name="status"
+          label="菜单状态"
+          options={[
+            { label: '启用', value: '0' },
+            { label: '禁用', value: '1' }
+          ]}
+          fieldProps={{
+            buttonStyle: "solid",
+            defaultValue: '0'
+          }}
+          radioType="button"
+        />
 
-      <ProFormRadio.Group
-        name="visible"
-        label="显示状态"
-        options={[
-          { label: '显示', value: '0' },
-          { label: '隐藏', value: '1' }
-        ]}
-        fieldProps={{
-          buttonStyle: "solid",
-          defaultValue: '0'
-        }}
-        radioType="button"
-      />
+        <ProFormRadio.Group
+          name="visible"
+          label="显示状态"
+          options={[
+            { label: '显示', value: '0' },
+            { label: '隐藏', value: '1' }
+          ]}
+          fieldProps={{
+            buttonStyle: "solid",
+            defaultValue: '0'
+          }}
+          radioType="button"
+        />
+      </ProForm.Group>
+
 
       <ProFormText
         name="menuName"

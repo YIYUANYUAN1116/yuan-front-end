@@ -11,7 +11,8 @@ const OpreLogDrawer = ({ trigger, record }: any) => {
         <DrawerForm
             title={"操作日志"}
             trigger={trigger}
-            width={480}
+            size='middle'
+            width={520}
             drawerProps={{
                 destroyOnClose: true,
                 closable: true, // 默认就是 true
@@ -48,8 +49,8 @@ const OpreLogDrawer = ({ trigger, record }: any) => {
                         title: '操作人员',
                         dataIndex: 'operName',
                         ellipsis: true,
-                        render: (_, record) =>(
-                             <Space>
+                        render: (_, record) => (
+                            <Space>
                                 <span>账号：{record.operName}</span>
                                 <span>ip: {record.operIp}</span>
                             </Space>
@@ -60,7 +61,7 @@ const OpreLogDrawer = ({ trigger, record }: any) => {
                         title: '请求方式',
                         dataIndex: 'requestMethod',
                         render: (_, record) =>
-                             <Space>
+                            <Space>
                                 <Tag>{record.requestMethod}请求</Tag>
                                 <span>{record.operUrl}</span>
                             </Space>

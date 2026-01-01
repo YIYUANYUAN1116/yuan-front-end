@@ -67,4 +67,5 @@ export default {
   'menu.workflow.nodeInstance': '节点实例',
   'menu.workflow.task': '任务管理',
   'menu.workflow.tasklog': '任务日志',
+  'menu.workflow.designer': '审批流设计器',
 };

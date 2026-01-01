@@ -37,12 +37,13 @@ export default function DictDataModalForm(props: DictDataModalFormProps) {
                 return true;
             }}
             width={520}
+            size='middle'
             modalProps={{ okButtonProps: { loading } }}
         >
             <ProFormText name="dictCode" hidden />
 
             <ProFormText
-                width="md"
+               
                 name="dictName"
                 label="字典类型"
                 initialValue={dictName}
@@ -56,13 +57,13 @@ export default function DictDataModalForm(props: DictDataModalFormProps) {
 
             <ProForm.Group>
                 <ProFormText
-                    width="md"
+                   
                     name="dictLabel"
                     label="字典标签"
                     rules={[{ required: true }]}
                 />
                 <ProFormText
-                    width="md"
+                   
                     name="dictValue"
                     label="字典键值"
                     rules={[{ required: true }]}

@@ -35,17 +35,19 @@ const DefinitionModalForm: FC<DefinitionModalFormProps> = ({
                 run(values);
                 return true;
             }}
+            width={720}
+            size='middle'
 
         >
             <ProFormText
-                width="md"
+               
                 name="definitionName"
                 label="流程名称"
                 placeholder="请输入流程名称"
                 rules={[{ required: true, message: '请输入流程名称' }]}
             />
             <ProFormText
-                width="md"
+               
                 name="definitionKey"
                 label="流程业务标识"
                 placeholder="请输入流程业务标识"
@@ -53,7 +55,7 @@ const DefinitionModalForm: FC<DefinitionModalFormProps> = ({
             />
 
             <ProFormText
-                width="md"
+               
                 name="version"
                 label="版本号"
                 placeholder="请输入版本号"
@@ -62,21 +64,13 @@ const DefinitionModalForm: FC<DefinitionModalFormProps> = ({
 
 
             <ProFormText
-                width="md"
+               
                 name="remark"
                 label="备注"
                 placeholder="请输入备注"
 
             />
-
-            <ProFormText
-                width="md"
-                name="status"
-                label="状态"
-                placeholder="请输入状态"
-
-            />
-
+            
             {/* 隐藏的id，只在编辑时用 */}
             <ProFormText name="id" hidden />
         </ModalForm>

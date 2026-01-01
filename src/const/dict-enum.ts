@@ -21,4 +21,5 @@ export enum DictEnum {
   STATUS_TYPE = 'status_type', // 状态类型
   MODEL_PROVIDER= 'model_provider',
   SYS_OPRE_STATUS= 'sys_opre_status',
+  WF_DEFINITION_STATUS = 'wf_definition_status',//流程定义状态
 }

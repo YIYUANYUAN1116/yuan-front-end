@@ -26,12 +26,13 @@ const DictModalForm = (props: DictModalFormProps) => {
                 run(values);
                 return true;
             }}
-            width={400}
+            size='middle'
+            width={520}
             modalProps={{ okButtonProps: { loading } }}
         >
-            <ProFormText width="md" name="dictId" hidden />
+            <ProFormText name="dictId" hidden />
             <ProFormText
-                width="md"
+
                 name="dictName"
                 label="字典名称"
                 placeholder="请输入字典名称"
@@ -39,7 +40,7 @@ const DictModalForm = (props: DictModalFormProps) => {
             />
 
             <ProFormText
-                width="md"
+
                 name="dictType"
                 label="字典类型"
                 rules={[{ required: true, message: '请输入字典类型' }]}
@@ -47,7 +48,7 @@ const DictModalForm = (props: DictModalFormProps) => {
                 tooltip="使用英文/下划线命名, 如:sys_normal_disable"
             />
             <ProFormText
-                width="md"
+
                 name="remark"
                 label="备注"
             />

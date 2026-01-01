@@ -17,12 +17,13 @@ export const DeptModalForm = (props: ModalFormProps) => {
   const [treeData, setTreeData] = useState<any[]>([]);
   const { mode, trigger, reload, record } = props;
   const isEdit = mode == OperationModes.EDIT
-  const { run: run} = useActionRequest(isEdit ? sysDeptEdit : sysDeptAdd, reload)
+  const { run: run } = useActionRequest(isEdit ? sysDeptEdit : sysDeptAdd, reload)
 
   return (
     <DrawerForm<API.SysDeptBo>
       title={isEdit ? '编辑岗位' : '新增岗位'}
       trigger={trigger}
+      size='middle'
       width={520}
       initialValues={isEdit
         ? { ...record } // 编辑：完整回填
@@ -63,7 +64,7 @@ export const DeptModalForm = (props: ModalFormProps) => {
       />
 
       <ProFormText
-        width="md"
+        
         name="deptName"
         label="部门名称"
         placeholder="请输入部门名称"
@@ -71,34 +72,34 @@ export const DeptModalForm = (props: ModalFormProps) => {
       />
 
       <ProFormText
-        width="md"
+        
         name="leader"
         label="负责人"
         placeholder="请输入负责人"
       />
 
       <ProFormText
-        width="md"
+        
         name="phone"
         label="联系电话"
         placeholder="请输入联系电话"
       />
       <ProFormText
-        width="md"
+        
         name="email"
         label="邮箱"
         placeholder="请输入邮箱"
       />
 
       <ProFormText
-        width="md"
+        
         name="orderNum"
         label="显示顺序"
         placeholder="请输入显示顺序"
         rules={[{ required: true, message: '请输入显示顺序' }]}
       />
       <ProFormRadio.Group
-        width="md"
+        
         name="status"
         label="状态"
         fieldProps={{

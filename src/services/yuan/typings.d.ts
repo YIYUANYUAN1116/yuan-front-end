@@ -1812,19 +1812,19 @@ declare namespace API {
   type WfDefinitionBo = {
     id?: string;
     /** 租户ID */
-    tenantId: string;
+    tenantId?: string;
     /** 流程业务标识(leave, expense) */
     definitionKey: string;
     /** 流程名称 */
     definitionName: string;
     /** 版本号(递增) */
-    version: number;
+    version?: number;
     /** 状态(DRAFT/PUBLISHED) */
-    status: string;
+    status?: string;
     /** 表单定义(JSON Schema) */
     formSchema?: string;
     /** 流程定义JSON */
-    flowJson: string;
+    flowJson?: string;
     /** 备注 */
     remark?: string;
     /** createBy */
@@ -1833,6 +1833,12 @@ declare namespace API {
     createTime?: string;
     /** updateTime */
     updateTime?: string;
+  };
+
+  type WfDefinitionDto = {
+    id?: string;
+    formSchema?: string;
+    flowJson?: string;
   };
 
   type WfDefinitionExportParams = {

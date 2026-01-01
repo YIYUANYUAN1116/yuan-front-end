@@ -33,7 +33,7 @@ export default () => {
       width: 48,
     },
     {
-      title: "流程业务标识",
+      title: "业务标识",
       dataIndex: "definitionKey",
 
     },

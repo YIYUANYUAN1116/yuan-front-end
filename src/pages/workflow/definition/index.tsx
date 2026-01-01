@@ -4,17 +4,20 @@ import { useTableRequest } from "@/hooks/table/useTableRequest";
 import { HIDE_COLUMN } from "@/util/ColumsUtils";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { PageContainer, ProTable } from "@ant-design/pro-components";
-import { Access,history, useAccess } from "@umijs/max";
+import { Access, history, useAccess } from "@umijs/max";
 import { Button, Popconfirm, Space, Table } from "antd";
 import { useRef } from "react";
 import { wfDefinitionList, wfDefinitionRemove } from "@/services/yuan/wfDefinitionController";
 import DefinitionModalForm from "./components/DefinitionModalForm";
 import { PlusOutlined } from "@ant-design/icons";
+import { useDictDataValueEnum } from "@/hooks/dict/useDictDataValueEnum";
+import { DictEnum } from "@/const/dict-enum";
 export default () => {
   /**权限控制 */
   const access = useAccess();
 
   const actionRef = useRef<ActionType | null>(null);
+  const statusEnum = useDictDataValueEnum(DictEnum.WF_DEFINITION_STATUS)
 
   const columns: ProColumns<API.WfDefinitionVo>[] = [
     {
@@ -50,11 +53,7 @@ export default () => {
     {
       title: "状态",
       dataIndex: "status",
-    },
-    {
-      title: "创建人",
-      dataIndex: "createBy",
-      hideInSearch: true,
+      valueEnum: statusEnum
     },
     {
       title: "创建时间",
@@ -79,23 +78,29 @@ export default () => {
         <Space size="small">
 
           <Access key="edit" accessible={access.canAccess("workflow:wfDefinition:edit")}>
-            <DefinitionModalForm
-              mode="edit"
-              trigger={<a type="primary">编辑</a>}
-              reload={actionRef.current?.reload}
-              record={record}
-            />
-          </Access>
+            <Space size="small">
+              <DefinitionModalForm
+                mode="edit"
+                trigger={<a type="primary">编辑</a>}
+                reload={actionRef.current?.reload}
+                record={record}
+              />
 
-          <Access accessible={access.canAccess("workflow:wfDefinition:edit")}>
-            <a onClick={() => {
-              history.push({
-                pathname: '/workflow/designer',
-                search: `?id=${record.id}&definitionName=${record.definitionName}`,
-              })
-            }}>
-              设计流程
-            </a>
+              <a onClick={() => {
+                history.push({
+                  pathname: '/workflow/designer',
+                  search: `?id=${record.id}`,
+                })
+              }}>
+                设计流程
+              </a>
+              <a >
+                发布
+              </a>
+              <a >
+                停用
+              </a>
+            </Space>
           </Access>
 
           <Access key="delete" accessible={access.canAccess("workflow:wfDefinition:remove")}>
@@ -131,7 +136,6 @@ export default () => {
         request={request}
         pagination={false}
         headerTitle="流程定义管理"
-
         columnsState={{
           persistenceKey: 'wf-definition-pro-table',
           persistenceType: 'localStorage',

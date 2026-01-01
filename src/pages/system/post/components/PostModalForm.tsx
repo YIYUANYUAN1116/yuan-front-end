@@ -33,40 +33,41 @@ export const PostModalForm = (props: ModalFormProps) => {
         run(values);
         return true;
       }}
+      size='middle'
       width={520}
     >
       <ProFormText name="postId" hidden />
 
       <ProFormText
-        width="md"
+
         name="postCode"
         label="岗位编码"
         placeholder="请输入岗位编码"
         rules={[{ required: true, message: '请输入岗位编码' }]}
       />
       <ProFormText
-        width="md"
+
         name="postName"
         label="岗位名称"
         placeholder="请输入岗位名称"
         rules={[{ required: true, message: '请输入岗位名称' }]}
       />
       <ProFormSelect
-          name="dataScope"
-          label="数据权限"
-          placeholder="请选择数据权限"
-          options={authScopeOptions}
-          rules={[{ required: true, message: "请选择数据权限" }]}
-        />
+        name="dataScope"
+        label="数据权限"
+        placeholder="请选择数据权限"
+        options={authScopeOptions}
+        rules={[{ required: true, message: "请选择数据权限" }]}
+      />
       <ProFormText
-        width="md"
+
         name="postSort"
         label="显示顺序"
         placeholder="请输入显示顺序"
         rules={[{ required: true, message: '请输入显示顺序' }]}
       />
       <ProFormRadio.Group
-        width="md"
+
         name="status"
         label="状态"
         fieldProps={{
@@ -79,7 +80,7 @@ export const PostModalForm = (props: ModalFormProps) => {
         radioType="button"
       />
       <ProFormTextArea
-        width="md"
+
         name="remark"
         label="备注"
         placeholder="请输入备注"

@@ -60,6 +60,21 @@ export async function wfDefinitionRemove(
   });
 }
 
+/** 修改wfd_dto 修改wfd PUT /workflow/wfDefinition/dto */
+export async function wfDefinitionEditDto(
+  body: API.WfDefinitionDto,
+  options?: { [key: string]: any }
+) {
+  return request<API.RVoid>("/workflow/wfDefinition/dto", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
 /** 导出wfd列表 导出wfd列表 POST /workflow/wfDefinition/export */
 export async function wfDefinitionExport(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)

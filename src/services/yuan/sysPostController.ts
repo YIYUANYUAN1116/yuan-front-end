@@ -2,7 +2,7 @@
 /* eslint-disable */
 import { request } from "@umijs/max";
 
-/** 修改post 修改post PUT /system/sysPost */
+/** 修改岗位 修改post PUT /system/sysPost */
 export async function sysPostEdit(
   body: API.SysPostBo,
   options?: { [key: string]: any }
@@ -17,7 +17,7 @@ export async function sysPostEdit(
   });
 }
 
-/** 新增post 新增post POST /system/sysPost */
+/** 新增岗位 新增post POST /system/sysPost */
 export async function sysPostAdd(
   body: API.SysPostBo,
   options?: { [key: string]: any }
@@ -32,7 +32,7 @@ export async function sysPostAdd(
   });
 }
 
-/** 获取post详细信息 获取post详细信息 GET /system/sysPost/${param0} */
+/** 获取岗位详细信息 获取post详细信息 GET /system/sysPost/${param0} */
 export async function sysPostGetInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.SysPostGetInfoParams,
@@ -46,7 +46,7 @@ export async function sysPostGetInfo(
   });
 }
 
-/** 删除post 删除post DELETE /system/sysPost/${param0} */
+/** 删除岗位 删除post DELETE /system/sysPost/${param0} */
 export async function sysPostRemove(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.SysPostRemoveParams,
@@ -60,7 +60,41 @@ export async function sysPostRemove(
   });
 }
 
-/** 导出post列表 导出post列表 POST /system/sysPost/export */
+/** 获取岗位已分配用户列表 查询已分配用户岗位列表 GET /system/sysPost/allocatedList */
+export async function postAllocatedUserList(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.postAllocatedUserListParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.TableDataInfoSysUserVo>("/system/sysPost/allocatedList", {
+    method: "GET",
+    params: {
+      ...params,
+      bo: undefined,
+      ...params["bo"],
+      pageQuery: undefined,
+      ...params["pageQuery"],
+    },
+    ...(options || {}),
+  });
+}
+
+/** 批量取消授权用户 批量取消授权用户 PUT /system/sysPost/cancelAll */
+export async function postCancelUserAll(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.postCancelUserAllParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.RVoid>("/system/sysPost/cancelAll", {
+    method: "PUT",
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
+/** 导出岗位列表 导出岗位列表 POST /system/sysPost/export */
 export async function sysPostExport(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.SysPostExportParams,
@@ -77,7 +111,7 @@ export async function sysPostExport(
   });
 }
 
-/** 查询post列表 查询post列表 GET /system/sysPost/list */
+/** 查询岗位列表 查询岗位列表 GET /system/sysPost/list */
 export async function sysPostList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.SysPostListParams,
@@ -94,4 +128,41 @@ export async function sysPostList(
     },
     ...(options || {}),
   });
+}
+
+/** 批量选择用户授权 批量选择用户授权 PUT /system/sysPost/selectAll */
+export async function postSelectUserAll(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.postSelectUserAllParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.RVoid>("/system/sysPost/selectAll", {
+    method: "PUT",
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
+/** 获取岗位未分配用户列表 查询未分配用户岗位列表 GET /system/sysPost/unallocatedList */
+export async function postUnallocatedUserList(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.postUnallocatedUserListParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.TableDataInfoSysUserVo>(
+    "/system/sysPost/unallocatedList",
+    {
+      method: "GET",
+      params: {
+        ...params,
+        bo: undefined,
+        ...params["bo"],
+        pageQuery: undefined,
+        ...params["pageQuery"],
+      },
+      ...(options || {}),
+    }
+  );
 }

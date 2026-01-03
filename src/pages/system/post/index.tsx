@@ -5,22 +5,14 @@ import { sysPostList, sysPostRemove } from "@/services/yuan/sysPostController";
 import { HIDE_COLUMN } from "@/util/ColumsUtils";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { PageContainer, ProTable } from "@ant-design/pro-components";
-import { Access, useAccess } from "@umijs/max";
+import { Access, useAccess,history } from "@umijs/max";
 import { Button, Popconfirm, Space, Table, Tag } from "antd";
 import { useRef } from "react";
 import { PostModalForm } from "./components/PostModalForm";
 import { DictEnum } from "@/const/dict-enum";
 import { useDictDataValueEnum } from "@/hooks/dict/useDictDataValueEnum";
 import { PlusOutlined } from "@ant-design/icons";
-
-export const authScopeOptions = [
-  { color: 'green', label: '全部数据权限', value: '1' },
-  { color: 'default', label: '自定数据权限', value: '2' },
-  { color: 'orange', label: '本部门数据权限', value: '3' },
-  { color: 'cyan', label: '本部门及以下数据权限', value: '4' },
-  { color: 'error', label: '仅本人数据权限', value: '5' },
-  { color: 'default', label: '部门及以下或本人数据权限', value: '6' },
-];
+import { authScopeOptions } from "./components/AuthScopeOptions";
 
 export default () => {
   /**权限控制 */
@@ -93,12 +85,22 @@ export default () => {
       render: (text, record) => (
         <Space size="small">
           <Access key="edit" accessible={access.canAccess("system:post:edit") || false}>
-            <PostModalForm
-              mode="edit"
-              trigger={<a>编辑</a>}
-              record={record}
-              reload={actionRef.current?.reload}
-            />
+            <Space>
+              <PostModalForm
+                mode="edit"
+                trigger={<a>编辑</a>}
+                record={record}
+                reload={actionRef.current?.reload}
+              />
+
+              <a onClick={() => {
+                history.push({
+                  pathname: '/system/post-assign',
+                  search: `?postId=${record.postId}&postName=${record.postName}`,
+                })
+              }}>分配用户</a>
+            </Space>
+
           </Access>
 
           <Access key="delete" accessible={access.canAccess("system:post:remove")}>

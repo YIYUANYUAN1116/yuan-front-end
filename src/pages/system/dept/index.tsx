@@ -4,7 +4,7 @@ import { useTableRequest } from "@/hooks/table/useTableRequest";
 import { HIDE_COLUMN } from "@/util/ColumsUtils";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { PageContainer, ProTable } from "@ant-design/pro-components";
-import { Access, useAccess } from "@umijs/max";
+import { Access, useAccess,history } from "@umijs/max";
 import { Button, Popconfirm, Space, Table } from "antd";
 import { useRef } from "react";
 import { DeptModalForm } from "./components/DeptModalForm";
@@ -66,7 +66,7 @@ export default () => {
       render: (text, record) => (
         <Space size="small">
 
-          <Access key="add" accessible={access.canAccess("system:dept:edit")}>
+          <Access key="add" accessible={access.canAccess("system:dept:add")}>
             <DeptModalForm
               mode="add"
               trigger={<a>新增</a>}
@@ -83,6 +83,13 @@ export default () => {
               reload={actionRef.current?.reload}
             />
           </Access>
+
+          <a onClick={() => {
+            history.push({
+              pathname: '/system/dept-assign',
+              search: `?deptId=${record.deptId}&deptName=${record.deptName}`,
+            })
+          }}>分配用户</a>
 
           <Access key="delete" accessible={access.canAccess("system:dept:remove")}>
             <Popconfirm

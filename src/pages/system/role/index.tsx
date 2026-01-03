@@ -8,13 +8,10 @@ import { HIDE_COLUMN } from '@/util/ColumsUtils';
 import { sysRoleList, sysRoleRemove } from '@/services/yuan/sysRoleController';
 import { DictEnum } from '@/const/dict-enum';
 import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
-import DataScopeModalForm from './components/DataScopeModalForm';
 import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
 import { Access, history, useAccess } from '@umijs/max';
 import { useTableRequest } from '@/hooks/table/useTableRequest';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
-
-
 
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
@@ -85,37 +82,23 @@ export default () => {
       hideInSearch: true,
       render: (_, record) => {
         if (record.superAdmin) return null;
-
-        const items: MenuProps['items'] = [
-          {
-            key: 'assignUser',
-            label: '分配用户',
-            onClick: () =>
-              history.push({
-                pathname: '/system/role-assign',
-                search: `?roleId=${record.roleId}&roleName=${record.roleName}`,
-              }),
-          },
-          {
-            key: 'dataScope',
-            label: (
-              <DataScopeModalForm
-                trigger={<a>数据权限</a>}
-                record={record}
-              />
-            ),
-          },
-        ];
-
         return (
           <Space>
             <Access accessible={access.canAccess('system:role:edit')}>
-              <RoleModalForm
-                mode="edit"
-                trigger={<a>编辑</a>}
-                reload={actionRef.current?.reload}
-                record={record}
-              />
+              <Space>
+                <RoleModalForm
+                  mode="edit"
+                  trigger={<a>编辑</a>}
+                  reload={actionRef.current?.reload}
+                  record={record}
+                />
+                <a onClick={() => {
+                  history.push({
+                    pathname: '/system/role-assign',
+                    search: `?roleId=${record.roleId}&roleName=${record.roleName}`,
+                  })
+                }}>分配用户</a>
+              </Space>
             </Access>
             <Access accessible={access.canAccess('system:role:remove')}>
               <Popconfirm
@@ -128,16 +111,6 @@ export default () => {
               >
                 <a style={{ color: 'red' }}>删除</a>
               </Popconfirm>
-            </Access>
-            <Access accessible={access.canAccess('system:role:assigne')}>
-              <Dropdown menu={{ items }}>
-                <a onClick={(e) => e.preventDefault()}>
-                  <Space>
-                    更多
-                    <DownOutlined />
-                  </Space>
-                </a>
-              </Dropdown>
             </Access>
 
           </Space>

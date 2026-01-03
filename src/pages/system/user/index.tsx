@@ -13,6 +13,8 @@ import { useTableRequest } from '@/hooks/table/useTableRequest';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
 import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 import { PlusOutlined } from '@ant-design/icons';
+import { sysDeptTreeselect } from '@/services/yuan/sysDeptController';
+import { convertTree } from '@/util/TreeUtils';
 export default () => {
 
   /**权限控制 */
@@ -73,14 +75,28 @@ export default () => {
       dataIndex: 'phonenumber',
       hideInSearch: true,
     },
-    {
-      title: '部门id',
-      dataIndex: 'deptId',
-      ...HIDE_COLUMN
-    },
+   
     {
       title: '部门',
-      dataIndex: 'deptName'
+      dataIndex: 'deptId',
+      valueType: 'treeSelect',
+      hideInTable: true,
+      fieldProps: {
+        showSearch: true,
+        treeDefaultExpandAll: false,
+        // treeData: deptTreeData, // 页面初始化加载一次（数量不大时）
+      },
+      request: async () => {
+        const res = await sysDeptTreeselect({
+                    bo: {}
+                  } as API.sysMenuTreeselectParams);
+        return convertTree(res.data?.treeList || []) // 或者请求接口
+      },
+    },
+     {
+      title: '部门',
+      dataIndex: 'deptName',
+      hideInSearch: true,
     },
     {
       title: '创建时间',

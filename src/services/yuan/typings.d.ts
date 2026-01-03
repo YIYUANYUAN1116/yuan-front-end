@@ -1,16 +1,24 @@
 declare namespace API {
-  type allocatedUserListParams = {
+  type AvatarVo = Record<string, any>;
+
+  type deptAllocatedUserListParams = {
     bo: SysUserBo;
     pageQuery: PageQuery;
   };
 
-  type AvatarVo = Record<string, any>;
-
-  type cancelAuthUserAllParams = {
-    /** 角色ID */
-    roleId: string;
-    /** 用户ID串 */
+  type deptCancelUserAllParams = {
+    deptId: string;
     userIds: string[];
+  };
+
+  type deptSelectUserAllParams = {
+    deptId: string;
+    userIds: string[];
+  };
+
+  type deptUnallocatedUserListParams = {
+    bo: SysUserBo;
+    pageQuery: PageQuery;
   };
 
   type dictDictTypeParams = {
@@ -139,6 +147,26 @@ declare namespace API {
     isAsc?: string;
   };
 
+  type postAllocatedUserListParams = {
+    bo: SysUserBo;
+    pageQuery: PageQuery;
+  };
+
+  type postCancelUserAllParams = {
+    postId: string;
+    userIds: string[];
+  };
+
+  type postSelectUserAllParams = {
+    postId: string;
+    userIds: string[];
+  };
+
+  type postUnallocatedUserListParams = {
+    bo: SysUserBo;
+    pageQuery: PageQuery;
+  };
+
   type ProfileVo = {
     /** 用户信息 */
     user?: SysUserVo;
@@ -188,6 +216,18 @@ declare namespace API {
     data?: LoginVo;
   };
 
+  type roleAllocatedUserListParams = {
+    bo: SysUserBo;
+    pageQuery: PageQuery;
+  };
+
+  type roleCancelUserAllParams = {
+    /** 角色ID */
+    roleId: string;
+    /** 用户ID串 */
+    userIds: string[];
+  };
+
   type RoleDTO = {
     /** 角色ID */
     roleId?: string;
@@ -197,6 +237,18 @@ declare namespace API {
     roleKey?: string;
     /** 数据范围（1：所有数据权限；2：自定义数据权限；3：本部门数据权限；4：本部门及以下数据权限；5：仅本人数据权限） */
     dataScope?: string;
+  };
+
+  type roleSelectUserAllParams = {
+    /** 角色ID */
+    roleId: string;
+    /** 用户ID串 */
+    userIds: string[];
+  };
+
+  type roleUnallocatedUserListParams = {
+    bo: SysUserBo;
+    pageQuery: PageQuery;
   };
 
   type RProfileVo = {
@@ -347,13 +399,6 @@ declare namespace API {
     code?: number;
     msg?: string;
     data?: WfTaskVo;
-  };
-
-  type selectAuthUserAllParams = {
-    /** 角色ID */
-    roleId: string;
-    /** 用户ID串 */
-    userIds: string[];
   };
 
   type SelectRolesVo = {
@@ -761,6 +806,7 @@ declare namespace API {
     requestMethod?: string;
     /** 操作类别（0其它 1后台用户 2手机端用户） */
     operatorType?: number;
+    operatorId?: string;
     /** 操作人员 */
     operName?: string;
     /** 部门名称 */
@@ -818,6 +864,7 @@ declare namespace API {
     requestMethod?: string;
     /** 操作类别（0其它 1后台用户 2手机端用户） */
     operatorType?: number;
+    operatorId?: string;
     /** 操作人员 */
     operName?: string;
     /** 部门名称 */
@@ -1236,6 +1283,7 @@ declare namespace API {
     /** 关联知识库角色/角色组id */
     kroleGroupIds?: string;
     roleId?: string;
+    postId?: string;
   };
 
   type sysUserExportParams = {
@@ -1404,6 +1452,7 @@ declare namespace API {
     /** 部门对象 */
     dept?: SysDeptVo;
     deptName?: string;
+    postName?: string;
   };
 
   type TableDataInfoSysDeptVo = {
@@ -1693,11 +1742,6 @@ declare namespace API {
     treeList?: TreeLong[];
   };
 
-  type unallocatedUserListParams = {
-    bo: SysUserBo;
-    pageQuery: PageQuery;
-  };
-
   type UserInfoVo = {
     /** 用户基本信息 */
     user?: SysUserVo;
@@ -1717,12 +1761,12 @@ declare namespace API {
     instanceId: string;
     /** RUNNING/APPROVED/REJECTED/CANCELED */
     status: string;
-    /** createdBy */
-    createdBy?: string;
+    /** createBy */
+    createBy?: string;
     /** createdTime */
-    createdTime: string;
+    createTime: string;
     /** updatedTime */
-    updatedTime: string;
+    updateTime: string;
   };
 
   type WfBizRefExportParams = {
@@ -1754,12 +1798,12 @@ declare namespace API {
     instanceId?: string;
     /** RUNNING/APPROVED/REJECTED/CANCELED */
     status?: string;
-    /** createdBy */
-    createdBy?: string;
+    /** createBy */
+    createBy?: string;
     /** createdTime */
-    createdTime?: string;
+    createTime?: string;
     /** updatedTime */
-    updatedTime?: string;
+    updateTime?: string;
   };
 
   type WfCcBo = {
@@ -1833,6 +1877,11 @@ declare namespace API {
     createTime?: string;
     /** updateTime */
     updateTime?: string;
+  };
+
+  type WfDefinitionChangeStatusParams = {
+    id: string;
+    action: string;
   };
 
   type WfDefinitionDto = {

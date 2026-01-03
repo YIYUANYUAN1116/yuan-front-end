@@ -4,11 +4,10 @@ import { ProTable } from '@ant-design/pro-components';
 import { Modal, Space, Table } from 'antd';
 import { useTableRequest } from '@/hooks/table/useTableRequest';
 import { userBaseColumns } from '@/pages/system/user/components/userColumns';
-import { roleAllocatedUserList, roleUnallocatedUserList } from '@/services/yuan/sysRoleController';
-
-type RoleUserTableProps = {
+import { postAllocatedUserList, postUnallocatedUserList } from '@/services/yuan/sysPostController';
+type PostUserTableProps = {
   model: string;
-  roleId: string;
+  postId: string;
   title: any;
   actionText: string;
   confirmText: (count: number) => string;
@@ -18,9 +17,9 @@ type RoleUserTableProps = {
   actionRef?: React.RefObject<ActionType | null>;
 };
 
-const RoleUserTable = ({
+const PostUserTable = ({
   model,
-  roleId,
+  postId,
   title,
   actionText,
   confirmText,
@@ -28,17 +27,17 @@ const RoleUserTable = ({
   reloadParent,
   toolBarRender,
   actionRef,
-}: RoleUserTableProps) => {
+}: PostUserTableProps) => {
   const internalActionRef = useRef<ActionType | null>(null);
   const ref = actionRef || internalActionRef;
   const isAllocatedUser = model === "Y";
-  const request = useTableRequest(isAllocatedUser ? roleAllocatedUserList : roleUnallocatedUserList);
+  const request = useTableRequest(isAllocatedUser ? postAllocatedUserList : postUnallocatedUserList);
   return (
     <ProTable<API.SysUserVo>
       actionRef={ref}
       columns={userBaseColumns}
       rowKey="userId"
-      params={{ roleId }}
+      params={{ postId }}
       request={request}
       search={{ labelWidth: 'auto' }}
       pagination={{ pageSize: 10 }}
@@ -78,4 +77,4 @@ const RoleUserTable = ({
   );
 };
 
-export default RoleUserTable;
+export default PostUserTable;

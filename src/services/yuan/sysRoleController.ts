@@ -60,78 +60,38 @@ export async function sysRoleRemove(
   });
 }
 
-/** 获取角色已分配用户列表 查询已分配用户角色列表 GET /system/sysRole/authUser/allocatedList */
-export async function allocatedUserList(
+/** 获取角色已分配用户列表 查询已分配用户角色列表 GET /system/sysRole/allocatedList */
+export async function roleAllocatedUserList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.allocatedUserListParams,
+  params: API.roleAllocatedUserListParams,
   options?: { [key: string]: any }
 ) {
-  return request<API.TableDataInfoSysUserVo>(
-    "/system/sysRole/authUser/allocatedList",
-    {
-      method: "GET",
-      params: {
-        ...params,
-        bo: undefined,
-        ...params["bo"],
-        pageQuery: undefined,
-        ...params["pageQuery"],
-      },
-      ...(options || {}),
-    }
-  );
+  return request<API.TableDataInfoSysUserVo>("/system/sysRole/allocatedList", {
+    method: "GET",
+    params: {
+      ...params,
+      bo: undefined,
+      ...params["bo"],
+      pageQuery: undefined,
+      ...params["pageQuery"],
+    },
+    ...(options || {}),
+  });
 }
 
-/** 批量取消授权用户 批量取消授权用户 PUT /system/sysRole/authUser/cancelAll */
-export async function cancelAuthUserAll(
+/** 批量取消授权用户 批量取消授权用户 PUT /system/sysRole/cancelAll */
+export async function roleCancelUserAll(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.cancelAuthUserAllParams,
+  params: API.roleCancelUserAllParams,
   options?: { [key: string]: any }
 ) {
-  return request<API.RVoid>("/system/sysRole/authUser/cancelAll", {
+  return request<API.RVoid>("/system/sysRole/cancelAll", {
     method: "PUT",
     params: {
       ...params,
     },
     ...(options || {}),
   });
-}
-
-/** 批量选择用户授权 批量选择用户授权 PUT /system/sysRole/authUser/selectAll */
-export async function selectAuthUserAll(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.selectAuthUserAllParams,
-  options?: { [key: string]: any }
-) {
-  return request<API.RVoid>("/system/sysRole/authUser/selectAll", {
-    method: "PUT",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
-}
-
-/** 获取角色未分配用户列表 查询未分配用户角色列表 GET /system/sysRole/authUser/unallocatedList */
-export async function unallocatedUserList(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.unallocatedUserListParams,
-  options?: { [key: string]: any }
-) {
-  return request<API.TableDataInfoSysUserVo>(
-    "/system/sysRole/authUser/unallocatedList",
-    {
-      method: "GET",
-      params: {
-        ...params,
-        bo: undefined,
-        ...params["bo"],
-        pageQuery: undefined,
-        ...params["pageQuery"],
-      },
-      ...(options || {}),
-    }
-  );
 }
 
 /** 导出角色列表 导出角色列表 POST /system/sysRole/export */
@@ -183,4 +143,41 @@ export async function sysRoleOptionselect(
     },
     ...(options || {}),
   });
+}
+
+/** 批量选择用户授权 批量选择用户授权 PUT /system/sysRole/selectAll */
+export async function roleSelectUserAll(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.roleSelectUserAllParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.RVoid>("/system/sysRole/selectAll", {
+    method: "PUT",
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
+/** 获取角色未分配用户列表 查询未分配用户角色列表 GET /system/sysRole/unallocatedList */
+export async function roleUnallocatedUserList(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.roleUnallocatedUserListParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.TableDataInfoSysUserVo>(
+    "/system/sysRole/unallocatedList",
+    {
+      method: "GET",
+      params: {
+        ...params,
+        bo: undefined,
+        ...params["bo"],
+        pageQuery: undefined,
+        ...params["pageQuery"],
+      },
+      ...(options || {}),
+    }
+  );
 }

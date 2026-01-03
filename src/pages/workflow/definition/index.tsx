@@ -3,21 +3,61 @@ import { useActionRequest } from "@/hooks/action/useActionRequest";
 import { useTableRequest } from "@/hooks/table/useTableRequest";
 import { HIDE_COLUMN } from "@/util/ColumsUtils";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
-import { PageContainer, ProTable } from "@ant-design/pro-components";
+import { PageContainer, ProTable, TableDropdown } from "@ant-design/pro-components";
 import { Access, history, useAccess } from "@umijs/max";
-import { Button, Popconfirm, Space, Table } from "antd";
-import { useRef } from "react";
-import { wfDefinitionList, wfDefinitionRemove } from "@/services/yuan/wfDefinitionController";
+import { Button, Modal, Popconfirm, Space, Table } from "antd";
+import { useRef, useState } from "react";
+import { wfDefinitionChangeStatus, wfDefinitionList, wfDefinitionRemove } from "@/services/yuan/wfDefinitionController";
 import DefinitionModalForm from "./components/DefinitionModalForm";
 import { PlusOutlined } from "@ant-design/icons";
 import { useDictDataValueEnum } from "@/hooks/dict/useDictDataValueEnum";
 import { DictEnum } from "@/const/dict-enum";
+import { DfActions } from "./DfTypes";
 export default () => {
   /**权限控制 */
   const access = useAccess();
 
   const actionRef = useRef<ActionType | null>(null);
   const statusEnum = useDictDataValueEnum(DictEnum.WF_DEFINITION_STATUS)
+
+  const { run: deleteRun } = useActionRequest(
+    wfDefinitionRemove,
+    actionRef.current?.reload
+  );
+
+  const { run: changeStatusRun } = useActionRequest(
+    wfDefinitionChangeStatus,
+    actionRef.current?.reload
+  );
+  const menus = [
+    {
+      key: 'edit',
+      name: '流程设计',
+    },
+    {
+      key: 'publish',
+      name: '发布'
+
+    }, {
+      key: 'disable',
+      name: '停用',
+      danger: true,
+    }
+  ];
+
+  const handleDropdownSelect = (key: string, record: API.WfDefinitionVo) => {
+    if (key === 'publish') {
+      changeStatusRun({ id: record.id, action: DfActions.PUBLISH });
+    } else if (key === 'disable') {
+      changeStatusRun({ id: record.id, action: DfActions.DISABLE });
+    } else if (key === 'edit') {
+      history.push({
+        pathname: '/workflow/designer',
+        search: `?id=${record.id}`,
+      })
+    }
+  };
+
 
   const columns: ProColumns<API.WfDefinitionVo>[] = [
     {
@@ -85,21 +125,11 @@ export default () => {
                 reload={actionRef.current?.reload}
                 record={record}
               />
-
-              <a onClick={() => {
-                history.push({
-                  pathname: '/workflow/designer',
-                  search: `?id=${record.id}`,
-                })
-              }}>
-                设计流程
-              </a>
-              <a >
-                发布
-              </a>
-              <a >
-                停用
-              </a>
+              <TableDropdown
+                key="actionGroup"
+                menus={menus}
+                onSelect={(key) => handleDropdownSelect(key, record)}
+              />
             </Space>
           </Access>
 
@@ -109,7 +139,6 @@ export default () => {
               description={`确认删除：${record.definitionName}？`}
               okText="确认"
               cancelText="取消"
-              okButtonProps={{ loading: deleteLoading }}
               onConfirm={() => deleteRun({ ids: [record.id] })}
             >
               <a style={{ color: "red" }}>删除</a>
@@ -119,10 +148,7 @@ export default () => {
       ),
     },
   ];
-  const { run: deleteRun, loading: deleteLoading } = useActionRequest(
-    wfDefinitionRemove,
-    actionRef.current?.reload
-  );
+
 
   const request = useTableRequest(wfDefinitionList);
 

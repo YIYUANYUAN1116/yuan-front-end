@@ -3,7 +3,8 @@ import { useActionRequest } from '@/hooks/action/useActionRequest';
 import { sysPostAdd, sysPostEdit } from '@/services/yuan/sysPostController';
 import { ActionType, DrawerForm, ModalForm, ProFormRadio, ProFormSelect, ProFormText, ProFormTextArea } from '@ant-design/pro-components';
 import React from 'react'
-import { authScopeOptions } from '..';
+import { authScopeOptions } from './AuthScopeOptions';
+
 
 interface ModalFormProps {
   mode: OperationMode;

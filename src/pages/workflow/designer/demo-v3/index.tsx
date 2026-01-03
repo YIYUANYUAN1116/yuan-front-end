@@ -1,16 +1,18 @@
 import { ActionType, PageContainer, ProCard } from '@ant-design/pro-components'
 import { LogicFlow } from '@logicflow/core';
 import React, { useEffect, useRef, useState } from 'react'
-import { Assignee, GatewayBranchVM, initialFlowData, WfType, WfTypeConst } from './types.ts/DesiginerTypes';
+import { GatewayBranchVM, initialFlowData, WfType, WfTypeConst } from '../types.ts/DesiginerTypes';
 import { useRequest, useSearchParams } from '@umijs/max';
 import '@logicflow/extension/lib/style/index.css';
 import "@logicflow/core/lib/style/index.css";
 import './index.less';
 import { Button, Card, Form, Input, message, Select, Space } from 'antd';
 import { DndPanel, Menu, SelectionSelect } from '@logicflow/extension';
-import { PreviewJsonForm } from './components/PreViewJosnForm';
+import { PreviewJsonForm } from '../components/PreViewJosnForm';
 import { wfDefinitionEdit, wfDefinitionEditDto, wfDefinitionGetInfo } from '@/services/yuan/wfDefinitionController';
-import AssigneePicker from './components/AssigneePicker';
+import e from 'express';
+import { RuleConfigFields } from '../components/RuleConfigFields';
+import AssigneePicker from '../components/AssigneePicker';
 
 const index = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -22,6 +24,25 @@ const index = () => {
   const id = searchParams.get('id') || '';
   const [messageApi, contextHolder] = message.useMessage();
   const [previewData, setPreviewData] = useState<any>({});
+
+
+
+
+  const roleOptions = [
+    { label: '部门主管', value: 'manager' },
+    { label: '人事', value: 'hr' },
+  ];
+
+  const userOptions = [
+    { label: '张三', value: '1001' },
+    { label: '李四', value: '1002' },
+  ];
+
+  const deptOptions = [
+    { label: '研发部', value: 'dept_rd' },
+    { label: '财务部', value: 'dept_fin' },
+  ];
+
 
   const handleOpenPreview = () => {
     const lf = lfRef.current;
@@ -48,33 +69,16 @@ const index = () => {
     const lf = lfRef.current;
     if (!lf || !selectedNodeId) return;
 
-
-    await form.validateFields();
-
-    // ✅ 再拿全量（包括隐藏字段）
-    const values = form.getFieldsValue(true);
-
+    const values = await form.validateFields();
     console.log(values)
-
     // // 更新节点名称
     lf.updateText(selectedNodeId, values.label);
 
     // // 更新节点 properties
-    const assignee: Assignee | undefined =
-      values.wfType === 'USER_TASK'
-        ? {
-          ...values.assignee,
-          userIds: values.assignee?.userIds ?? [],
-          users: values.assignee?.users ?? [],
-        }
-        : undefined;
-
     lf.setProperties(selectedNodeId, {
       wfType: values.wfType,
-      assignee, // ✅ 进入 flowJson，后续打开流程仍然能看到人名
+      assignee: values.wfType === 'USER_TASK' ? values.assignee : undefined,
     });
-
-
 
     // // 如果是网关：批量更新出边
     if (values.wfType === 'GATEWAY' && Array.isArray(values.branches)) {
@@ -181,14 +185,9 @@ const index = () => {
         wfType === 'GATEWAY'
           ? loadGatewayBranches(lf, nodeId)
           : [];
-      console.log(props)
-      // ✅ 每个节点从自己的 properties 拿 assignee；没有就清空，避免“所有节点都已选中”
+
       const assignee: Assignee =
-        props.assignee ?? {
-          kind: 'FIXED',
-          userIds: [],
-          users: [],
-        };
+        props.assignee ?? { type: 'ROLE', roleIds: [] };
 
       setGatewayBranches(branches);
 
@@ -282,6 +281,9 @@ const index = () => {
               <Form
                 form={form}
                 layout="vertical">
+                <Space>
+                  
+                </Space>
                 <Form.Item
                   label="节点名称"
                   name="label"
@@ -305,49 +307,98 @@ const index = () => {
                   />
                 </Form.Item>
 
+                <Form.Item label="审批人模式" name={['assignee', 'kind']} initialValue="RULE" rules={[{ required: true }]}>
+                  <Select options={[
+                    { label: '固定选择', value: 'FIXED' },
+                    { label: '业务规则', value: 'RULE' },
+                  ]} />
+                </Form.Item>
+
                 {/* ========== Assignee 面板 ========== */}
                 <Form.Item shouldUpdate noStyle>
                   {() => {
-                    const wfType = form.getFieldValue('wfType');
-                    if (wfType !== 'USER_TASK') return null;
-                    return (
-                      <Card size="small" title="审批人配置">
-                        <Form.Item
-                          label="指定审批人"
-                          name={['assignee', 'userIds']}
-                          rules={[{ required: true, message: '请选择审批人' }]}
-                        >
-                          {/* 这里不直接渲染输入控件，用 shouldUpdate 渲染自定义选择器 */}
-                          <Form.Item noStyle shouldUpdate>
-                            {() => {
-                              const userIds: string[] = form.getFieldValue(['assignee', 'userIds']) || [];
-                              const users = form.getFieldValue(['assignee', 'users']) || [];
-
-                              return (
-                                <AssigneePicker
-                                  value={{ userIds, users }}
-                                  onChange={(v) => {
-                                    form.setFieldsValue({
-                                      assignee: {
-                                        ...(form.getFieldValue('assignee') || {}),
-                                        userIds: v.userIds,
-                                        users: v.users,
-                                      },
-                                    });
-                                  }}
-                                />
-                              );
-                            }}
+                    const kind = form.getFieldValue(['assignee', 'kind']);
+                    if (kind === 'FIXED') {
+                      const wfType = form.getFieldValue('wfType');
+                      if (wfType !== 'USER_TASK') return null;
+                      return (
+                        <Card size="small" title="审批人配置">
+                          <Form.Item
+                            label="指派方式"
+                            name={['assignee', 'type']}
+                            rules={[{ required: true }]}
+                          >
+                            <Select
+                              options={[
+                                { label: '按人员', value: 'USER' },
+                                { label: '按角色', value: 'ROLE' },
+                                { label: '按部门', value: 'DEPT' },
+                              ]}
+                            />
                           </Form.Item>
+
+
+                          <Form.Item shouldUpdate noStyle>
+                            {() => {
+                              const type = form.getFieldValue(['assignee', 'type']);
+
+                              if (type === 'ROLE') {
+                                return (
+                                  <Form.Item
+                                    label="角色"
+                                    name={['assignee', 'roleIds']}
+                                    rules={[{ required: true }]}
+                                  >
+                                    <AssigneePicker form={form} kind='USER'></AssigneePicker>
+                                  </Form.Item>
+                                );
+                              }
+                              if (type === 'USER') {
+                                return (
+                                  <Form.Item
+                                    label="人员"
+                                    name={['assignee', 'userIds']}
+                                    rules={[{ required: true }]}
+                                  >
+                                    <AssigneePicker form={form} kind='USER'></AssigneePicker>
+                                  </Form.Item>
+                                );
+                              }
+                              return (
+                                <Form.Item
+                                  label="部门"
+                                  name={['assignee', 'deptIds']}
+                                  rules={[{ required: true }]}
+                                >
+                                  <AssigneePicker form={form} kind='USER'></AssigneePicker>
+                                </Form.Item>
+                              )
+                            }
+                            }
+                          </Form.Item>
+                        </Card>
+                      )
+                    }
+
+                    // RULE
+                    return (
+                      <>
+                        <Form.Item label="规则类型" name={['assignee', 'ruleType']} rules={[{ required: true }]}>
+                          <Select options={[
+                            { label: '发起人', value: 'STARTER' },
+                            { label: '发起人主管', value: 'STARTER_MANAGER' },
+                            { label: '表单字段', value: 'FORM_FIELD' },
+                            { label: '业务解析器', value: 'BIZ_RESOLVER' },
+                            { label: '表达式', value: 'EXPR' },
+                          ]} />
                         </Form.Item>
 
-                        {/* ✅ 关键：把 assignee.users 也注册（用 hidden 即可） */}
-                        <Form.Item name={['assignee', 'users']} hidden>
-                          <Input />
-                        </Form.Item>
-                      </Card>
-                    )
-                  }}
+                        {/* 按 ruleType 展示不同参数 */}
+                        <RuleConfigFields form={form} />
+                      </>
+                    );
+                  }
+                  }
                 </Form.Item>
 
                 {/* ========== Gateway Branches 面板 ========== */}
@@ -355,8 +406,9 @@ const index = () => {
                   {() => {
                     const wfType = form.getFieldValue('wfType');
                     if (wfType !== 'GATEWAY') return null;
+
                     return (
-                      <Card size="small" title="条件分支" style={{ marginTop: 20 }}>
+                      <Card size="small" title="条件分支">
                         {gatewayBranches.length === 0 ? (
                           <>当前网关没有出边，请先从该节点拉出连线</>
                         ) : (
@@ -392,8 +444,7 @@ const index = () => {
                     );
                   }}
                 </Form.Item>
-
-                <Button type="primary" onClick={handleSaveNode} block style={{ marginTop: 20 }}>
+                <Button type="primary" onClick={handleSaveNode} block>
                   保存节点配置
                 </Button>
               </Form>

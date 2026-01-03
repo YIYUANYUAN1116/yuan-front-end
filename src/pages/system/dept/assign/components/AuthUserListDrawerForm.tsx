@@ -1,17 +1,17 @@
 import { DrawerForm } from "@ant-design/pro-components";
-import RoleUserTable from "./RoleUserTable";
 import { Button, Drawer } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useState } from "react";
-import { roleSelectUserAll } from "@/services/yuan/sysRoleController";
+import PostUserTable from "./DeptUserTable";
+import { deptSelectUserAll } from "@/services/yuan/sysDeptController";
 
 type Props = {
-  roleId: string;
+  deptId: string;
   reload: () => void;
   triggerText?: string;
 };
 
-const AuthUserListDrawerForm = ({ triggerText = "新增", roleId, reload }: Props) => {
+const AuthUserListDrawerForm = ({ triggerText = "新增", deptId, reload }: Props) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -31,14 +31,14 @@ const AuthUserListDrawerForm = ({ triggerText = "新增", roleId, reload }: Prop
         destroyOnHidden 
         size={720}
       >
-        <RoleUserTable
+        <PostUserTable
           model="N"
-          roleId={roleId}
+          deptId={deptId}
           title="未分配用户列表"
-          actionText="批量授权"
-          confirmText={(n) => `确认授权选中的 ${n} 条用户吗？`}
+          actionText="批量分配"
+          confirmText={(n) => `确认分配选中的 ${n} 条用户吗？`}
           onBatchAction={(keys) =>
-            roleSelectUserAll({ roleId, userIds: keys })
+            deptSelectUserAll({ deptId, userIds: keys })
           }
           reloadParent={() => {
             reload();

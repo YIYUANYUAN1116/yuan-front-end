@@ -60,6 +60,20 @@ export async function wfDefinitionRemove(
   });
 }
 
+/** 修改流程定义状态 修改wfd POST /workflow/wfDefinition/${param0}/${param1} */
+export async function wfDefinitionChangeStatus(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.WfDefinitionChangeStatusParams,
+  options?: { [key: string]: any }
+) {
+  const { id: param0, action: param1, ...queryParams } = params;
+  return request<API.RVoid>(`/workflow/wfDefinition/${param0}/${param1}`, {
+    method: "POST",
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}
+
 /** 修改wfd_dto 修改wfd PUT /workflow/wfDefinition/dto */
 export async function wfDefinitionEditDto(
   body: API.WfDefinitionDto,

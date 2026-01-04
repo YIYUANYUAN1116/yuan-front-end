@@ -2,14 +2,15 @@ import { type ActionType, ModalForm, ProForm, ProFormSelect, ProFormText, ProFor
 import { Form } from 'antd';
 import { type FC } from 'react';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
-import { sysPostEdit } from '@/services/yuan/sysPostController';
+
 import { authScopeOptions } from './AuthScopeOptions';
+import { sysRoleEdit } from '@/services/yuan/sysRoleController';
 
 
 interface RoleModalFormProps {
   trigger?: React.ReactNode;
   reload?: ActionType['reload'];
-  record?: API.SysPostVo;
+  record?: API.SysRoleVo;
 }
 
 const DataScopeModalForm: FC<RoleModalFormProps> = ({
@@ -17,12 +18,12 @@ const DataScopeModalForm: FC<RoleModalFormProps> = ({
   reload,
   record,
 }) => {
-  const [form] = Form.useForm<API.SysPostBo>();
-  const { run: run, loading: loading } = useActionRequest(sysPostEdit)
+  const [form] = Form.useForm<API.SysRoleBo>();
+  const { run: run, loading: loading } = useActionRequest(sysRoleEdit)
 
 
   return (
-    <ModalForm<API.SysPostBo>
+    <ModalForm<API.SysRoleBo>
       title={"数据权限"}
       trigger={trigger}
       form={form}
@@ -39,10 +40,10 @@ const DataScopeModalForm: FC<RoleModalFormProps> = ({
 
           <ProFormText
             width="md"
-            name="postName"
-            label="岗位名称"
-            placeholder="请输入岗位名称"
-            rules={[{ required: true, message: '请输入岗位名称' }]}
+            name="roleName"
+            label="角色名称"
+            placeholder="请输入角色名称"
+            rules={[{ required: true, message: '请输入角色名称' }]}
           />
 
           <ProFormSelect

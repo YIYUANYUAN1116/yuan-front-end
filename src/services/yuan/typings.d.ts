@@ -1,4 +1,14 @@
 declare namespace API {
+  type ApproveTaskCmd = {
+    /** 操作人（当前用户） */
+    operatorUserId?: string;
+    tenantId?: string;
+    /** 备注 / 审批意见 */
+    comment?: string;
+    variables?: Record<string, any>;
+    taskId: string;
+  };
+
   type AvatarVo = Record<string, any>;
 
   type deptAllocatedUserListParams = {
@@ -210,10 +220,22 @@ declare namespace API {
     data?: SysDictTypeVo[];
   };
 
+  type RListSysPostVo = {
+    code?: number;
+    msg?: string;
+    data?: SysPostVo[];
+  };
+
   type RLoginVo = {
     code?: number;
     msg?: string;
     data?: LoginVo;
+  };
+
+  type RLong = {
+    code?: number;
+    msg?: string;
+    data?: string;
   };
 
   type roleAllocatedUserListParams = {
@@ -404,6 +426,20 @@ declare namespace API {
   type SelectRolesVo = {
     roles?: SysRoleVo[];
     checkedKeys?: string[];
+  };
+
+  type StartProcessCmd = {
+    /** 操作人（当前用户） */
+    operatorUserId?: string;
+    tenantId?: string;
+    /** 备注 / 审批意见 */
+    comment?: string;
+    variables?: Record<string, any>;
+    definitionKey: string;
+    bizType?: string;
+    bizId?: string;
+    /** 业务发起人（可选，代发场景用） */
+    starterUserId?: string;
   };
 
   type SysDeptBo = {
@@ -901,8 +937,7 @@ declare namespace API {
     postSort: number;
     /** 状态（0正常 1停用） */
     status: string;
-    /** 数据范围（1：所有数据权限；2：自定义数据权限；3：本部门数据权限；4：本部门及以下数据权限；5：仅本人数据权限） */
-    dataScope?: string;
+    deptId: string;
     /** 创建部门 */
     createDept?: string;
     /** 创建者 */
@@ -915,10 +950,15 @@ declare namespace API {
     updateTime?: string;
     /** 备注 */
     remark?: string;
+    delFlag?: string;
   };
 
   type SysPostExportParams = {
     bo: SysPostBo;
+  };
+
+  type SysPostGetByUserIdParams = {
+    userId: string;
   };
 
   type SysPostGetInfoParams = {
@@ -948,8 +988,7 @@ declare namespace API {
     postSort?: number;
     /** 状态（0正常 1停用） */
     status?: string;
-    /** 数据范围（1：所有数据权限；2：自定义数据权限；3：本部门数据权限；4：本部门及以下数据权限；5：仅本人数据权限） */
-    dataScope?: string;
+    deptId?: string;
     /** 创建部门 */
     createDept?: string;
     /** 创建者 */
@@ -962,6 +1001,10 @@ declare namespace API {
     updateTime?: string;
     /** 备注 */
     remark?: string;
+    deptName?: string;
+    delFlag?: string;
+    primaryPostId?: string;
+    isPrimary?: boolean;
   };
 
   type SysRoleBo = {
@@ -1284,6 +1327,10 @@ declare namespace API {
     kroleGroupIds?: string;
     roleId?: string;
     postId?: string;
+    postName?: string;
+    deptName?: string;
+    roleName?: string;
+    primaryPostId?: string;
   };
 
   type sysUserExportParams = {
@@ -1333,6 +1380,7 @@ declare namespace API {
   type SysUserPostBo = {
     userId?: string;
     postId?: string;
+    isPrimary?: boolean;
   };
 
   type SysUserPostExportParams = {
@@ -1453,6 +1501,7 @@ declare namespace API {
     dept?: SysDeptVo;
     deptName?: string;
     postName?: string;
+    isPrimaryPost?: boolean;
   };
 
   type TableDataInfoSysDeptVo = {
@@ -1938,19 +1987,19 @@ declare namespace API {
   type WfInstanceBo = {
     id?: string;
     /** 租户ID */
-    tenantId: string;
+    tenantId?: string;
     /** 流程定义ID */
     definitionId: string;
     /** 流程业务标识 */
-    definitionKey: string;
+    definitionKey?: string;
     /** 流程版本 */
-    version: number;
+    version?: number;
     /** 业务单号(请假单ID等) */
     businessKey?: string;
     /** 状态(RUNNING/APPROVED/REJECTED/CANCELED) */
-    status: string;
+    status?: string;
     /** 发起人 */
-    startUserId: string;
+    startUserId?: string;
     /** startTime */
     startTime?: string;
     /** 结束时间 */

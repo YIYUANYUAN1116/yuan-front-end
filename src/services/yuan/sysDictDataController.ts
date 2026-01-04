@@ -2,7 +2,7 @@
 /* eslint-disable */
 import { request } from "@umijs/max";
 
-/** 修改保存字典类型 修改保存字典类型 PUT /system/dict/data */
+/** 修改保存字典 修改保存字典类型 PUT /system/dict/data */
 export async function dictEdit(
   body: API.SysDictDataBo,
   options?: { [key: string]: any }
@@ -17,7 +17,7 @@ export async function dictEdit(
   });
 }
 
-/** 新增字典类型 新增字典类型 POST /system/dict/data */
+/** 新增字典 新增字典类型 POST /system/dict/data */
 export async function dictAdd(
   body: API.SysDictDataBo,
   options?: { [key: string]: any }

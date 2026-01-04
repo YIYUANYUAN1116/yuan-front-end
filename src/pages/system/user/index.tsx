@@ -39,8 +39,7 @@ export default () => {
     },
     {
       title: '用户名称',
-      dataIndex: 'nickName',
-      hideInSearch: true,
+      dataIndex: 'nickName'
     },
     {
       title: '登录名称',
@@ -75,7 +74,6 @@ export default () => {
       dataIndex: 'phonenumber',
       hideInSearch: true,
     },
-   
     {
       title: '部门',
       dataIndex: 'deptId',
@@ -88,14 +86,19 @@ export default () => {
       },
       request: async () => {
         const res = await sysDeptTreeselect({
-                    bo: {}
-                  } as API.sysMenuTreeselectParams);
+          bo: {}
+        } as API.sysMenuTreeselectParams);
         return convertTree(res.data?.treeList || []) // 或者请求接口
       },
     },
-     {
+    {
       title: '部门',
       dataIndex: 'deptName',
+      hideInSearch: true,
+    },
+    {
+      title: '岗位',
+      dataIndex: 'postName',
       hideInSearch: true,
     },
     {

@@ -21,10 +21,10 @@ export const DeptModalForm = (props: ModalFormProps) => {
 
   return (
     <DrawerForm<API.SysDeptBo>
-      title={isEdit ? '编辑岗位' : '新增岗位'}
+      title={isEdit ? '编辑部门' : '新增部门'}
       trigger={trigger}
       size='middle'
-      width={520}
+      width={720}
       initialValues={isEdit
         ? { ...record } // 编辑：完整回填
         : {

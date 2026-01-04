@@ -29,7 +29,7 @@ const AuthUserListDrawerForm = ({ triggerText = "新增", postId, reload }: Prop
         open={open}
         onClose={() => setOpen(false)}
         destroyOnHidden 
-        size={720}
+        size={920}
       >
         <PostUserTable
           model="N"

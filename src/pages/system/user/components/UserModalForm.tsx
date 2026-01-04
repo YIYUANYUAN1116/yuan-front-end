@@ -1,6 +1,7 @@
 import { OperationMode, OperationModes } from '@/const/Const';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
 import { sysDeptTreeselect } from '@/services/yuan/sysDeptController';
+import { sysPostGetByUserId, sysPostList } from '@/services/yuan/sysPostController';
 import { sysUserAdd, sysUserEdit } from '@/services/yuan/sysUserController';
 import { convertTree } from '@/util/TreeUtils';
 import { type ActionType, ModalForm, ProForm, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect } from '@ant-design/pro-components';
@@ -24,9 +25,9 @@ const UserModalForm: FC<UserModalFormProps> = ({
   const isEdit = mode === OperationModes.EDIT;
   const { run: run, loading: loading } = useActionRequest(isEdit ? sysUserEdit : sysUserAdd, reload)
   const [form] = Form.useForm<API.SysUserBo>();
-  const [treeData, setTreeData] = useState<any[]>([]);
+  const [post, setPost] = useState<any[]>([]);
 
-
+  console.log(record)
   return (
     <ModalForm<API.SysUserBo>
       title={isEdit ? '编辑用户' : '新建用户'}
@@ -39,11 +40,16 @@ const UserModalForm: FC<UserModalFormProps> = ({
         return true;
       }}
       onOpenChange={async (visible) => {
-        if (visible) {
-          const res = await sysDeptTreeselect({
-            bo: {}
-          } as API.sysMenuTreeselectParams);
-          setTreeData(convertTree(res.data?.treeList || []));
+        if (visible && record) {
+          const res = await sysPostGetByUserId({ userId: record.userId });
+          setPost(
+            (res.data || []).map(item => ({
+              label: item.deptName
+                ? `${item.postName} (${item.deptName})`
+                : item.postName,
+              value: item.postId,
+            }))
+          );
         }
       }}
     >
@@ -104,18 +110,13 @@ const UserModalForm: FC<UserModalFormProps> = ({
         />
       </ProForm.Group>
 
-      <ProFormTreeSelect
-        name="deptId"
-        label="部门"
-        placeholder="请选择部门"
-        fieldProps={{
-          treeData: treeData, // ← 接口返回的菜单树
-          showSearch: true,
-          treeNodeFilterProp: "deptName",
-        }}
-        rules={[{ required: true, message: "请选择部门" }]}
+      <ProFormSelect
+        name="primaryPostId"
+        label="主岗位"
+        placeholder="请选择主岗位"
+        options={post}
+        rules={[{ required: true, message: "请选择主岗位" }]}
       />
-
       <ProFormTextArea name="remark" label="备注" placeholder="请输入备注" />
 
       {/* 隐藏的userId，只在编辑时用 */}

@@ -7,6 +7,7 @@ import { convertTree } from '@/util/TreeUtils';
 import { sysRoleEdit, sysRoleAdd } from '@/services/yuan/sysRoleController';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
 import { OperationMode, OperationModes } from '@/const/Const';
+import { authScopeOptions } from './AuthScopeOptions';
 
 interface RoleModalFormProps {
   mode: OperationMode;
@@ -71,7 +72,13 @@ const UserModalForm: FC<RoleModalFormProps> = ({
           placeholder="请输入权限字符"
         />
       </ProForm.Group>
-
+      <ProFormSelect
+        name="dataScope"
+        label="数据权限"
+        placeholder="请选择数据权限"
+        options={authScopeOptions}
+        rules={[{ required: true, message: "请选择数据权限" }]}
+      />
       <ProForm.Group>
         <ProFormText
           width="md"

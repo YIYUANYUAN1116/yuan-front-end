@@ -95,3 +95,18 @@ export async function wfInstanceList(
     ...(options || {}),
   });
 }
+
+/** 流程发起 POST /workflow/wfInstance/start */
+export async function wfInstanceStart1(
+  body: API.StartProcessCmd,
+  options?: { [key: string]: any }
+) {
+  return request<API.RLong>("/workflow/wfInstance/start", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}

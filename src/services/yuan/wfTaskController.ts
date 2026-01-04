@@ -60,6 +60,21 @@ export async function wfTaskRemove(
   });
 }
 
+/** 流程发起 POST /workflow/wfTask/approve */
+export async function wfInstanceStart(
+  body: API.ApproveTaskCmd,
+  options?: { [key: string]: any }
+) {
+  return request<API.RLong>("/workflow/wfTask/approve", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
 /** 导出wft列表 导出wft列表 POST /workflow/wfTask/export */
 export async function wfTaskExport(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)

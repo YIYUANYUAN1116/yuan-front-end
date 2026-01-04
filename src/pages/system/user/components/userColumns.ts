@@ -36,12 +36,12 @@ export const userBaseColumns: ProColumns<API.SysUserVo>[] = [
   },
   {
     title: '部门',
-    dataIndex: 'detpName',
+    dataIndex: 'deptName',
     ellipsis: true,
   },
   {
-    title: '职位',
+    title: '主岗位',
     dataIndex: 'postName',
     ellipsis: true,
-  },
+  }
 ];

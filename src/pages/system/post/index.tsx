@@ -5,14 +5,15 @@ import { sysPostList, sysPostRemove } from "@/services/yuan/sysPostController";
 import { HIDE_COLUMN } from "@/util/ColumsUtils";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { PageContainer, ProTable } from "@ant-design/pro-components";
-import { Access, useAccess,history } from "@umijs/max";
+import { Access, useAccess, history } from "@umijs/max";
 import { Button, Popconfirm, Space, Table, Tag } from "antd";
 import { useRef } from "react";
 import { PostModalForm } from "./components/PostModalForm";
 import { DictEnum } from "@/const/dict-enum";
 import { useDictDataValueEnum } from "@/hooks/dict/useDictDataValueEnum";
 import { PlusOutlined } from "@ant-design/icons";
-import { authScopeOptions } from "./components/AuthScopeOptions";
+import { sysDeptTreeselect } from "@/services/yuan/sysDeptController";
+import { convertTree } from "@/util/TreeUtils";
 
 export default () => {
   /**权限控制 */
@@ -42,24 +43,39 @@ export default () => {
       dataIndex: "postCode"
     },
     {
-      title: '数据范围',
-      dataIndex: 'dataScope',
-      ellipsis: true,
+      title: "所属部门",
+      dataIndex: "deptName",
       hideInSearch: true,
-      render: (_, record) => {
-        const found = authScopeOptions.find(
-          (item) => item.value === record.dataScope,
-        );
-        if (found) {
-          return <Tag color={found.color}>{found.label}</Tag>;
-        }
-        return <Tag>{record.dataScope}</Tag>;
+    },
+    {
+      title: "所属部门",
+      dataIndex: "deptId",
+      ...HIDE_COLUMN,
+      hideInSearch: true,
+    },
+    {
+      title: '部门',
+      dataIndex: 'deptId',
+      valueType: 'treeSelect',
+      hideInTable: true,
+      fieldProps: {
+        showSearch: true,
+        treeDefaultExpandAll: false,
+        // treeData: deptTreeData, // 页面初始化加载一次（数量不大时）
+      },
+      request: async () => {
+        const res = await sysDeptTreeselect({
+          bo: {}
+        } as API.sysMenuTreeselectParams);
+        return convertTree(res.data?.treeList || []) // 或者请求接口
       },
     },
     {
       title: "显示顺序",
       dataIndex: "postSort",
       hideInSearch: true,
+      sorter: true,
+      defaultSortOrder: 'ascend', // 默认降序
     },
     {
       title: "状态",

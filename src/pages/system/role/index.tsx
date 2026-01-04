@@ -12,6 +12,7 @@ import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
 import { Access, history, useAccess } from '@umijs/max';
 import { useTableRequest } from '@/hooks/table/useTableRequest';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
+import { authScopeOptions } from './components/AuthScopeOptions';
 
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
@@ -42,6 +43,21 @@ export default () => {
       title: '权限字符',
       dataIndex: 'roleKey',
       ellipsis: true,
+    },
+    {
+      title: '数据范围',
+      dataIndex: 'dataScope',
+      ellipsis: true,
+      hideInSearch: true,
+      render: (_, record) => {
+        const found = authScopeOptions.find(
+          (item) => item.value === record.dataScope,
+        );
+        if (found) {
+          return <Tag color={found.color}>{found.label}</Tag>;
+        }
+        return <Tag>{record.dataScope}</Tag>;
+      },
     },
     {
       disable: true,

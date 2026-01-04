@@ -3,7 +3,6 @@ import { useActionRequest } from '@/hooks/action/useActionRequest';
 import { sysPostAdd, sysPostEdit } from '@/services/yuan/sysPostController';
 import { ActionType, DrawerForm, ModalForm, ProFormRadio, ProFormSelect, ProFormText, ProFormTextArea } from '@ant-design/pro-components';
 import React from 'react'
-import { authScopeOptions } from './AuthScopeOptions';
 
 
 interface ModalFormProps {
@@ -53,13 +52,7 @@ export const PostModalForm = (props: ModalFormProps) => {
         placeholder="请输入岗位名称"
         rules={[{ required: true, message: '请输入岗位名称' }]}
       />
-      <ProFormSelect
-        name="dataScope"
-        label="数据权限"
-        placeholder="请选择数据权限"
-        options={authScopeOptions}
-        rules={[{ required: true, message: "请选择数据权限" }]}
-      />
+      
       <ProFormText
 
         name="postSort"

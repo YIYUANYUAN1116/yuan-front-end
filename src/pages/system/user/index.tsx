@@ -2,8 +2,8 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { Button, Popconfirm, Result, Space, Table } from 'antd';
 import { use, useRef } from 'react';
-import UserModalForm from './components/UserModalForm';
-import UserRoleModalForm from './components/UserRoleModalForm';
+import UserDrawerForm from './components/UserDrawerForm';
+import UserRoleModalForm from '../post/components/PostRoleModalForm';
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
 import { sysUserList, sysUserRemove } from '@/services/yuan/sysUserController';
 import { DictEnum } from '@/const/dict-enum';
@@ -116,16 +116,12 @@ export default () => {
       render: (text, record) => (
         <Space size="small">
           <Access key='edit' accessible={access.canAccess('system:user:edit') || false}>
-            <UserModalForm
+            <UserDrawerForm
               mode="edit"
               trigger={<a>编辑</a>}
               record={record}
               reload={actionRef.current?.reload}
             />
-          </Access>
-
-          <Access key='assign' accessible={access.canAccess('system:user:assign')}>
-            <UserRoleModalForm userId={record.userId!} reload={actionRef.current?.reload} />
           </Access>
 
           <Access key='remove' accessible={access.canAccess('system:user:remove')}>
@@ -164,7 +160,7 @@ export default () => {
         headerTitle="用户管理"
         toolBarRender={() => [
           <Access key="add" accessible={access.canAccess('system:user:add')}>
-            <UserModalForm
+            <UserDrawerForm
               mode="add"
               trigger={
                 <Button type="primary" icon={<PlusOutlined />}>新增用户</Button>

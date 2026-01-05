@@ -1,4 +1,4 @@
-import { type ActionType, ModalForm, ProForm, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect } from '@ant-design/pro-components';
+import { type ActionType, DrawerForm, ModalForm, ProForm, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect } from '@ant-design/pro-components';
 import { Form, TreeSelect } from 'antd';
 import { useState, type FC } from 'react';
 import { sysMenuTreeselect } from '@/services/yuan/sysMenuController';
@@ -16,7 +16,7 @@ interface RoleModalFormProps {
   record?: API.SysRoleVo;
 }
 
-const UserModalForm: FC<RoleModalFormProps> = ({
+const RoleDrawerForm: FC<RoleModalFormProps> = ({
   mode,
   trigger,
   reload,
@@ -29,12 +29,11 @@ const UserModalForm: FC<RoleModalFormProps> = ({
 
 
   return (
-    <ModalForm<API.SysRoleBo>
+    <DrawerForm<API.SysRoleBo>
       title={isEdit ? '编辑角色' : '新建角色'}
       trigger={trigger}
       form={form}
       initialValues={{ ...record }}
-      modalProps={{ okButtonProps: { loading } }}
       onFinish={async (values) => {
         run(values);
         return true;
@@ -116,8 +115,8 @@ const UserModalForm: FC<RoleModalFormProps> = ({
       //   menuIds: value?.map((v: any) => v.value),
       // })}
       />
-    </ModalForm>
+    </DrawerForm>
   );
 };
 
-export default UserModalForm;
+export default RoleDrawerForm;

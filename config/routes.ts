@@ -100,31 +100,16 @@ export default [
         access: 'canSystemDeptList',
       },
       {
-        path: '/system/dept-assign',
-        component: './system/dept/assign',
-        hideInMenu: true,
-      },
-      {
         path: '/system/post',
         name: 'post',
         component: './system/post',
         access: 'canSystemPostList',
       },
       {
-        path: '/system/post-assign',
-        component: './system/post/assign',
-        hideInMenu: true,
-      },
-      {
         path: '/system/role',
         name: 'role',
         component: './system/role',
         access: 'canSystemRoleList',
-      },
-      {
-        path: '/system/role-assign',
-        component: './system/role/assign',
-        hideInMenu: true,
       },
       {
         path: '/system/menu',

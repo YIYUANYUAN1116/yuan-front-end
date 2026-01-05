@@ -3,7 +3,6 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { Button, Dropdown, MenuProps, Popconfirm, Space, Table, Tag } from 'antd';
 import { useRef } from 'react';
-import RoleModalForm from './components/RoleModalForm';
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
 import { sysRoleList, sysRoleRemove } from '@/services/yuan/sysRoleController';
 import { DictEnum } from '@/const/dict-enum';
@@ -13,6 +12,8 @@ import { Access, history, useAccess } from '@umijs/max';
 import { useTableRequest } from '@/hooks/table/useTableRequest';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
 import { authScopeOptions } from './components/AuthScopeOptions';
+import RoleUserListDrawerForm from './components/RoleUserListDrawerForm';
+import RoleDrawerForm from './components/RoleDrawerForm';
 
 export default () => {
   const actionRef = useRef<ActionType | null>(null);
@@ -102,18 +103,18 @@ export default () => {
           <Space>
             <Access accessible={access.canAccess('system:role:edit')}>
               <Space>
-                <RoleModalForm
+                <RoleDrawerForm
                   mode="edit"
                   trigger={<a>编辑</a>}
                   reload={actionRef.current?.reload}
                   record={record}
                 />
-                <a onClick={() => {
-                  history.push({
-                    pathname: '/system/role-assign',
-                    search: `?roleId=${record.roleId}&roleName=${record.roleName}`,
-                  })
-                }}>分配用户</a>
+                <RoleUserListDrawerForm
+                  roleId={record.roleId}
+                  roleName={record.roleName}
+                  reload={actionRef.current?.reload}
+                />
+
               </Space>
             </Access>
             <Access accessible={access.canAccess('system:role:remove')}>
@@ -158,7 +159,7 @@ export default () => {
         headerTitle="角色管理"
         toolBarRender={() => [
           <Access accessible={access.canAccess('system:role:add')}>
-            <RoleModalForm
+            <RoleDrawerForm
               mode="add"
               trigger={
                 <Button type="primary" icon={<PlusOutlined />}>

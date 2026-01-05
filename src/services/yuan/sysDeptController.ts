@@ -60,7 +60,7 @@ export async function sysDeptRemove(
   });
 }
 
-/** 获取岗位已分配用户列表 查询已分配用户岗位列表 GET /system/sysDept/allocatedList */
+/** 查询部门用户 查询部门用户 GET /system/sysDept/allocatedList */
 export async function deptAllocatedUserList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.deptAllocatedUserListParams,
@@ -74,21 +74,6 @@ export async function deptAllocatedUserList(
       ...params["bo"],
       pageQuery: undefined,
       ...params["pageQuery"],
-    },
-    ...(options || {}),
-  });
-}
-
-/** 批量取消授权用户 批量取消授权用户 PUT /system/sysDept/cancelAll */
-export async function deptCancelUserAll(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.deptCancelUserAllParams,
-  options?: { [key: string]: any }
-) {
-  return request<API.RVoid>("/system/sysDept/cancelAll", {
-    method: "PUT",
-    params: {
-      ...params,
     },
     ...(options || {}),
   });
@@ -147,21 +132,6 @@ export async function sysDeptListTree(
   });
 }
 
-/** 批量选择用户授权 批量选择用户授权 PUT /system/sysDept/selectAll */
-export async function deptSelectUserAll(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.deptSelectUserAllParams,
-  options?: { [key: string]: any }
-) {
-  return request<API.RVoid>("/system/sysDept/selectAll", {
-    method: "PUT",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
-}
-
 /** 获取菜单下拉树列表 获取菜单下拉树列表 GET /system/sysDept/treeselect */
 export async function sysDeptTreeselect(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
@@ -177,26 +147,4 @@ export async function sysDeptTreeselect(
     },
     ...(options || {}),
   });
-}
-
-/** 获取岗位未分配用户列表 查询未分配用户岗位列表 GET /system/sysDept/unallocatedList */
-export async function deptUnallocatedUserList(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.deptUnallocatedUserListParams,
-  options?: { [key: string]: any }
-) {
-  return request<API.TableDataInfoSysUserVo>(
-    "/system/sysDept/unallocatedList",
-    {
-      method: "GET",
-      params: {
-        ...params,
-        bo: undefined,
-        ...params["bo"],
-        pageQuery: undefined,
-        ...params["pageQuery"],
-      },
-      ...(options || {}),
-    }
-  );
 }

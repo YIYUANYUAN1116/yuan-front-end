@@ -60,21 +60,6 @@ export async function sysUserRemove(
   });
 }
 
-/** 用户授权角色 用户授权角色 PUT /system/sysUser/authRole */
-export async function sysUserInsertAuthRole(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.sysUserInsertAuthRoleParams,
-  options?: { [key: string]: any }
-) {
-  return request<API.RVoid>("/system/sysUser/authRole", {
-    method: "PUT",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
-}
-
 /** 根据用户编号获取授权角色 根据用户编号获取授权角色 GET /system/sysUser/authRole/${param0} */
 export async function sysUserGetAuthRole(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)

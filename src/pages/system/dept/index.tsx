@@ -10,6 +10,7 @@ import { useRef } from "react";
 import { DeptModalForm } from "./components/DeptModalForm";
 import { sysDeptList, sysDeptListTree, sysDeptRemove } from "@/services/yuan/sysDeptController";
 import { PlusOutlined } from "@ant-design/icons";
+import DeptUserListDrawerForm from "./components/DeptUserListDrawerForm";
 export default () => {
   /**权限控制 */
   const access = useAccess();
@@ -84,12 +85,11 @@ export default () => {
             />
           </Access>
 
-          <a onClick={() => {
-            history.push({
-              pathname: '/system/dept-assign',
-              search: `?deptId=${record.deptId}&deptName=${record.deptName}`,
-            })
-          }}>分配用户</a>
+          <DeptUserListDrawerForm
+              deptId={record.deptId}
+              deptName={record.deptName}
+              reload={actionRef.current?.reload}
+          />
 
           <Access key="delete" accessible={access.canAccess("system:dept:remove")}>
             <Popconfirm

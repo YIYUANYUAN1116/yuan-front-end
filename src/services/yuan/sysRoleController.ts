@@ -79,21 +79,6 @@ export async function roleAllocatedUserList(
   });
 }
 
-/** 批量取消授权用户 批量取消授权用户 PUT /system/sysRole/cancelAll */
-export async function roleCancelUserAll(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.roleCancelUserAllParams,
-  options?: { [key: string]: any }
-) {
-  return request<API.RVoid>("/system/sysRole/cancelAll", {
-    method: "PUT",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
-}
-
 /** 导出角色列表 导出角色列表 POST /system/sysRole/export */
 export async function sysRoleExport(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
@@ -130,54 +115,17 @@ export async function sysRoleList(
   });
 }
 
-/** 获取角色选择框列表 获取角色选择框列表 GET /system/sysRole/optionselect */
-export async function sysRoleOptionselect(
+/** 获取角色选择框列表 获取角色选择框列表 GET /system/sysRole/postRole */
+export async function sysRolePostSelect(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.sysRoleOptionselectParams,
+  params: API.sysRolePostSelectParams,
   options?: { [key: string]: any }
 ) {
-  return request<API.RSelectRolesVo>("/system/sysRole/optionselect", {
+  return request<API.RSelectRolesVo>("/system/sysRole/postRole", {
     method: "GET",
     params: {
       ...params,
     },
     ...(options || {}),
   });
-}
-
-/** 批量选择用户授权 批量选择用户授权 PUT /system/sysRole/selectAll */
-export async function roleSelectUserAll(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.roleSelectUserAllParams,
-  options?: { [key: string]: any }
-) {
-  return request<API.RVoid>("/system/sysRole/selectAll", {
-    method: "PUT",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
-}
-
-/** 获取角色未分配用户列表 查询未分配用户角色列表 GET /system/sysRole/unallocatedList */
-export async function roleUnallocatedUserList(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.roleUnallocatedUserListParams,
-  options?: { [key: string]: any }
-) {
-  return request<API.TableDataInfoSysUserVo>(
-    "/system/sysRole/unallocatedList",
-    {
-      method: "GET",
-      params: {
-        ...params,
-        bo: undefined,
-        ...params["bo"],
-        pageQuery: undefined,
-        ...params["pageQuery"],
-      },
-      ...(options || {}),
-    }
-  );
 }

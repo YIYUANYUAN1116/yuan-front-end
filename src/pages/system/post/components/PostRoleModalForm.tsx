@@ -1,19 +1,19 @@
 import { ActionType, ModalForm, ProFormSelect } from '@ant-design/pro-components';
 import { Form } from 'antd';
-import { sysRoleOptionselect } from '@/services/yuan/sysRoleController';
-import { sysUserInsertAuthRole } from '@/services/yuan/sysUserController';
+import { sysRolePostSelect } from '@/services/yuan/sysRoleController';
 import { useState } from 'react';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
+import { sysPostInsertPostRole } from '@/services/yuan/sysPostController';
 
-interface UserRoleModalFormProps {
-    userId: string;
+interface PostRoleModalFormProps {
+    postId: string;
     reload?: ActionType['reload'];
 }
 
-const UserRoleModalForm = ({ userId, reload }: UserRoleModalFormProps) => {
+const PostRoleModalForm = ({ postId, reload }: PostRoleModalFormProps) => {
     const [roles, setRoles] = useState<{ label: string; value: string }[]>([]);
     const [form] = Form.useForm<{ roleIds: string[] }>();
-    const { run: run, loading: loading } = useActionRequest(sysUserInsertAuthRole, reload)
+    const { run: run, loading: loading } = useActionRequest(sysPostInsertPostRole, reload)
 
     return (
         <ModalForm
@@ -23,7 +23,7 @@ const UserRoleModalForm = ({ userId, reload }: UserRoleModalFormProps) => {
             modalProps={{ okButtonProps: { loading } }}
             onOpenChange={async (visible) => {
                 if (visible) {
-                    const res = await sysRoleOptionselect({ userId });
+                    const res = await sysRolePostSelect({ postId });
                     // 过滤掉 roleName 或 roleId 为 undefined/null 的数据
                     const validRoles = (res?.data?.roles || [])
                         .filter(role => role.roleName != null && role.roleId != null)
@@ -39,7 +39,7 @@ const UserRoleModalForm = ({ userId, reload }: UserRoleModalFormProps) => {
                 }
             }}
             onFinish={async (values) => {
-                run({ userId, roleIds: values.roleIds }); // ✅ 调接口
+                run({ postId, roleIds: values.roleIds }); // ✅ 调接口
                 return true;
             }}
         >
@@ -56,4 +56,4 @@ const UserRoleModalForm = ({ userId, reload }: UserRoleModalFormProps) => {
     );
 };
 
-export default UserRoleModalForm;
+export default PostRoleModalForm;

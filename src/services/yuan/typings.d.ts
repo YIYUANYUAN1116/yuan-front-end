@@ -16,21 +16,6 @@ declare namespace API {
     pageQuery: PageQuery;
   };
 
-  type deptCancelUserAllParams = {
-    deptId: string;
-    userIds: string[];
-  };
-
-  type deptSelectUserAllParams = {
-    deptId: string;
-    userIds: string[];
-  };
-
-  type deptUnallocatedUserListParams = {
-    bo: SysUserBo;
-    pageQuery: PageQuery;
-  };
-
   type dictDictTypeParams = {
     /** 字典类型 */
     dictType: string;
@@ -162,21 +147,6 @@ declare namespace API {
     pageQuery: PageQuery;
   };
 
-  type postCancelUserAllParams = {
-    postId: string;
-    userIds: string[];
-  };
-
-  type postSelectUserAllParams = {
-    postId: string;
-    userIds: string[];
-  };
-
-  type postUnallocatedUserListParams = {
-    bo: SysUserBo;
-    pageQuery: PageQuery;
-  };
-
   type ProfileVo = {
     /** 用户信息 */
     user?: SysUserVo;
@@ -243,13 +213,6 @@ declare namespace API {
     pageQuery: PageQuery;
   };
 
-  type roleCancelUserAllParams = {
-    /** 角色ID */
-    roleId: string;
-    /** 用户ID串 */
-    userIds: string[];
-  };
-
   type RoleDTO = {
     /** 角色ID */
     roleId?: string;
@@ -259,18 +222,6 @@ declare namespace API {
     roleKey?: string;
     /** 数据范围（1：所有数据权限；2：自定义数据权限；3：本部门数据权限；4：本部门及以下数据权限；5：仅本人数据权限） */
     dataScope?: string;
-  };
-
-  type roleSelectUserAllParams = {
-    /** 角色ID */
-    roleId: string;
-    /** 用户ID串 */
-    userIds: string[];
-  };
-
-  type roleUnallocatedUserListParams = {
-    bo: SysUserBo;
-    pageQuery: PageQuery;
   };
 
   type RProfileVo = {
@@ -337,6 +288,12 @@ declare namespace API {
     code?: number;
     msg?: string;
     data?: SysRoleMenuVo;
+  };
+
+  type RSysRolePostVo = {
+    code?: number;
+    msg?: string;
+    data?: SysRolePostVo;
   };
 
   type RSysRoleVo = {
@@ -957,6 +914,10 @@ declare namespace API {
     bo: SysPostBo;
   };
 
+  type SysPostGetByDeptIdParams = {
+    deptId: string;
+  };
+
   type SysPostGetByUserIdParams = {
     userId: string;
   };
@@ -964,6 +925,13 @@ declare namespace API {
   type SysPostGetInfoParams = {
     /** 主键 */
     postId: string;
+  };
+
+  type sysPostInsertPostRoleParams = {
+    /** 用户Id */
+    postId: string;
+    /** 角色ID串 */
+    roleIds: string[];
   };
 
   type SysPostListParams = {
@@ -1119,8 +1087,37 @@ declare namespace API {
     menuId: string;
   };
 
-  type sysRoleOptionselectParams = {
-    userId: string;
+  type SysRolePostBo = {
+    postId?: string;
+    roleId?: string;
+  };
+
+  type SysRolePostExportParams = {
+    bo: SysRolePostBo;
+  };
+
+  type SysRolePostGetInfoParams = {
+    /** 主键 */
+    roleId: string;
+  };
+
+  type SysRolePostListParams = {
+    bo: SysRolePostBo;
+    pageQuery: PageQuery;
+  };
+
+  type SysRolePostRemoveParams = {
+    /** 主键串 */
+    roleIds: string[];
+  };
+
+  type sysRolePostSelectParams = {
+    postId: string;
+  };
+
+  type SysRolePostVo = {
+    postId?: string;
+    roleId?: string;
   };
 
   type sysRoleRemoveParams = {
@@ -1358,13 +1355,6 @@ declare namespace API {
     postIds?: string[];
   };
 
-  type sysUserInsertAuthRoleParams = {
-    /** 用户Id */
-    userId: string;
-    /** 角色ID串 */
-    roleIds: string[];
-  };
-
   type sysUserListParams = {
     bo: SysUserBo;
     pageQuery: PageQuery;
@@ -1502,6 +1492,7 @@ declare namespace API {
     deptName?: string;
     postName?: string;
     isPrimaryPost?: boolean;
+    primaryPostId?: string;
   };
 
   type TableDataInfoSysDeptVo = {
@@ -1639,6 +1630,17 @@ declare namespace API {
     total?: string;
     /** 列表数据 */
     rows?: SysRoleMenuVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoSysRolePostVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: SysRolePostVo[];
     /** 消息状态码 */
     code?: number;
     /** 消息内容 */

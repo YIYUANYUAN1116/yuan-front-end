@@ -14,6 +14,7 @@ import * as sysProfileController from "./sysProfileController";
 import * as sysRoleController from "./sysRoleController";
 import * as sysRoleDeptService from "./sysRoleDeptService";
 import * as sysRoleMenuService from "./sysRoleMenuService";
+import * as sysRolePostController from "./sysRolePostController";
 import * as sysTenantController from "./sysTenantController";
 import * as sysUserController from "./sysUserController";
 import * as sysUserPostController from "./sysUserPostController";
@@ -37,6 +38,7 @@ export default {
   sysUserPostController,
   sysTenantController,
   sysRoleController,
+  sysRolePostController,
   sysRoleMenuService,
   sysRoleDeptService,
   sysPostController,

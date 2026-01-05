@@ -14,6 +14,8 @@ import { useDictDataValueEnum } from "@/hooks/dict/useDictDataValueEnum";
 import { PlusOutlined } from "@ant-design/icons";
 import { sysDeptTreeselect } from "@/services/yuan/sysDeptController";
 import { convertTree } from "@/util/TreeUtils";
+import PostUserListDrawerForm from "./components/PostUserListDrawerForm";
+import PostRoleModalForm from "./components/PostRoleModalForm";
 
 export default () => {
   /**权限控制 */
@@ -109,12 +111,17 @@ export default () => {
                 reload={actionRef.current?.reload}
               />
 
-              <a onClick={() => {
-                history.push({
-                  pathname: '/system/post-assign',
-                  search: `?postId=${record.postId}&postName=${record.postName}`,
-                })
-              }}>分配用户</a>
+              <PostUserListDrawerForm
+                postId={record.postId}
+                postName={record.postName}
+                reload={actionRef.current?.reload}
+              />
+
+              <PostRoleModalForm
+                 postId={record.postId}
+                 reload={actionRef.current?.reload}
+              />
+              
             </Space>
 
           </Access>

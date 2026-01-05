@@ -93,17 +93,16 @@ export async function sysPostGetByUserId(
   });
 }
 
-/** 批量取消授权用户 批量取消授权用户 PUT /system/sysPost/cancelAll */
-export async function postCancelUserAll(
+/** 根据部门获取岗位 GET /system/sysPost/dept/${param0} */
+export async function sysPostGetByDeptId(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.postCancelUserAllParams,
+  params: API.SysPostGetByDeptIdParams,
   options?: { [key: string]: any }
 ) {
-  return request<API.RVoid>("/system/sysPost/cancelAll", {
-    method: "PUT",
-    params: {
-      ...params,
-    },
+  const { deptId: param0, ...queryParams } = params;
+  return request<API.RListSysPostVo>(`/system/sysPost/dept/${param0}`, {
+    method: "GET",
+    params: { ...queryParams },
     ...(options || {}),
   });
 }
@@ -120,6 +119,21 @@ export async function sysPostExport(
       ...params,
       bo: undefined,
       ...params["bo"],
+    },
+    ...(options || {}),
+  });
+}
+
+/** 岗位授权角色 岗位授权角色 PUT /system/sysPost/insertPostRole */
+export async function sysPostInsertPostRole(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.sysPostInsertPostRoleParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.RVoid>("/system/sysPost/insertPostRole", {
+    method: "PUT",
+    params: {
+      ...params,
     },
     ...(options || {}),
   });
@@ -142,41 +156,4 @@ export async function sysPostList(
     },
     ...(options || {}),
   });
-}
-
-/** 批量选择用户授权 批量选择用户授权 PUT /system/sysPost/selectAll */
-export async function postSelectUserAll(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.postSelectUserAllParams,
-  options?: { [key: string]: any }
-) {
-  return request<API.RVoid>("/system/sysPost/selectAll", {
-    method: "PUT",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
-}
-
-/** 获取岗位未分配用户列表 查询未分配用户岗位列表 GET /system/sysPost/unallocatedList */
-export async function postUnallocatedUserList(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.postUnallocatedUserListParams,
-  options?: { [key: string]: any }
-) {
-  return request<API.TableDataInfoSysUserVo>(
-    "/system/sysPost/unallocatedList",
-    {
-      method: "GET",
-      params: {
-        ...params,
-        bo: undefined,
-        ...params["bo"],
-        pageQuery: undefined,
-        ...params["pageQuery"],
-      },
-      ...(options || {}),
-    }
-  );
 }

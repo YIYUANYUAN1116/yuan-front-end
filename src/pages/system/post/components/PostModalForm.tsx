@@ -1,8 +1,10 @@
 import { OperationMode, OperationModes } from '@/const/Const';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
+import { sysDeptTreeselect } from '@/services/yuan/sysDeptController';
 import { sysPostAdd, sysPostEdit } from '@/services/yuan/sysPostController';
-import { ActionType, DrawerForm, ModalForm, ProFormRadio, ProFormSelect, ProFormText, ProFormTextArea } from '@ant-design/pro-components';
-import React from 'react'
+import { convertTree } from '@/util/TreeUtils';
+import { ActionType, DrawerForm, ModalForm, ProFormRadio, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect } from '@ant-design/pro-components';
+import React, { useState } from 'react'
 
 
 interface ModalFormProps {
@@ -16,6 +18,7 @@ export const PostModalForm = (props: ModalFormProps) => {
   const { mode, trigger, reload, record } = props;
   const isEdit = mode == OperationModes.EDIT
   const { run: run, loading: loading } = useActionRequest(isEdit ? sysPostEdit : sysPostAdd, reload)
+  const [treeData, setTreeData] = useState<any[]>([]);
 
   return (
     <DrawerForm<API.SysPostBo>
@@ -29,6 +32,14 @@ export const PostModalForm = (props: ModalFormProps) => {
         destroyOnClose: true,
         closable: true, // 默认就是 true
       }}
+      onOpenChange={async (visible) => {
+        if (visible) {
+          const res = await sysDeptTreeselect({
+            bo: {}
+          } as API.sysMenuTreeselectParams);
+          setTreeData(convertTree(res.data?.treeList || []));
+        }
+      }}
       onFinish={async (values) => {
         run(values);
         return true;
@@ -37,6 +48,18 @@ export const PostModalForm = (props: ModalFormProps) => {
       width={520}
     >
       <ProFormText name="postId" hidden />
+
+      <ProFormTreeSelect
+        name="deptId"
+        label="部门"
+        placeholder="请选择部门"
+        fieldProps={{
+          treeData: treeData, // ← 接口返回的菜单树
+          showSearch: true,
+          treeNodeFilterProp: "value",
+        }}
+        rules={[{ required: true, message: "请选择部门" }]}
+      />
 
       <ProFormText
 
@@ -52,7 +75,7 @@ export const PostModalForm = (props: ModalFormProps) => {
         placeholder="请输入岗位名称"
         rules={[{ required: true, message: '请输入岗位名称' }]}
       />
-      
+
       <ProFormText
 
         name="postSort"

@@ -16,6 +16,11 @@ declare namespace API {
     pageQuery: PageQuery;
   };
 
+  type deptSetLeaderParams = {
+    deptId: string;
+    userId: string;
+  };
+
   type dictDictTypeParams = {
     /** 字典类型 */
     dictType: string;
@@ -412,7 +417,7 @@ declare namespace API {
     /** 显示顺序 */
     orderNum?: number;
     /** 负责人 */
-    leader?: string;
+    leaderId?: string;
     /** 联系电话 */
     phone?: string;
     /** 邮箱 */
@@ -431,6 +436,7 @@ declare namespace API {
     updateBy?: string;
     /** 更新时间 */
     updateTime?: string;
+    leader?: string;
   };
 
   type sysDeptExportParams = {
@@ -473,7 +479,7 @@ declare namespace API {
     /** 显示顺序 */
     orderNum?: number;
     /** 负责人 */
-    leader?: string;
+    leaderId?: string;
     /** 联系电话 */
     phone?: string;
     /** 邮箱 */
@@ -493,6 +499,7 @@ declare namespace API {
     /** 更新时间 */
     updateTime?: string;
     children?: any[];
+    leader?: string;
   };
 
   type SysDictDataBo = {
@@ -1506,7 +1513,7 @@ declare namespace API {
       ancestors?: string;
       deptName?: string;
       orderNum?: number;
-      leader?: string;
+      leaderId?: number;
       phone?: string;
       email?: string;
       status?: string;
@@ -1517,6 +1524,7 @@ declare namespace API {
       updateBy?: number;
       updateTime?: string;
       children?: any[];
+      leader?: string;
     }[];
     /** 消息状态码 */
     code?: number;

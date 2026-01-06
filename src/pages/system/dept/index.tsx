@@ -89,6 +89,7 @@ export default () => {
               deptId={record.deptId}
               deptName={record.deptName}
               reload={actionRef.current?.reload}
+              leaderId={record.leaderId}
           />
 
           <Access key="delete" accessible={access.canAccess("system:dept:remove")}>

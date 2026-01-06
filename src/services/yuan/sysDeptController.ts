@@ -132,6 +132,20 @@ export async function sysDeptListTree(
   });
 }
 
+/** 查询部门用户 查询部门用户 GET /system/sysDept/setLeader/${param0}/${param1} */
+export async function deptSetLeader(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.deptSetLeaderParams,
+  options?: { [key: string]: any }
+) {
+  const { deptId: param0, userId: param1, ...queryParams } = params;
+  return request<API.RVoid>(`/system/sysDept/setLeader/${param0}/${param1}`, {
+    method: "GET",
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}
+
 /** 获取菜单下拉树列表 获取菜单下拉树列表 GET /system/sysDept/treeselect */
 export async function sysDeptTreeselect(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)

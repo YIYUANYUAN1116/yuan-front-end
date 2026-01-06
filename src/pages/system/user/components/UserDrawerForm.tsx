@@ -85,14 +85,7 @@ const UserDrawerForm: FC<UserModalFormProps> = ({ mode, trigger, reload, record 
           placeholder="请输入用户名称"
           rules={[{ required: true, message: '请输入用户名称' }]}
         />
-        <ProFormText
-          width="md"
-          name="userName"
-          label="登录名称"
-          placeholder="请输入登录名称"
-          rules={[{ required: true, message: '请输入登录名称' }]}
-          disabled={isEdit}
-        />
+       
       </ProForm.Group>
 
       <ProForm.Group>

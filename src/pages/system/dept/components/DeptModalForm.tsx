@@ -2,7 +2,7 @@ import { OperationMode, OperationModes } from '@/const/Const';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
 import { sysDeptAdd, sysDeptEdit, sysDeptTreeselect } from '@/services/yuan/sysDeptController';
 import { convertTree } from '@/util/TreeUtils';
-import { ActionType, DrawerForm, ProFormRadio, ProFormText, ProFormTextArea, ProFormTreeSelect } from '@ant-design/pro-components';
+import { ActionType, DrawerForm, ProForm, ProFormRadio, ProFormSelect, ProFormText, ProFormTextArea, ProFormTreeSelect } from '@ant-design/pro-components';
 import { useRequest } from '@umijs/max';
 import React, { useState } from 'react'
 
@@ -51,55 +51,50 @@ export const DeptModalForm = (props: ModalFormProps) => {
     >
       <ProFormText name="deptId" hidden />
 
-      <ProFormTreeSelect
-        name="parentId"
-        label="上级部门"
-        placeholder="请选择上级部门"
-        fieldProps={{
-          treeData: treeData, // ← 接口返回的菜单树
-          showSearch: true,
-          treeNodeFilterProp: "deptName",
-        }}
-        rules={[{ required: true, message: "请选择上级部门" }]}
-      />
+      {!(record?.parentId === 1 && isEdit) && (
+        <ProFormTreeSelect
+          name="parentId"
+          label="上级部门"
+          placeholder="请选择上级部门"
+          fieldProps={{
+            treeData: treeData, // ← 接口返回的菜单树
+            showSearch: true,
+            treeNodeFilterProp: "value",
+          }}
+          rules={[{ required: true, message: "请选择上级部门" }]}
+        />
+      )}
 
       <ProFormText
-        
+
         name="deptName"
         label="部门名称"
         placeholder="请输入部门名称"
         rules={[{ required: true, message: '请输入部门名称' }]}
       />
 
-      <ProFormText
-        
-        name="leader"
-        label="负责人"
-        placeholder="请输入负责人"
-      />
 
       <ProFormText
-        
         name="phone"
         label="联系电话"
         placeholder="请输入联系电话"
       />
       <ProFormText
-        
+
         name="email"
         label="邮箱"
         placeholder="请输入邮箱"
       />
 
       <ProFormText
-        
+
         name="orderNum"
         label="显示顺序"
         placeholder="请输入显示顺序"
         rules={[{ required: true, message: '请输入显示顺序' }]}
       />
       <ProFormRadio.Group
-        
+
         name="status"
         label="状态"
         fieldProps={{

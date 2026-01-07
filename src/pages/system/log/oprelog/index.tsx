@@ -39,13 +39,13 @@ export default () => {
             title: '模块标题',
             dataIndex: 'title',
             ellipsis: true,
-
         },
         {
             title: '操作业务',
             dataIndex: 'businessType',
             ellipsis: true,
             render: (_, record) => renderBusinessType(record.businessType || 0),
+            width:80
         },
         {
             disable: true,
@@ -95,7 +95,8 @@ export default () => {
             title: '操作状态',
             dataIndex: 'status',
             valueType: 'select',
-            valueEnum: statusEnum
+            valueEnum: statusEnum,
+            width: 80,
         },
         {
             title: '消耗时间',
@@ -107,6 +108,7 @@ export default () => {
             dataIndex: 'operTime',
             hideInSearch: true,
             valueType: 'dateTime',
+            width:180,
             sorter: true,
             defaultSortOrder: 'descend', // 默认降序
         },

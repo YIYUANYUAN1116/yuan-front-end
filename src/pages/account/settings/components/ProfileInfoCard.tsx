@@ -44,9 +44,14 @@ const ProfileInfoCard = ({ data }:{data?:API.ProfileVo}) => {
                         dataIndex: 'email',
                     },
                     {
+                        title: '岗位',
+                        key: '岗位',
+                        dataIndex: 'postName',
+                    },
+                    {
                         title: '部门',
                         key: '部门',
-                        dataIndex: 'postGroup',
+                        dataIndex: 'deptName',
                     },
                     {
                         title: '上次登录',

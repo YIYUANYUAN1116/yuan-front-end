@@ -10,6 +10,8 @@ export default function access(
     perms.includes('*:*:*') || perms.includes(perm);
   return {
     canAccess: (perm: string) => currentUser?.permissions?.includes('*:*:*') || currentUser?.permissions?.includes(perm) || false,
+
+    /**系统管理 */
     canSystemUserList: has('system:user:list'),
     canSystemRoleList: has('system:role:list'),
     canSystemDictList: has('system:dict:list'),
@@ -22,11 +24,8 @@ export default function access(
     canSystemDeptList: has('system:dept:list'),
     canSystemPostList: has('system:post:list'),
 
-    canWorkDefinition: has('workflow:definition:list'),
-    canWorkInstance: has('workflow:instance:list'),
-    canWorkNodeInstance: has('workflow:nodeInstance:list'),
-    canWorkTask: has('workflow:task:list'),
-    canWorkTaskLog: has('workflow:tasklog:list'),
-    canWorkDesigner: has('workflow:designer:list'),
+    /**工作流管理 */
+    canWorkDefinition: has('workflow:wfDefinition:list'),
+    canWorkInstance: has('workflow:wfDefinition:query'),
   };
 }

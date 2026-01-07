@@ -85,6 +85,7 @@ export default () => {
       ellipsis: true,
       valueType: 'select',
       valueEnum: statusEnum,
+      width:100
     },
 
     {
@@ -93,6 +94,7 @@ export default () => {
       dataIndex: 'visible',
       ellipsis: true,
       render: (_, record) => renderVisible(record.visible || 0),
+      width:100
     },
 
     {
@@ -112,13 +114,14 @@ export default () => {
           text: '按钮'
         }
       },
+      width:100
     },
     {
       title: '菜单权限',
       dataIndex: 'perms',
       ellipsis: true,
       hideInSearch: true,
-      width: 200,
+      width: 240,
       render: (text, record) => <Tag>{text}</Tag>,
     },
     {

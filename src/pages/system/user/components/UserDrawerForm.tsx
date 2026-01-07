@@ -34,7 +34,7 @@ const UserDrawerForm: FC<UserModalFormProps> = ({ mode, trigger, reload, record 
   const [postOptions, setPostOptions] = useState<Array<{ label: string; value: any }>>([]);
 
   const loadDeptTree = async () => {
-    const res = await sysDeptTreeselect({bo:{}});
+    const res = await sysDeptTreeselect({ bo: {} });
     // 你项目里应该已有 convertTree，确保字段映射为 {title,value,children}
     const tree = convertTree(res.data?.treeList || []);
     setDeptTree(tree);
@@ -85,7 +85,7 @@ const UserDrawerForm: FC<UserModalFormProps> = ({ mode, trigger, reload, record 
           placeholder="请输入用户名称"
           rules={[{ required: true, message: '请输入用户名称' }]}
         />
-       
+
       </ProForm.Group>
 
       <ProForm.Group>
@@ -93,8 +93,11 @@ const UserDrawerForm: FC<UserModalFormProps> = ({ mode, trigger, reload, record 
           width="md"
           name="email"
           label="邮箱"
-          placeholder="请输入邮箱"
-          rules={[{ required: true, message: '请输入邮箱' }]}
+          placeholder="请输入邮箱,例如: xxxx@qq.com"
+          rules={[
+            { required: true, message: '请输入邮箱' },
+            { type: 'email', message: '邮箱格式不正确' },
+          ]}
         />
         <ProFormText
           width="md"

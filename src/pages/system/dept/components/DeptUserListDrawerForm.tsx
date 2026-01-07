@@ -99,6 +99,7 @@ const DeptUserListDrawerForm = ({ deptId, deptName, reload, leaderId }: Props) =
                 title="设为部门负责人"
                 description={`确认设 ${record.nickName} 为该部门负责人？`}
                 onConfirm={() => setLeaderRun({ deptId, userId: record.userId })}
+                placement="topLeft"
               >
                 <a>设为负责人</a>
               </Popconfirm>

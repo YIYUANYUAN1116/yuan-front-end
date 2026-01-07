@@ -78,12 +78,15 @@ export const DeptModalForm = (props: ModalFormProps) => {
         name="phone"
         label="联系电话"
         placeholder="请输入联系电话"
+        rules={[{ pattern: /^1[3-9]\d{9}$/, message: '手机号格式错误' }]}
       />
       <ProFormText
-
         name="email"
         label="邮箱"
-        placeholder="请输入邮箱"
+        placeholder="请输入邮箱,例如: xxxx@qq.com"
+        rules={[
+          { type: 'email', message: '邮箱格式不正确' },
+        ]}
       />
 
       <ProFormText

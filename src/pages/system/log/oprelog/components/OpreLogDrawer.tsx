@@ -47,11 +47,11 @@ const OpreLogDrawer = ({ trigger, record }: any) => {
 
                     {
                         title: '操作人员',
-                        dataIndex: 'operName',
+                        dataIndex: 'operatorId',
                         ellipsis: true,
                         render: (_, record) => (
                             <Space>
-                                <span>账号：{record.operName}</span>
+                                <span>账号：{record.operatorId}</span>
                                 <span>ip: {record.operIp}</span>
                             </Space>
                         )

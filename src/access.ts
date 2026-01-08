@@ -16,7 +16,7 @@ export default function access(
     canSystemRoleList: has('system:role:list'),
     canSystemDictList: has('system:dict:list'),
     canSystemMenuList: has('system:menu:list'),
-    canSystemOprelogList: has('system:oprelog:list'),
+    canSystemOprelogList: has('system:operlog:list'),
     canSystemLoginforList: has('system:loginfor:list'),
     canDashboardWorkplace: has('dashboard:workplace'),
     canDashboardAnalysis: has('dashboard:analysis'),
@@ -27,5 +27,6 @@ export default function access(
     /**工作流管理 */
     canWorkDefinition: has('workflow:wfDefinition:list'),
     canWorkInstance: has('workflow:wfDefinition:query'),
+    canWorkDesigner: has('workflow:wfDesigner:list'),
   };
 }

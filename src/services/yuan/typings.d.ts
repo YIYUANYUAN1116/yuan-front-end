@@ -2,6 +2,7 @@ declare namespace API {
   type ApproveTaskCmd = {
     /** 操作人（当前用户） */
     operatorUserId?: string;
+    operatorUserName?: string;
     tenantId?: string;
     /** 备注 / 审批意见 */
     comment?: string;
@@ -181,6 +182,12 @@ declare namespace API {
     code?: number;
     msg?: string;
     data?: ReactRouterVo[];
+  };
+
+  type RListSelectModel = {
+    code?: number;
+    msg?: string;
+    data?: SelectModel[];
   };
 
   type RListSysDictDataVo = {
@@ -385,6 +392,11 @@ declare namespace API {
     data?: WfTaskVo;
   };
 
+  type SelectModel = {
+    value?: string;
+    label?: string;
+  };
+
   type SelectRolesVo = {
     roles?: SysRoleVo[];
     checkedKeys?: string[];
@@ -393,6 +405,7 @@ declare namespace API {
   type StartProcessCmd = {
     /** 操作人（当前用户） */
     operatorUserId?: string;
+    operatorUserName?: string;
     tenantId?: string;
     /** 备注 / 审批意见 */
     comment?: string;
@@ -400,8 +413,12 @@ declare namespace API {
     definitionKey: string;
     bizType?: string;
     bizId?: string;
+    bizNo?: string;
     /** 业务发起人（可选，代发场景用） */
     starterUserId?: string;
+    starterUserName?: string;
+    starterDeptId?: string;
+    starterDeptName?: string;
   };
 
   type SysDeptBo = {
@@ -1284,7 +1301,7 @@ declare namespace API {
     /** 部门ID */
     deptId?: string;
     /** 用户账号 */
-    userName: string;
+    userName?: string;
     /** 用户昵称 */
     nickName: string;
     /** 用户类型（sys_user系统用户） */
@@ -1812,10 +1829,12 @@ declare namespace API {
 
   type WfBizRefBo = {
     id?: string;
+    tenantId?: string;
     /** 业务类型，如 LEAVE/REIMBURSE */
     bizType: string;
     /** 业务主键 */
     bizId: string;
+    bizNo: string;
     /** 流程实例ID */
     instanceId: string;
     /** RUNNING/APPROVED/REJECTED/CANCELED */
@@ -1826,6 +1845,7 @@ declare namespace API {
     createTime: string;
     /** updatedTime */
     updateTime: string;
+    ref_type?: string;
   };
 
   type WfBizRefExportParams = {
@@ -1853,6 +1873,8 @@ declare namespace API {
     bizType?: string;
     /** 业务主键 */
     bizId?: string;
+    bizNo?: string;
+    tenantId?: string;
     /** 流程实例ID */
     instanceId?: string;
     /** RUNNING/APPROVED/REJECTED/CANCELED */
@@ -2002,10 +2024,9 @@ declare namespace API {
     definitionId: string;
     /** 流程业务标识 */
     definitionKey?: string;
+    definitionName?: string;
     /** 流程版本 */
     version?: number;
-    /** 业务单号(请假单ID等) */
-    businessKey?: string;
     /** 状态(RUNNING/APPROVED/REJECTED/CANCELED) */
     status?: string;
     /** 发起人 */
@@ -2015,6 +2036,12 @@ declare namespace API {
     /** 结束时间 */
     endTime?: string;
     variables?: string;
+    startUserName?: string;
+    startDeptName?: string;
+    operatorUserId?: string;
+    operatorUserName?: string;
+    bizType?: string;
+    bizNo?: string;
   };
 
   type WfInstanceExportParams = {
@@ -2046,16 +2073,22 @@ declare namespace API {
     definitionKey?: string;
     /** 流程版本 */
     version?: number;
-    /** 业务单号(请假单ID等) */
-    businessKey?: string;
     /** 状态(RUNNING/APPROVED/REJECTED/CANCELED) */
     status?: string;
     /** 发起人 */
     startUserId?: string;
+    startUserName?: string;
+    startDeptId?: string;
+    startDeptName?: string;
+    operatorUserId?: string;
+    operatorUserName?: string;
     /** startTime */
     startTime?: string;
     /** 结束时间 */
     endTime?: string;
+    bizType?: string;
+    definitionName?: string;
+    bizNo?: string;
     variables?: string;
   };
 

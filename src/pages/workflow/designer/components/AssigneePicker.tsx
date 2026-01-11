@@ -104,11 +104,9 @@ const AssigneePicker: React.FC<AssigneePickerProps> = ({ value, onChange }) => {
             selectedRowKeys,
             onChange: (keys, rows) => {
               setSelectedRowKeys(keys);
-              // ✅ ProTable 的 rows 可能不全（翻页后），这里按当前页 rows + 已选 rows 做合并去重
               const map = new Map<string, AssigneeUser>();
               selectedRows.forEach((r) => map.set(String(r.userId), r));
               rows.forEach((r: any) => map.set(String(r.userId), r));
-              // ✅ 只保留 keys 对应的
               const finalRows = keys
                 .map((k) => map.get(String(k)))
                 .filter(Boolean) as AssigneeUser[];

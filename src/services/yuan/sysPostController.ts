@@ -157,3 +157,11 @@ export async function sysPostList(
     ...(options || {}),
   });
 }
+
+/** 获取角色选择框列表 GET /system/sysPost/posts */
+export async function sysPostSelect(options?: { [key: string]: any }) {
+  return request<API.RListSelectModel>("/system/sysPost/posts", {
+    method: "GET",
+    ...(options || {}),
+  });
+}

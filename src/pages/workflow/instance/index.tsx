@@ -9,10 +9,12 @@ import { Button, Popconfirm, Space, Table } from "antd";
 import { useRef } from "react";
 import { wfDefinitionList, wfDefinitionRemove } from "@/services/yuan/wfDefinitionController";
 import { wfInstanceList, wfInstanceRemove } from "@/services/yuan/wfInstanceController";
+import { useDictDataValueEnum } from "@/hooks/dict/useDictDataValueEnum";
+import { DictEnum } from "@/const/dict-enum";
 export default () => {
   /**权限控制 */
   const access = useAccess();
-
+  const statusEnum = useDictDataValueEnum(DictEnum.WF_INSTANCE_STATUS);
   const actionRef = useRef<ActionType | null>(null);
 
   const columns: ProColumns<API.WfInstanceVo>[] = [
@@ -35,12 +37,16 @@ export default () => {
     {
       title: "业务标识",
       dataIndex: "definitionKey",
-
+      ...HIDE_COLUMN
+    },
+    {
+      title: "流程名称",
+      dataIndex: "definitionName",
     },
     {
       title: "业务单号",
-      dataIndex: "businessKey",
-
+      dataIndex: "bizNo",
+      render: (_, r) => r.bizNo ? <a>{r.bizNo}</a> : '-',
     },
     {
       title: "版本号",
@@ -50,12 +56,26 @@ export default () => {
     {
       title: "状态",
       dataIndex: "status",
-
+      valueEnum:statusEnum
     },
     {
       title: "发起人",
       dataIndex: "startUserId",
-      hideInSearch: true,
+      ...HIDE_COLUMN
+    },
+    {
+      title: "发起人",
+      dataIndex: "startUserName",
+
+    },
+    {
+      title:"发起人部门",
+      dataIndex:"startDeptName"
+    },
+    {
+      title:"发起人部门",
+      dataIndex:"startDeptId",
+      ...HIDE_COLUMN
     },
     {
       title: "发起时间",
@@ -78,11 +98,6 @@ export default () => {
       hideInSearch: true,
       render: (text, record) => (
         <Space size="small">
-
-          <Access key="edit" accessible={access.canAccess("workflow:wfInstance:edit")}>
-            <Button>编辑</Button>
-          </Access>
-
           <Access key="delete" accessible={access.canAccess("workflow:wfInstance:remove")}>
             <Popconfirm
               title="删除"
@@ -124,11 +139,11 @@ export default () => {
             option: { fixed: 'right', disable: true },
           },
         }}
-        toolBarRender={() => [
-          <Access accessible={access.canAccess('workflow:wfInstance:add')}>
-            <Button>新增</Button>
-          </Access >
-        ]}
+        // toolBarRender={() => [
+        //   <Access accessible={access.canAccess('workflow:wfInstance:add')}>
+        //     <Button>新增</Button>
+        //   </Access >
+        // ]}
       />
     </PageContainer>
   );

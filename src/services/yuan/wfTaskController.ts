@@ -60,8 +60,8 @@ export async function wfTaskRemove(
   });
 }
 
-/** 流程发起 POST /workflow/wfTask/approve */
-export async function wfInstanceStart(
+/** 审批通过 POST /workflow/wfTask/approve */
+export async function wfTaskApprove(
   body: API.ApproveTaskCmd,
   options?: { [key: string]: any }
 ) {

@@ -129,3 +129,11 @@ export async function sysRolePostSelect(
     ...(options || {}),
   });
 }
+
+/** 获取角色选择框列表 获取角色选择框列表 GET /system/sysRole/roles */
+export async function sysRoleSelect(options?: { [key: string]: any }) {
+  return request<API.RListSelectModel>("/system/sysRole/roles", {
+    method: "GET",
+    ...(options || {}),
+  });
+}

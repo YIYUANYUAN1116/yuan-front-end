@@ -17,13 +17,20 @@ export const AssigneeTypeConst = {
 
 
 
+export type EdgeCondition = {
+  field: string
+  operator: string
+  value: any
+}
+
 export type GatewayBranchVM = {
-  edgeId: string;
-  targetNodeId: string;
-  targetLabel: string;
-  name?: string;
-  expression?: string;
-};
+  edgeId: string
+  targetNodeId: string
+  targetLabel: string
+  name: string
+  condition: EdgeCondition
+}
+
 
 export const initialFlowData = {
   nodes: [

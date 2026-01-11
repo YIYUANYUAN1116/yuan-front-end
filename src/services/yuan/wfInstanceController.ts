@@ -97,7 +97,7 @@ export async function wfInstanceList(
 }
 
 /** 流程发起 POST /workflow/wfInstance/start */
-export async function wfInstanceStart1(
+export async function wfInstanceStart(
   body: API.StartProcessCmd,
   options?: { [key: string]: any }
 ) {

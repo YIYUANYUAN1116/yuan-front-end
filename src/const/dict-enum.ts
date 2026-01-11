@@ -22,4 +22,7 @@ export enum DictEnum {
   MODEL_PROVIDER= 'model_provider',
   SYS_OPRE_STATUS= 'sys_opre_status',
   WF_DEFINITION_STATUS = 'wf_definition_status',//流程定义状态
+  WF_INSTANCE_STATUS = 'wf_instance_status',//流程定义状态
+  WF_GATEWAY_FIELD = 'wf_gateway_field',//流程定义状态
+  WF_GATEWAY_OPER = 'wf_gateway_oper',//流程定义状态
 }

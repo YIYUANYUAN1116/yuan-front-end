@@ -132,7 +132,7 @@ export async function sysDeptListTree(
   });
 }
 
-/** 查询部门用户 查询部门用户 GET /system/sysDept/setLeader/${param0}/${param1} */
+/** 设置部门负责人 设置部门负责人 GET /system/sysDept/setLeader/${param0}/${param1} */
 export async function deptSetLeader(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.deptSetLeaderParams,

@@ -407,20 +407,29 @@ const Index = () => {
                   />
                 </Form.Item>
 
-                <Form.Item label="审批人模式" name={['assignee', 'kind']} initialValue="RULE" rules={[{ required: true }]}>
-                  <Select options={[
-                    { label: '固定选择', value: 'FIXED' },
-                    { label: '业务规则', value: 'RULE' },
-                  ]} />
-                </Form.Item>
+                <Form.Item shouldUpdate noStyle>
+                  {() => {
+                    const wfType = form.getFieldValue('wfType');
+                    if (wfType !== 'USER_TASK') return null;
+                    return (
+                      <Form.Item label="审批人模式" name={['assignee', 'kind']} initialValue="RULE" rules={[{ required: true }]}>
+                        <Select options={[
+                          { label: '固定选择', value: 'FIXED' },
+                          { label: '业务规则', value: 'RULE' },
+                        ]} />
+                      </Form.Item>
+                    )
+                  }
+                  }
 
+                </Form.Item>
                 {/* ========== Assignee 面板 ========== */}
                 <Form.Item shouldUpdate noStyle>
                   {() => {
+                    const wfType = form.getFieldValue('wfType');
+                    if (wfType !== 'USER_TASK') return null;
                     const kind = form.getFieldValue(['assignee', 'kind']);
                     if (kind === 'FIXED') {
-                      const wfType = form.getFieldValue('wfType');
-                      if (wfType !== 'USER_TASK') return null;
                       return (
                         <Card size="small" title="审批人配置">
                           <Form.Item
@@ -437,6 +446,7 @@ const Index = () => {
                               ]}
                               onChange={(type) => {
                                 // ✅ 切换类型时清理其它字段，避免 values 里残留
+                                console.log("切换")
                                 form.setFieldsValue({
                                   assignee: {
                                     ...(form.getFieldValue('assignee') || {}),

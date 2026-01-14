@@ -60,7 +60,8 @@ export default {
   'menu.system.dept': '部门管理',
   'menu.system.post': '岗位管理',
   'menu.system.tenant': '租户管理',
-  
+
+  /** 工作流*/
   'menu.workflow': '工作流管理',
   'menu.workflow.definition': '流程定义',
   'menu.workflow.instance': '流程实例',
@@ -68,4 +69,13 @@ export default {
   'menu.workflow.task': '任务管理',
   'menu.workflow.tasklog': '任务日志',
   'menu.workflow.designer': '审批流设计器',
+
+  /**工作台 */
+  'menu.workplace': '工作台',
+  'menu.workplace.overview': '概览',
+  'menu.workplace.apply': '我的申请',
+  'menu.workplace.task': '我的代办',
+  'menu.workplace.approve': '我的已办'
+
+
 };

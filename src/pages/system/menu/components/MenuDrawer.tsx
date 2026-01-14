@@ -16,7 +16,12 @@ const MenuDrawer = ({ mode, trigger, record, reload }: any) => {
       trigger={trigger}
       size='middle'
       width={520}
-      initialValues={record}
+      initialValues={{
+        menuType: 'C', // 默认值
+        status: '0',
+        visible: '0',
+        ...record, // 如果是编辑，record 的值会覆盖默认值
+      }}
       drawerProps={{ destroyOnClose: true }}
       onOpenChange={async (visible) => {
         if (visible) {
@@ -39,7 +44,7 @@ const MenuDrawer = ({ mode, trigger, record, reload }: any) => {
         }
       }}
       onFinish={async (values) => {
-        await run(values);
+        run(values);
         return true;
       }}
       onValuesChange={(changedValues, allValues) => {
@@ -76,8 +81,7 @@ const MenuDrawer = ({ mode, trigger, record, reload }: any) => {
           { label: '按钮', value: 'F' },
         ]}
         fieldProps={{
-          buttonStyle: "solid",
-          defaultValue: currentMenuType
+          buttonStyle: "solid"
         }}
         radioType="button"
       />
@@ -90,8 +94,7 @@ const MenuDrawer = ({ mode, trigger, record, reload }: any) => {
             { label: '禁用', value: '1' }
           ]}
           fieldProps={{
-            buttonStyle: "solid",
-            defaultValue: '0'
+            buttonStyle: "solid"
           }}
           radioType="button"
         />
@@ -104,8 +107,7 @@ const MenuDrawer = ({ mode, trigger, record, reload }: any) => {
             { label: '隐藏', value: '1' }
           ]}
           fieldProps={{
-            buttonStyle: "solid",
-            defaultValue: '0'
+            buttonStyle: "solid"
           }}
           radioType="button"
         />

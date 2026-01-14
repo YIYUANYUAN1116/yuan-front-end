@@ -18,11 +18,18 @@ export default function access(
     canSystemMenuList: has('system:menu:list'),
     canSystemOprelogList: has('system:operlog:list'),
     canSystemLoginforList: has('system:loginfor:list'),
-    canDashboardWorkplace: has('dashboard:workplace'),
-    canDashboardAnalysis: has('dashboard:analysis'),
     canSystemTenantList: has('system:tenant:list'),
     canSystemDeptList: has('system:dept:list'),
     canSystemPostList: has('system:post:list'),
+
+    /** Dashboard*/
+    canDashboardAnalysis: has('dashboard:analysis'),
+
+    /**工作台 */
+    canWorkplaceOverview: has('workplace:overview'),
+    canWorkplaceApply: has('workplace:apply'),
+    canWorkplaceTask: has('workplace:task'),
+    canWorkplaceApprove: has('workplace:approve'),
 
     /**工作流管理 */
     canWorkDefinition: has('workflow:wfDefinition:list'),

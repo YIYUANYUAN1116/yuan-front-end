@@ -56,19 +56,48 @@ export default [
     routes: [
       {
         path: '/dashboard',
-        redirect: '/dashboard/workplace',
-      },
-      {
-        path: '/dashboard/workplace',
-        name: 'workplace',
-        component: './dashboard/workplace',
-        access: 'canDashboardWorkplace'
+        redirect: '/dashboard/analysis',
       },
       {
         path: '/dashboard/analysis',
         name: 'analysis',
         component: './dashboard/analysis',
         access: 'canDashboardAnalysis'
+      }
+    ]
+  },
+    {
+    path: '/workplace',
+    name: 'workplace',
+    icon: 'workplace',
+      routes: [
+      {
+        path: '/workplace',
+        redirect: '/workplace/overview',
+      },
+      {
+        path: '/workplace/overview',
+        name: 'overview',
+        component: './workplace/overview',
+        access: 'canWorkplaceOverview'
+      },
+      {
+        path: '/workplace/apply',
+        name: 'apply',
+        component: './workplace/apply',
+        access: 'canWorkplaceApply'
+      },
+      {
+        path: '/workplace/task',
+        name: 'task',
+        component: './workplace/task',
+        access: 'canWorkplaceTask'
+      },
+      {
+        path: '/workplace/approve',
+        name: 'approve',
+        component: './workplace/approve',
+        access: 'canWorkplaceApprove'
       },
     ]
   },
@@ -182,30 +211,30 @@ export default [
     ],
   },
 
-{
-  path: '/account',
+  {
+    path: '/account',
     name: 'account',
-      icon: 'crown',
-        routes: [
-          {
-            path: '/account',
-            redirect: '/account/settings',
-          },
-          {
-            path: '/account/settings',
-            name: 'settings',
-            component: './account/settings',
-          },
-        ],
+    icon: 'crown',
+    routes: [
+      {
+        path: '/account',
+        redirect: '/account/settings',
+      },
+      {
+        path: '/account/settings',
+        name: 'settings',
+        component: './account/settings',
+      },
+    ],
   },
 
-{
-  path: '/',
+  {
+    path: '/',
     redirect: '/welcome',
   },
-{
-  path: '*',
+  {
+    path: '*',
     layout: false,
-      component: './404',
+    component: './404',
   },
 ];

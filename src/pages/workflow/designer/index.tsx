@@ -342,7 +342,7 @@ const Index = () => {
   }, [data])
 
   return (
-    <PageContainer title="审批流编辑器" content="可视化拖拽设计审批流" className="wf-page">
+    <PageContainer title="审批流编辑器" content="可视化拖拽设计审批流" className="wf-page"  onBack={() => history.back()}>
       {contextHolder}
       <div className="flowEditor">
         <div className="editorLayout">

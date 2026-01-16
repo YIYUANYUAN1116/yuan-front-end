@@ -15,14 +15,23 @@ export enum DictEnum {
   SYS_YES_NO = 'sys_yes_no', // 是否
   WF_BUSINESS_STATUS = 'wf_business_status', // 业务状态
   WF_FORM_TYPE = 'wf_form_type', // 表单类型
-  WF_TASK_STATUS = 'wf_task_status', // 任务状态
+
   CHAT_MODEL_CATEGORY = 'chat_model_category', // 模型分类
   MCP_TRANSPORT_TYPE = 'mcp_transport_type', // mcp链接方式
   STATUS_TYPE = 'status_type', // 状态类型
-  MODEL_PROVIDER= 'model_provider',
-  SYS_OPRE_STATUS= 'sys_opre_status',
+  MODEL_PROVIDER = 'model_provider',
+  SYS_OPRE_STATUS = 'sys_opre_status',
   WF_DEFINITION_STATUS = 'wf_definition_status',//流程定义状态
-  WF_INSTANCE_STATUS = 'wf_instance_status',//流程定义状态
+  WF_INSTANCE_STATUS = 'wf_instance_status',//流程实例状态
   WF_GATEWAY_FIELD = 'wf_gateway_field',//流程定义状态
   WF_GATEWAY_OPER = 'wf_gateway_oper',//流程定义状态
+  WF_END_REASON = 'wf_end_reason',//流程结束原因
+  WF_TASK_ACTION = 'wf_task_action',//任务处理动作
+  WF_TASK_STATUS = 'wf_task_status',//审批任务状态
+  WF_NODE_STATUS = 'wf_node_status',//审批节点状态
+
+  WF_BIZ_TYPE = 'wf_biz_type',//审批业务类型
+  OA_LEAVE_TYPE = 'oa_leave_type',//审批业务类型
+  OA_APPLY_STATUS= 'oa_apply_status', //oa申请状态
+
 }

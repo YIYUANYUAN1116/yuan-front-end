@@ -3,6 +3,8 @@
 // API 更新时间：
 // API 唯一标识：
 import * as authController from "./authController";
+import * as oaLeaveApplyController from "./oaLeaveApplyController";
+import * as sysBizNoSeqController from "./sysBizNoSeqController";
 import * as sysDeptController from "./sysDeptController";
 import * as sysDictDataController from "./sysDictDataController";
 import * as sysDictTypeController from "./sysDictTypeController";
@@ -25,6 +27,7 @@ import * as wfInstanceController from "./wfInstanceController";
 import * as wfNodeInstanceController from "./wfNodeInstanceController";
 import * as wfTaskController from "./wfTaskController";
 import * as wfTaskLogController from "./wfTaskLogController";
+import * as workPlaceController from "./workPlaceController";
 export default {
   wfTaskController,
   wfTaskLogController,
@@ -46,7 +49,10 @@ export default {
   sysMenuController,
   sysLogininforController,
   sysDeptController,
+  sysBizNoSeqController,
   sysDictTypeController,
   sysDictDataController,
+  oaLeaveApplyController,
   authController,
+  workPlaceController,
 };

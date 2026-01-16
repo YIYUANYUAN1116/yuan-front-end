@@ -35,5 +35,9 @@ export default function access(
     canWorkDefinition: has('workflow:wfDefinition:list'),
     canWorkInstance: has('workflow:wfDefinition:query'),
     canWorkDesigner: has('workflow:wfDesigner:list'),
+
+    /**OA管理 */
+    canOaLeave: has('oa:leave:list'),
+    canOaClaim: has('oa:claim:list'),
   };
 }

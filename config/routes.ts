@@ -181,6 +181,41 @@ export default [
       },
     ]
   },
+   {
+    path: '/oa',
+    name: 'oa',
+    icon: 'crown',
+    routes: [
+      {
+        path: '/oa',
+        redirect: '/oa/leave',
+      },
+      {
+        path: '/oa/leave',
+        name: 'leave',
+        component: './oa/leave',
+        access: 'canOaLeave'
+      },
+      {
+        path: '/oa/leave/form',
+        name: 'leave',
+        component: './oa/leave/form',
+        access: 'canOaLeave'
+      },
+       {
+        path: '/oa/leave/detail',
+        name: 'leave',
+        component: './oa/leave/detail',
+        access: 'canOaLeave'
+      },
+      {
+        path: '/oa/claim',
+        name: 'claim',
+        component: './oa/claim',
+        // access: 'canOaClaim'
+      },
+    ],
+  },
   {
     path: '/workflow',
     name: 'workflow',

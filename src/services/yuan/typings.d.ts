@@ -1,8 +1,8 @@
 declare namespace API {
   type ApproveTaskCmd = {
     /** 操作人（当前用户） */
-    operatorUserId?: string;
-    operatorUserName?: string;
+    operatorId?: string;
+    operatorName?: string;
     tenantId?: string;
     /** 备注 / 审批意见 */
     comment?: string;
@@ -136,6 +136,102 @@ declare namespace API {
     userInfo?: LoginUser;
   };
 
+  type OaLeaveApplyBo = {
+    id?: string;
+    tenantId?: string;
+    applyNo?: string;
+    applicantId?: string;
+    applicantName?: string;
+    applicantDept?: string;
+    applicantDeptName?: string;
+    /** 请假类型 */
+    leaveType: string;
+    /** 请假原因 */
+    reason?: string;
+    /** 开始时间 */
+    startTime: string;
+    /** 结束时间 */
+    endTime: string;
+    /** 请假天数 */
+    leaveDays: number;
+    /** 请假小时数（可选） */
+    leaveHours?: number;
+    /** 状态：DRAFT/APPROVING/APPROVED/REJECTED/CANCELED */
+    status?: string;
+    /** createDept */
+    createDept?: string;
+    /** createBy */
+    createBy?: string;
+    /** createTime */
+    createTime?: string;
+    /** updateBy */
+    updateBy?: string;
+    /** updateTime */
+    updateTime?: string;
+  };
+
+  type OaLeaveApplyExportParams = {
+    bo: OaLeaveApplyBo;
+  };
+
+  type OaLeaveApplyGetInfoByBizNoParams = {
+    bizNo: string;
+  };
+
+  type OaLeaveApplyGetInfoParams = {
+    /** 主键 */
+    id: string;
+  };
+
+  type OaLeaveApplyListParams = {
+    bo: OaLeaveApplyBo;
+    pageQuery: PageQuery;
+  };
+
+  type OaLeaveApplyRemoveParams = {
+    /** 主键串 */
+    ids: string[];
+  };
+
+  type OaLeaveApplyVo = {
+    id: string;
+    /** 租户ID */
+    tenantId?: string;
+    /** 请假单号 */
+    applyNo?: string;
+    /** 申请人ID */
+    applicantId?: string;
+    /** 申请人姓名（冗余） */
+    applicantName?: string;
+    /** 申请人部门ID */
+    applicantDept?: string;
+    applicantDeptName?: string;
+    /** 请假类型 */
+    leaveType?: string;
+    /** 请假原因 */
+    reason?: string;
+    /** 开始时间 */
+    startTime?: string;
+    /** 结束时间 */
+    endTime?: string;
+    /** 请假天数 */
+    leaveDays?: number;
+    /** 请假小时数（可选） */
+    leaveHours?: number;
+    /** 状态：DRAFT/APPROVING/APPROVED/REJECTED/CANCELED */
+    status?: string;
+    /** createDept */
+    createDept?: string;
+    /** createBy */
+    createBy?: string;
+    /** createTime */
+    createTime?: string;
+    /** updateBy */
+    updateBy?: string;
+    /** updateTime */
+    updateTime?: string;
+  };
+
   type PageQuery = {
     /** 分页大小 */
     pageSize?: number;
@@ -176,6 +272,17 @@ declare namespace API {
     layout?: boolean;
     hideInMenu?: boolean;
     access?: string;
+  };
+
+  type RejectTaskCmd = {
+    /** 操作人（当前用户） */
+    operatorId?: string;
+    operatorName?: string;
+    tenantId?: string;
+    /** 备注 / 审批意见 */
+    comment?: string;
+    variables?: Record<string, any>;
+    taskId: string;
   };
 
   type RListReactRouterVo = {
@@ -220,6 +327,12 @@ declare namespace API {
     data?: string;
   };
 
+  type ROaLeaveApplyVo = {
+    code?: number;
+    msg?: string;
+    data?: OaLeaveApplyVo;
+  };
+
   type roleAllocatedUserListParams = {
     bo: SysUserBo;
     pageQuery: PageQuery;
@@ -236,6 +349,18 @@ declare namespace API {
     dataScope?: string;
   };
 
+  type RollbackToActivityCmd = {
+    /** 操作人（当前用户） */
+    operatorId?: string;
+    operatorName?: string;
+    tenantId?: string;
+    /** 备注 / 审批意见 */
+    comment?: string;
+    variables?: Record<string, any>;
+    taskId: string;
+    targetActivityId: string;
+  };
+
   type RProfileVo = {
     code?: number;
     msg?: string;
@@ -246,6 +371,12 @@ declare namespace API {
     code?: number;
     msg?: string;
     data?: SelectRolesVo;
+  };
+
+  type RSysBizNoSeqVo = {
+    code?: number;
+    msg?: string;
+    data?: SysBizNoSeqVo;
   };
 
   type RSysDeptVo = {
@@ -404,8 +535,8 @@ declare namespace API {
 
   type StartProcessCmd = {
     /** 操作人（当前用户） */
-    operatorUserId?: string;
-    operatorUserName?: string;
+    operatorId?: string;
+    operatorName?: string;
     tenantId?: string;
     /** 备注 / 审批意见 */
     comment?: string;
@@ -415,10 +546,73 @@ declare namespace API {
     bizId?: string;
     bizNo?: string;
     /** 业务发起人（可选，代发场景用） */
-    starterUserId?: string;
-    starterUserName?: string;
-    starterDeptId?: string;
-    starterDeptName?: string;
+    startId?: string;
+    startName?: string;
+    startDeptId?: string;
+    startDeptName?: string;
+  };
+
+  type SysBizNoSeqBo = {
+    id?: string;
+    /** 租户Id */
+    tenantId?: string;
+    /** 业务前缀，如 OA / EXP / CON */
+    bizPrefix: string;
+    /** 业务日期 yyyyMMdd */
+    bizDate: string;
+    /** 当前序号 */
+    currentNo: number;
+    /** updateTime */
+    updateTime?: string;
+    /** 创建部门 */
+    createDept?: string;
+    /** 创建者 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 更新者 */
+    updateBy?: string;
+  };
+
+  type SysBizNoSeqExportParams = {
+    bo: SysBizNoSeqBo;
+  };
+
+  type SysBizNoSeqGetInfoParams = {
+    /** 主键 */
+    id: string;
+  };
+
+  type SysBizNoSeqListParams = {
+    bo: SysBizNoSeqBo;
+    pageQuery: PageQuery;
+  };
+
+  type SysBizNoSeqRemoveParams = {
+    /** 主键串 */
+    ids: string[];
+  };
+
+  type SysBizNoSeqVo = {
+    id?: string;
+    /** 租户Id */
+    tenantId?: string;
+    /** 业务前缀，如 OA / EXP / CON */
+    bizPrefix?: string;
+    /** 业务日期 yyyyMMdd */
+    bizDate?: string;
+    /** 当前序号 */
+    currentNo?: number;
+    /** updateTime */
+    updateTime?: string;
+    /** 创建部门 */
+    createDept?: string;
+    /** 创建者 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 更新者 */
+    updateBy?: string;
   };
 
   type SysDeptBo = {
@@ -1519,6 +1713,28 @@ declare namespace API {
     primaryPostId?: string;
   };
 
+  type TableDataInfoOaLeaveApplyVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: OaLeaveApplyVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoSysBizNoSeqVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: SysBizNoSeqVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
   type TableDataInfoSysDeptVo = {
     /** 总记录数 */
     total?: string;
@@ -1793,6 +2009,30 @@ declare namespace API {
     msg?: string;
   };
 
+  type TableDataInfoWorkItemRowVO = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: WorkItemRowVO[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TransferTaskCmd = {
+    /** 操作人（当前用户） */
+    operatorId?: string;
+    operatorName?: string;
+    tenantId?: string;
+    /** 备注 / 审批意见 */
+    comment?: string;
+    variables?: Record<string, any>;
+    taskId: string;
+    toUserId: string;
+    reason?: string;
+  };
+
   type TreeLong = {
     name?: { empty?: boolean };
     id?: string;
@@ -2026,20 +2266,24 @@ declare namespace API {
     definitionKey?: string;
     definitionName?: string;
     /** 流程版本 */
-    version?: number;
+    definitionVersion?: number;
     /** 状态(RUNNING/APPROVED/REJECTED/CANCELED) */
     status?: string;
-    /** 发起人 */
-    startUserId?: string;
     /** startTime */
     startTime?: string;
     /** 结束时间 */
     endTime?: string;
     variables?: string;
-    startUserName?: string;
-    startDeptName?: string;
-    operatorUserId?: string;
-    operatorUserName?: string;
+    starterId?: string;
+    starterName?: string;
+    starterDeptId?: string;
+    starterDeptName?: string;
+    lastOperatorId?: string;
+    lastOperatorName?: string;
+    endReason?: string;
+    endComment?: string;
+    endBy?: string;
+    /** 非数据库字段 */
     bizType?: string;
     bizNo?: string;
   };
@@ -2072,20 +2316,24 @@ declare namespace API {
     /** 流程业务标识 */
     definitionKey?: string;
     /** 流程版本 */
-    version?: number;
+    definitionVersion?: number;
     /** 状态(RUNNING/APPROVED/REJECTED/CANCELED) */
-    status?: string;
+    status?: "RUNNING" | "APPROVED" | "REJECTED" | "CANCELED";
     /** 发起人 */
-    startUserId?: string;
-    startUserName?: string;
-    startDeptId?: string;
-    startDeptName?: string;
-    operatorUserId?: string;
-    operatorUserName?: string;
+    starterId?: string;
+    starterName?: string;
+    starterDeptId?: string;
+    starterDeptName?: string;
+    lastOperatorId?: string;
+    lastOperatorName?: string;
     /** startTime */
     startTime?: string;
     /** 结束时间 */
     endTime?: string;
+    endReason?: "APPROVED" | "REJECTED" | "WITHDRAWN" | "TERMINATED";
+    endComment?: string;
+    endBy?: string;
+    /** 非数据库字段 */
     bizType?: string;
     definitionName?: string;
     bizNo?: string;
@@ -2098,6 +2346,7 @@ declare namespace API {
     instanceId: string;
     /** 节点标识(start/approve_1) */
     nodeKey: string;
+    nodeName?: string;
     /** 节点类型(START/APPROVAL/GATEWAY/END) */
     nodeType: string;
     /** 审批人类型(USER/ROLE/DEPT) */
@@ -2137,14 +2386,15 @@ declare namespace API {
     instanceId?: string;
     /** 节点标识(start/approve_1) */
     nodeKey?: string;
+    nodeName?: string;
     /** 节点类型(START/APPROVAL/GATEWAY/END) */
-    nodeType?: string;
+    nodeType?: "START" | "APPROVAL" | "GATEWAY" | "END";
     /** 审批人类型(USER/ROLE/DEPT) */
     assigneeType?: string;
     /** 审批人值 */
     assigneeValue?: string;
     /** 状态(WAIT/DONE) */
-    status?: string;
+    status?: "WAIT" | "DONE" | "CANCELED";
     /** 执行顺序 */
     orderNo?: number;
     /** createTime */
@@ -2161,6 +2411,9 @@ declare namespace API {
     nodeInstanceId: string;
     /** 审批人ID */
     assigneeId: string;
+    operatorId?: string;
+    transferFrom?: string;
+    transferTime?: string;
     /** 状态(TODO/DONE/TRANSFERRED) */
     status: string;
     /** 操作(APPROVE/REJECT/TRANSFER) */
@@ -2253,15 +2506,82 @@ declare namespace API {
     nodeInstanceId?: string;
     /** 审批人ID */
     assigneeId?: string;
-    /** 状态(TODO/DONE/TRANSFERRED) */
-    status?: string;
+    operatorId?: string;
+    transferFrom?: string;
+    transferTime?: string;
+    status?: "TODO" | "DONE" | "CANCELED";
     /** 操作(APPROVE/REJECT/TRANSFER) */
-    action?: string;
+    action?:
+      | "ANY_APPROVE"
+      | "REJECT"
+      | "ROLLBACK"
+      | "TRANSFER"
+      | "ADD_SIGN"
+      | "ALL_APPROVE"
+      | "WITHDRAW";
     /** 审批意见 */
     comment?: string;
     /** createTime */
     createTime?: string;
     /** 完成时间 */
     finishTime?: string;
+  };
+
+  type WithdrawCmd = {
+    /** 操作人（当前用户） */
+    operatorId?: string;
+    operatorName?: string;
+    tenantId?: string;
+    /** 备注 / 审批意见 */
+    comment?: string;
+    variables?: Record<string, any>;
+    instanceId: string;
+  };
+
+  type WorkItemRowVO = {
+    taskId?: string;
+    instanceId?: string;
+    nodeInstanceId?: string;
+    taskStatus?: "TODO" | "DONE" | "CANCELED";
+    taskAction?:
+      | "ANY_APPROVE"
+      | "REJECT"
+      | "ROLLBACK"
+      | "TRANSFER"
+      | "ADD_SIGN"
+      | "ALL_APPROVE"
+      | "WITHDRAW";
+    taskComment?: string;
+    taskCreateTime?: string;
+    taskFinishTime?: string;
+    instanceStatus?: "RUNNING" | "APPROVED" | "REJECTED" | "CANCELED";
+    instanceStartTime?: string;
+    instanceEndTime?: string;
+    instanceEndReason?: "APPROVED" | "REJECTED" | "WITHDRAWN" | "TERMINATED";
+    instanceEndComment?: string;
+    nodeKey?: string;
+    nodeName?: string;
+    bizType?: string;
+    bizId?: string;
+    bizNo?: string;
+    starterId?: string;
+    starterName?: string;
+    assigneeId?: string;
+    assigneeName?: string;
+  };
+
+  type workPlaceApprovalsParams = {
+    bo: WfTaskBo;
+    pageQuery: PageQuery;
+  };
+
+  type workPlaceMyApplyParams = {
+    bo: WfInstanceBo;
+    pageQuery: PageQuery;
+  };
+
+  type workPlaceMyTaskParams = {
+    bo: WfTaskBo;
+    pageQuery: PageQuery;
   };
 }

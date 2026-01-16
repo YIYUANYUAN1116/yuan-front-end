@@ -11,11 +11,17 @@ import { wfDefinitionList, wfDefinitionRemove } from "@/services/yuan/wfDefiniti
 import { wfInstanceList, wfInstanceRemove } from "@/services/yuan/wfInstanceController";
 import { useDictDataValueEnum } from "@/hooks/dict/useDictDataValueEnum";
 import { DictEnum } from "@/const/dict-enum";
+import { useDictDataTagMap } from "@/hooks/dict/useDictDataTagMap";
 export default () => {
   /**权限控制 */
   const access = useAccess();
   const statusEnum = useDictDataValueEnum(DictEnum.WF_INSTANCE_STATUS);
+  const endReasonTag = useDictDataTagMap(DictEnum.WF_END_REASON);
   const actionRef = useRef<ActionType | null>(null);
+  const endReason = (value: string | number) => {
+    const tag = endReasonTag[String(value)];
+    return tag?.render?.() ?? value;
+  };
 
   const columns: ProColumns<API.WfInstanceVo>[] = [
     {
@@ -50,32 +56,41 @@ export default () => {
     },
     {
       title: "版本号",
-      dataIndex: "version",
+      dataIndex: "definitionVersion",
       hideInSearch: true,
     },
     {
       title: "状态",
       dataIndex: "status",
-      valueEnum:statusEnum
+      valueEnum: statusEnum
+    },
+    {
+      title: "结束原因",
+      dataIndex: "endReason",
+      render: (_, record) => endReason(record.endReason || '-'),
     },
     {
       title: "发起人",
-      dataIndex: "startUserId",
+      dataIndex: "starterId",
       ...HIDE_COLUMN
     },
     {
       title: "发起人",
-      dataIndex: "startUserName",
+      dataIndex: "starterName",
 
     },
     {
-      title:"发起人部门",
-      dataIndex:"startDeptName"
+      title: "发起人部门",
+      dataIndex: "starterDeptName"
     },
     {
-      title:"发起人部门",
-      dataIndex:"startDeptId",
+      title: "发起人部门",
+      dataIndex: "starterDeptId",
       ...HIDE_COLUMN
+    },
+    {
+      title: "最后操作人",
+      dataIndex: "lastOperatorName"
     },
     {
       title: "发起时间",
@@ -101,7 +116,7 @@ export default () => {
           <Access key="delete" accessible={access.canAccess("workflow:wfInstance:remove")}>
             <Popconfirm
               title="删除"
-              description={`确认删除：${record.businessKey}？`}
+              description={`确认删除：${record.definitionName}？`}
               okText="确认"
               cancelText="取消"
               okButtonProps={{ loading: deleteLoading }}
@@ -118,6 +133,8 @@ export default () => {
     wfInstanceRemove,
     actionRef.current?.reload
   );
+
+
 
   const request = useTableRequest(wfInstanceList);
 
@@ -139,11 +156,11 @@ export default () => {
             option: { fixed: 'right', disable: true },
           },
         }}
-        // toolBarRender={() => [
-        //   <Access accessible={access.canAccess('workflow:wfInstance:add')}>
-        //     <Button>新增</Button>
-        //   </Access >
-        // ]}
+      // toolBarRender={() => [
+      //   <Access accessible={access.canAccess('workflow:wfInstance:add')}>
+      //     <Button>新增</Button>
+      //   </Access >
+      // ]}
       />
     </PageContainer>
   );

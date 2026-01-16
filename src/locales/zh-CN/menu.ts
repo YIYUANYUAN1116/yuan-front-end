@@ -75,7 +75,10 @@ export default {
   'menu.workplace.overview': '概览',
   'menu.workplace.apply': '我的申请',
   'menu.workplace.task': '我的代办',
-  'menu.workplace.approve': '我的已办'
+  'menu.workplace.approve': '我的已办',
 
-
+  /**oa */
+  'menu.oa': 'OA管理',
+  'menu.oa.leave': '请假申请',
+  'menu.oa.claim': '报销申请',
 };

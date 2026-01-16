@@ -110,3 +110,63 @@ export async function wfTaskList(
     ...(options || {}),
   });
 }
+
+/** 审批拒绝 POST /workflow/wfTask/reject */
+export async function wfTaskReject(
+  body: API.RejectTaskCmd,
+  options?: { [key: string]: any }
+) {
+  return request<API.RLong>("/workflow/wfTask/reject", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** 退回指定节点 POST /workflow/wfTask/rollbackTo */
+export async function wfTaskRollbackTo(
+  body: API.RollbackToActivityCmd,
+  options?: { [key: string]: any }
+) {
+  return request<API.RLong>("/workflow/wfTask/rollbackTo", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** 转交 POST /workflow/wfTask/transfer */
+export async function wfTaskTransfer(
+  body: API.TransferTaskCmd,
+  options?: { [key: string]: any }
+) {
+  return request<API.RLong>("/workflow/wfTask/transfer", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** 撤回申请 POST /workflow/wfTask/withdraw */
+export async function wfTaskWithdraw(
+  body: API.WithdrawCmd,
+  options?: { [key: string]: any }
+) {
+  return request<API.RLong>("/workflow/wfTask/withdraw", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}

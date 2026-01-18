@@ -16,16 +16,23 @@ const index = () => {
     const tag = taskActionTag[String(value)];
     return tag?.render?.() ?? value;
   };
+    const wfBizTypeTagMap = useDictDataTagMap(DictEnum.WF_BIZ_TYPE);
+  
+
+    const wfBizType = (value: string | number) => {
+      const tag = wfBizTypeTagMap[String(value)];
+      return tag?.render?.() ?? value;
+    };
   const columns: ProColumns<API.WorkItemRowVO>[] = [
     {
-      title: '事项',
-      dataIndex: 'bizTitle',
+      title: '单号',
+      dataIndex: 'bizNo',
       ellipsis: true,
     },
     {
-      title: '流程',
+      title: '流程类型',
       dataIndex: 'bizType',
-      width: 120,
+      render: (_, record) => wfBizType(record.bizType || '-'),
     },
     {
       title: '节点',

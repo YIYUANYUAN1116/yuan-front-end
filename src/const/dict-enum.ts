@@ -29,9 +29,12 @@ export enum DictEnum {
   WF_TASK_ACTION = 'wf_task_action',//任务处理动作
   WF_TASK_STATUS = 'wf_task_status',//审批任务状态
   WF_NODE_STATUS = 'wf_node_status',//审批节点状态
+  WF_NODE_TYPE = 'wf_node_type',//流程节点类型
 
   WF_BIZ_TYPE = 'wf_biz_type',//审批业务类型
-  OA_LEAVE_TYPE = 'oa_leave_type',//审批业务类型
+  OA_LEAVE_TYPE = 'oa_leave_type',//请假类型
   OA_APPLY_STATUS= 'oa_apply_status', //oa申请状态
+
+
 
 }

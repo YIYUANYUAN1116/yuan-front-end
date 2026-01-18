@@ -1,4 +1,5 @@
 import { DictEnum } from '@/const/dict-enum';
+import { useDictDataTagMap } from '@/hooks/dict/useDictDataTagMap';
 import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 import { useTableRequest } from '@/hooks/table/useTableRequest';
 import { workPlaceMyTask } from '@/services/yuan/workPlaceController';
@@ -13,15 +14,24 @@ const index = () => {
   const actionRef = useRef<ActionType | null>(null);
   const statusEnum = useDictDataValueEnum(DictEnum.WF_TASK_STATUS);
 
+  const wfBizTypeTagMap = useDictDataTagMap(DictEnum.WF_BIZ_TYPE);
+
+
+  const wfBizType = (value: string | number) => {
+    const tag = wfBizTypeTagMap[String(value)];
+    return tag?.render?.() ?? value;
+  };
+
   const columns: ProColumns<API.WorkItemRowVO>[] = [
     {
-      title: '事项',
-      dataIndex: 'bizTitle',
+      title: '单号',
+      dataIndex: 'bizNo',
       ellipsis: true,
     },
     {
-      title: '流程',
-      dataIndex: 'bizType'
+      title: '流程类型',
+      dataIndex: 'bizType',
+      render: (_, record) => wfBizType(record.bizType || '-'),
     },
     {
       title: '当前节点',

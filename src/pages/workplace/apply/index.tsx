@@ -10,23 +10,30 @@ import React, { useRef } from 'react'
 const index = () => {
   /**权限控制 */
   const access = useAccess();
-    const actionRef = useRef<ActionType | null>(null);
+  const actionRef = useRef<ActionType | null>(null);
   const statusEnum = useDictDataValueEnum(DictEnum.WF_INSTANCE_STATUS);
   const endReasonTag = useDictDataTagMap(DictEnum.WF_END_REASON);
+  const wfBizTypeTagMap = useDictDataTagMap(DictEnum.WF_BIZ_TYPE);
 
   const endReason = (value: string | number) => {
     const tag = endReasonTag[String(value)];
     return tag?.render?.() ?? value;
   };
+  const wfBizType = (value: string | number) => {
+    const tag = wfBizTypeTagMap[String(value)];
+    return tag?.render?.() ?? value;
+  };
+
   const columns: ProColumns<API.WorkItemRowVO>[] = [
     {
-      title: '事项',
-      dataIndex: 'bizTitle',
+      title: '单号',
+      dataIndex: 'bizNo',
       ellipsis: true,
     },
     {
-      title: '流程',
+      title: '流程类型',
       dataIndex: 'bizType',
+      render: (_, record) => wfBizType(record.bizType || '-'),
     },
     {
       title: '当前节点',
@@ -49,7 +56,7 @@ const index = () => {
       dataIndex: "endReason",
       render: (_, record) => endReason(record.instanceEndReason || '-'),
     },
-     {
+    {
       title: '结束时间',
       dataIndex: 'instanceEndTime',
       valueType: 'dateTime'

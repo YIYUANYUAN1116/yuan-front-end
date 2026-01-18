@@ -1,19 +1,19 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Button, Card, Divider, message, Space } from 'antd';
+import { Button, Card, Divider, message, Popconfirm, Space } from 'antd';
 import { PageContainer, ProForm, ProFormDateTimePicker, ProFormSelect, ProFormTextArea, ProFormText, ProFormDateTimeRangePicker, FooterToolbar } from '@ant-design/pro-components';
 import type { ProFormInstance } from '@ant-design/pro-components';
-import { history, useRequest, useSearchParams } from '@umijs/max';
+import { Access, history, useAccess, useRequest, useSearchParams } from '@umijs/max';
 import dayjs from 'dayjs';
 import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 import { DictEnum } from '@/const/dict-enum';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
-import { oaLeaveApplyAdd, oaLeaveApplyEdit, oaLeaveApplyGetInfoByBizNo } from '@/services/yuan/oaLeaveApplyController';
+import { oaLeaveApplyAdd, oaLeaveApplyEdit, oaLeaveApplyGetInfoByBizNo, oaLeaveApplySubmit } from '@/services/yuan/oaLeaveApplyController';
 
-type SubmitAction = 'SAVE_DRAFT' | 'SUBMIT';
 
 const OaLeaveApplyForm: React.FC = () => {
+    const access = useAccess();
+
     const formRef = useRef<ProFormInstance | undefined>(undefined)
-    const actionRef = useRef<SubmitAction>('SAVE_DRAFT'); // 默认
     const [sp] = useSearchParams();
     const bizNo = useMemo(() => {
         return sp.get('bizNo');
@@ -24,6 +24,8 @@ const OaLeaveApplyForm: React.FC = () => {
 
     const leaveTypeEnum = useDictDataValueEnum(DictEnum.OA_LEAVE_TYPE);
     const { run: run } = useActionRequest(isEdit ? oaLeaveApplyEdit : oaLeaveApplyAdd)
+
+    const { run: submitRun } = useActionRequest(oaLeaveApplySubmit);
 
     const { data: detail, loading, run: fetchDetail } = useRequest(
         (bizNo: string) => oaLeaveApplyGetInfoByBizNo({ bizNo: bizNo }),        // 👈 请求函数
@@ -89,7 +91,6 @@ const OaLeaveApplyForm: React.FC = () => {
                         }
                     }}
 
-
                     submitter={{
                         // ✅ 自定义按钮放 submitter
                         render: (props, dom) => {
@@ -105,29 +106,30 @@ const OaLeaveApplyForm: React.FC = () => {
                                 <Button
                                     key="draft"
                                     onClick={() => {
-                                        actionRef.current = 'SAVE_DRAFT';
                                         // 触发表单校验 + onFinish
                                         props.form?.submit?.();
                                     }}
                                 >
                                     保存草稿
                                 </Button>
-                                <Button
-                                    key="submit"
-                                    type="primary"
-                                    onClick={() => {
-                                        actionRef.current = 'SUBMIT';
-                                        props.form?.submit?.();
-                                    }}
-                                >
-                                    提交发起
-                                </Button>
+
+                                {detail &&
+                                    detail.status === 'DRAFT' &&
+                                    access.canAccess("oa:leave:submit") && (
+                                        <Popconfirm
+                                            title="提交申请"
+                                            description="确认提交申请"
+                                            okText="确认"
+                                            cancelText="取消"
+                                            onConfirm={() => submitRun({ bizNo: detail.applyNo! })}
+                                        >
+                                            <Button>提交申请</Button>
+                                        </Popconfirm>
+                                    )}
                             </FooterToolbar>;
                         },
                     }}
                     onFinish={async (values) => {
-                        const action = actionRef.current; // 
-
                         // 1) 统一把 timeRange 拆成 startTime/endTime
                         const range = values.timeRange;
                         const [start, end] = Array.isArray(range) ? range : [];
@@ -138,11 +140,9 @@ const OaLeaveApplyForm: React.FC = () => {
                             ...values,
                             startTime,
                             endTime,
-                            status: action === 'SAVE_DRAFT' ? 'DRAFT' : 'APPROVING',
+                            status: 'DRAFT'
                         };
                         run(body as API.OaLeaveApplyBo)
-
-                        history.push("/oa/leave")
                         return true;
                     }}
 

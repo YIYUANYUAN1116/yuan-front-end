@@ -1,4 +1,4 @@
-import { PageContainer } from '@ant-design/pro-components'
+import { PageContainer, ProFormSelect } from '@ant-design/pro-components'
 import { LogicFlow } from '@logicflow/core'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useRequest, useSearchParams } from '@umijs/max'
@@ -42,6 +42,7 @@ const Index = () => {
   // =========================
   const fieldValueEnum: DictValueEnum = useDictDataValueEnum(DictEnum.WF_GATEWAY_FIELD)
   const operatorValueEnum: DictValueEnum = useDictDataValueEnum(DictEnum.WF_GATEWAY_OPER)
+  const wfNodeTypeEnum = useDictDataValueEnum(DictEnum.WF_NODE_TYPE)
   // 角色 options
   const { data: roleOptions } = useRequest(sysRoleSelect)
   //岗位 options
@@ -342,7 +343,7 @@ const Index = () => {
   }, [data])
 
   return (
-    <PageContainer title="审批流编辑器" content="可视化拖拽设计审批流" className="wf-page"  onBack={() => history.back()}>
+    <PageContainer title="审批流编辑器" content="可视化拖拽设计审批流" className="wf-page" onBack={() => history.back()}>
       {contextHolder}
       <div className="flowEditor">
         <div className="editorLayout">
@@ -396,14 +397,11 @@ const Index = () => {
                 </Form.Item>
 
                 <Form.Item label="节点类型" name="wfType" rules={[{ required: true }]}>
-                  <Select
-                    options={[
-                      { label: '开始', value: 'START' },
-                      { label: '结束', value: 'END' },
-                      { label: '用户任务（审批）', value: 'USER_TASK' },
-                      { label: '系统任务', value: 'SYSTEM_TASK' },
-                      { label: '条件网关', value: 'GATEWAY' },
-                    ]}
+                  {/* <Select
+                    options={wfNodeTypeEnum}
+                  /> */}
+                  <ProFormSelect
+                    valueEnum={wfNodeTypeEnum}
                   />
                 </Form.Item>
 

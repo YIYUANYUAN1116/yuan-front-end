@@ -193,12 +193,16 @@ declare namespace API {
     ids: string[];
   };
 
+  type OaLeaveApplySubmitParams = {
+    bizNo: string;
+  };
+
   type OaLeaveApplyVo = {
     id: string;
     /** 租户ID */
     tenantId?: string;
     /** 请假单号 */
-    applyNo?: string;
+    applyNo: string;
     /** 申请人ID */
     applicantId?: string;
     /** 申请人姓名（冗余） */
@@ -546,10 +550,11 @@ declare namespace API {
     bizId?: string;
     bizNo?: string;
     /** 业务发起人（可选，代发场景用） */
-    startId?: string;
-    startName?: string;
-    startDeptId?: string;
-    startDeptName?: string;
+    starterId?: string;
+    starterName?: string;
+    starterDeptId?: string;
+    starterDeptName?: string;
+    title?: string;
   };
 
   type SysBizNoSeqBo = {
@@ -594,7 +599,7 @@ declare namespace API {
   };
 
   type SysBizNoSeqVo = {
-    id?: string;
+    id: string;
     /** 租户Id */
     tenantId?: string;
     /** 业务前缀，如 OA / EXP / CON */

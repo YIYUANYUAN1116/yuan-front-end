@@ -19,6 +19,7 @@ export default () => {
 
   const actionRef = useRef<ActionType | null>(null);
   const statusEnum = useDictDataValueEnum(DictEnum.WF_DEFINITION_STATUS)
+  // const bizTypeEnum = useDictDataValueEnum(DictEnum.WF_BIZ_TYPE);
 
   const { run: deleteRun } = useActionRequest(
     wfDefinitionRemove,
@@ -30,10 +31,6 @@ export default () => {
     actionRef.current?.reload
   );
   const menus = [
-    {
-      key: 'edit',
-      name: '流程设计',
-    },
     {
       key: 'publish',
       name: '发布'
@@ -50,11 +47,6 @@ export default () => {
       changeStatusRun({ id: record.id, action: DfActions.PUBLISH });
     } else if (key === 'disable') {
       changeStatusRun({ id: record.id, action: DfActions.DISABLE });
-    } else if (key === 'edit') {
-      history.push({
-        pathname: '/workflow/designer',
-        search: `?id=${record.id}`,
-      })
     }
   };
 
@@ -125,6 +117,14 @@ export default () => {
                 reload={actionRef.current?.reload}
                 record={record}
               />
+              <a onClick={() => {
+                history.push({
+                  pathname: '/workflow/designer',
+                  search: `?id=${record.id}`,
+                })
+              }}>
+                流程设计
+              </a>
               <TableDropdown
                 key="actionGroup"
                 menus={menus}

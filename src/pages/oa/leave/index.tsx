@@ -1,7 +1,7 @@
 import { DictEnum } from '@/const/dict-enum';
 import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 import { useTableRequest } from '@/hooks/table/useTableRequest';
-import { oaLeaveApplyList, oaLeaveApplyRemove } from '@/services/yuan/oaLeaveApplyController';
+import { oaLeaveApplyList, oaLeaveApplyRemove, oaLeaveApplySubmit } from '@/services/yuan/oaLeaveApplyController';
 import { ActionType, PageContainer, ProColumns, ProTable } from '@ant-design/pro-components';
 import { Button, Popconfirm, Space } from 'antd';
 import React, { useRef } from 'react'
@@ -13,7 +13,6 @@ const index = () => {
   const access = useAccess();
   const actionRef = useRef<ActionType | null>(null);
   const leaveStatusEnum = useDictDataValueEnum(DictEnum.OA_APPLY_STATUS)
-
   const leaveTypetagMap = useDictDataTagMap(DictEnum.OA_LEAVE_TYPE)
 
   const leaveType = (value: string | number) => {
@@ -25,6 +24,8 @@ const index = () => {
     oaLeaveApplyRemove,
     actionRef.current?.reload
   );
+
+  const { run: submitRun } = useActionRequest(oaLeaveApplySubmit,actionRef.current?.reload);
 
   const columns: ProColumns<API.OaLeaveApplyVo>[] = [
     {
@@ -109,8 +110,20 @@ const index = () => {
                 </a>
 
                 <Popconfirm
+                  title="提交申请"
+                  description="确认提交申请"
+                  okText="确认"
+                  cancelText="取消"
+                  onConfirm={() => submitRun({ bizNo: r.applyNo })}
+                >
+                  <a >提交申请</a>
+                </Popconfirm>
+
+                <Popconfirm
                   title="删除"
                   onConfirm={() => deleteRun({ ids: [r.id] })}
+                  okText='确认'
+                  cancelText='取消'
                 >
                   <a style={{ color: 'red' }}>删除</a>
                 </Popconfirm>

@@ -1,15 +1,18 @@
+import WorkFlowActionPanel from '@/components/WorkFlow/WorkFlowActionPanel';
+import WorkFlowHistory from '@/components/WorkFlow/WorkFlowHistory';
 import { DictEnum } from '@/const/dict-enum';
 import { useDictDataTagMap } from '@/hooks/dict/useDictDataTagMap';
 import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 import { oaLeaveApplyGetInfoByBizNo } from '@/services/yuan/oaLeaveApplyController';
 import { PageContainer, ProCard, ProDescriptions, ProDescriptionsItemProps } from '@ant-design/pro-components'
 import { useRequest, useSearchParams } from '@umijs/max';
+import { Button, Space } from 'antd';
 import React, { useEffect, useMemo } from 'react'
 
 const index = () => {
     const [sp] = useSearchParams();
     const bizNo = useMemo(() => {
-        return sp.get('bizNo');
+        return sp.get('bizNo') ?? undefined;
     }, [sp]);
 
     const leaveStatusEnum = useDictDataValueEnum(DictEnum.OA_APPLY_STATUS)
@@ -89,8 +92,13 @@ const index = () => {
     return (
         <PageContainer
             title="请假详情"
-             onBack={() => history.back()}>
-                
+            onBack={() => history.back()}
+            footer={[
+                <WorkFlowActionPanel
+                    bizNo={bizNo}
+                />
+            ]}
+        >
             <ProCard>
                 <ProDescriptions
                     column={2}
@@ -98,6 +106,9 @@ const index = () => {
                     dataSource={data}
                 />
             </ProCard>
+            <WorkFlowHistory
+                bizNo={bizNo}
+            />
         </PageContainer >
 
     )

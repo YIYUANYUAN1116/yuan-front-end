@@ -1,195 +1,173 @@
-import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { PageContainer, ProTable } from '@ant-design/pro-components';
-import { Button, Popconfirm, Result, Space, Table } from 'antd';
-import { use, useRef } from 'react';
-import UserDrawerForm from './components/UserDrawerForm';
-import UserRoleModalForm from '../post/components/PostRoleModalForm';
-import { HIDE_COLUMN } from '@/util/ColumsUtils';
-import { sysUserList, sysUserRemove } from '@/services/yuan/sysUserController';
-import { DictEnum } from '@/const/dict-enum';
-import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
-import { Access, useAccess } from '@umijs/max';
-import { useTableRequest } from '@/hooks/table/useTableRequest';
-import { useActionRequest } from '@/hooks/action/useActionRequest';
-import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
-import { PlusOutlined } from '@ant-design/icons';
-import { sysDeptTreeselect } from '@/services/yuan/sysDeptController';
-import { convertTree } from '@/util/TreeUtils';
-export default () => {
+import { ActionType } from '@ant-design/pro-components';
+import { Button, Modal, Popconfirm, Space, message } from 'antd';
+import TextArea from 'antd/es/input/TextArea';
+import React, { useMemo, useState } from 'react';
 
-  /**权限控制 */
-  const access = useAccess();
+interface WorkFlowActionPanelProps {
+  bizNo?: string;
+  reload?: ActionType['reload'];
+  task?: API.WfTaskVo;
+}
 
-  const actionRef = useRef<ActionType | null>(null);
-  const { run: deleteRun, loading: deleteLoading } = useActionRequest(sysUserRemove, actionRef.current?.reload)
-  const sexEnum = useDictDataValueEnum(DictEnum.SYS_USER_SEX)
-  const statusEnum = useDictDataValueEnum(DictEnum.SYS_NORMAL_DISABLE)
+export type WfActionKey =
+  | 'APPROVE'
+  | 'REJECT'
+  | 'ROLLBACK_PREV'
+  | 'ROLLBACK_TO'
+  | 'TRANSFER'
+  | 'WITHDRAW'
+  | 'ADD_SIGN';
 
-  const columns: ProColumns<API.SysUserVo>[] = [
-    {
-      title: '用户Id',
-      dataIndex: 'userId',
-      ...HIDE_COLUMN,
-    },
-    {
-      title: '序号',
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
-    {
-      title: '用户名称',
-      dataIndex: 'nickName'
-    },
-    {
-      title: '登录名称',
-      dataIndex: 'userName',
-      hideInSearch: true,
-    },
-    {
-      disable: true,
-      title: '状态',
-      dataIndex: 'status',
-      filters: true,
-      onFilter: true,
-      valueType: 'select',
-      valueEnum: statusEnum
-    },
-    {
-      disable: true,
-      title: '性别',
-      dataIndex: 'sex',
-      width: 100,
-      filters: true,
-      onFilter: true,
-      valueType: 'select',
-      valueEnum: sexEnum
-    },
-    {
-      title: '用户邮箱',
-      dataIndex: 'email',
-    },
-    {
-      title: '手机号',
-      dataIndex: 'phonenumber',
-      hideInSearch: true,
-    },
-    {
-      title: '部门',
-      dataIndex: 'deptId',
-      valueType: 'treeSelect',
-      hideInTable: true,
-      fieldProps: {
-        showSearch: true,
-        treeDefaultExpandAll: false,
-        // treeData: deptTreeData, // 页面初始化加载一次（数量不大时）
-      },
-      request: async () => {
-        const res = await sysDeptTreeselect({
-          bo: {}
-        } as API.sysMenuTreeselectParams);
-        return convertTree(res.data?.treeList || []) // 或者请求接口
-      },
-    },
-    {
-      title: '部门',
-      dataIndex: 'deptName',
-      hideInSearch: true,
-    },
-    {
-      title: '岗位',
-      dataIndex: 'postName',
-      hideInSearch: true,
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'createTime',
-      valueType: 'dateTime',
-      sorter: true,
-      hideInSearch: true,
-    },
-    {
-      title: '操作',
-      valueType: 'option',
-      key: 'option',
-      hideInSearch: true,
-      render: (text, record) => (
-        <Space size="small">
-          <Access key='edit' accessible={access.canAccess('system:user:edit') || false}>
-            <UserDrawerForm
-              mode="edit"
-              trigger={<a>编辑</a>}
-              record={record}
-              reload={actionRef.current?.reload}
-            />
-          </Access>
+const ALL_ACTIONS: WfActionKey[] = [
+  'APPROVE',
+  'REJECT',
+  'ROLLBACK_PREV',
+  'ROLLBACK_TO',
+  'TRANSFER',
+  'WITHDRAW',
+  'ADD_SIGN',
+];
 
-          <Access key='remove' accessible={access.canAccess('system:user:remove')}>
-            <Popconfirm
-              title="用户删除"
-              description={`确认删除用户：${record.nickName}`}
-              okText="确认"
-              cancelText="取消"
-              okButtonProps={{ loading: deleteLoading }}
-              onConfirm={() => deleteRun({ userIds: [record.userId] })}
-            >
-              <a style={{ color: 'red' }}>删除</a>
-            </Popconfirm>
-          </Access>
-        </Space>
-      ),
-    },
-  ];
-  const request = useTableRequest(sysUserList);
+const WorkFlowActionPanel = (props: WorkFlowActionPanelProps) => {
+  const { bizNo } = props;
+  const [comment, setComment] = useState('');
+
+  const allowedSet = useMemo(() => new Set(ALL_ACTIONS), []);
+
+  /** 简单校验：拒绝必须填意见 */
+  const ensureRejectComment = () => {
+    if (!comment.trim()) {
+      message.warning('拒绝时必须填写审批意见');
+      return false;
+    }
+    return true;
+  };
+
+  /** Modal.confirm（用于需要额外信息的操作） */
+  const confirm = (actionText: string, onOk: () => void) => {
+    Modal.confirm({
+      title: `确认${actionText}？`,
+      content: comment ? `审批意见：${comment.slice(0, 30)}` : '未填写审批意见',
+      okText: '确认',
+      cancelText: '取消',
+      onOk,
+    });
+  };
+
   return (
-    <PageContainer>
-      <ProTable<API.SysUserVo>
-        columns={columns}
-        actionRef={actionRef}
-        request={request}
-        columnsState={{
-          persistenceKey: 'sys-user-pro-table',
-          persistenceType: 'localStorage',
-          defaultValue: {
-            option: { fixed: 'right', disable: true },
-          },
+    <div
+      style={{
+        display: 'flex',
+        gap: 12,
+        alignItems: 'flex-end',
+        width: '100%',
+      }}
+    >
+      {/* 左侧：审批意见 */}
+      <TextArea
+        placeholder="审批意见（可选，拒绝必填）"
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+        maxLength={300}
+        showCount
+        rows={1}
+        style={{
+          flex: 1,
+          minWidth: 360,
+          marginBottom: 20,
+          marginTop: 20,
         }}
-        rowKey="userId"
-        search={{ labelWidth: 'auto' }}
-        pagination={{ pageSize: 10 }}
-        headerTitle="用户管理"
-        toolBarRender={() => [
-          <Access key="add" accessible={access.canAccess('system:user:add')}>
-            <UserDrawerForm
-              mode="add"
-              trigger={
-                <Button type="primary" icon={<PlusOutlined />}>新增用户</Button>
-              }
-              reload={actionRef.current?.reload}
-            />
-          </Access>
-
-        ]}
-        rowSelection={{
-          // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
-          // 注释该行则默认不显示下拉选项
-          selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
-        }}
-        tableAlertOptionRender={false}
-        tableAlertRender={(props) => (
-          <Access key="remove" accessible={access.canAccess('system:user:remove')}>
-            <BatchDeleteAlert<API.SysUserVo>
-              {...props}
-              actionRef={actionRef}
-              onDelete={(keys) =>
-                sysUserRemove({ userIds: keys as string[] })
-              }
-            />
-          </Access>
-        )}
       />
 
-    </PageContainer>
+      {/* 右侧：操作按钮 */}
+      <Space wrap size={8}>
+        {/* ===== 同意：Popconfirm ===== */}
+        {allowedSet.has('APPROVE') && (
+          <Popconfirm
+            title="确认同意？"
+            description={comment ? `审批意见：${comment.slice(0, 30)}` : '未填写审批意见'}
+            okText="确认"
+            cancelText="取消"
+            onConfirm={() => {
+              console.log('approve', { bizNo, comment });
+            }}
+          >
+            <Button type="primary">同意</Button>
+          </Popconfirm>
+        )}
 
+        {/* ===== 拒绝：Popconfirm + 必填校验 ===== */}
+        {allowedSet.has('REJECT') && (
+          <Popconfirm
+            title="确认拒绝？"
+            description="拒绝操作必须填写审批意见"
+            okText="确认"
+            cancelText="取消"
+            onConfirm={() => {
+              if (!ensureRejectComment()) return;
+              console.log('reject', { bizNo, comment });
+            }}
+          >
+            <Button danger>拒绝</Button>
+          </Popconfirm>
+        )}
+
+        {/* ===== 退回指定节点：仍用 Modal（需要选节点） ===== */}
+        {allowedSet.has('ROLLBACK_TO') && (
+          <Button
+            onClick={() =>
+              confirm('退回至指定节点', () => {
+                console.log('rollback_to', { bizNo, comment });
+              })
+            }
+          >
+            退回至指定节点
+          </Button>
+        )}
+
+        {/* ===== 转交：仍用 Modal（需要选人） ===== */}
+        {allowedSet.has('TRANSFER') && (
+          <Button
+            onClick={() =>
+              confirm('转交', () => {
+                console.log('transfer', { bizNo, comment });
+              })
+            }
+          >
+            转交
+          </Button>
+        )}
+
+        {/* ===== 撤销：Popconfirm ===== */}
+        {allowedSet.has('WITHDRAW') && (
+          <Popconfirm
+            title="确认撤销？"
+            description={comment ? `审批意见：${comment.slice(0, 30)}` : '未填写审批意见'}
+            okText="确认"
+            cancelText="取消"
+            onConfirm={() => {
+              console.log('withdraw', { bizNo, comment });
+            }}
+          >
+            <Button>撤销</Button>
+          </Popconfirm>
+        )}
+
+        {/* ===== 加签：仍用 Modal（需要选人） ===== */}
+        {allowedSet.has('ADD_SIGN') && (
+          <Button
+            onClick={() =>
+              confirm('加签', () => {
+                console.log('add_sign', { bizNo, comment });
+              })
+            }
+          >
+            加签
+          </Button>
+        )}
+      </Space>
+    </div>
   );
 };
+
+export default WorkFlowActionPanel;

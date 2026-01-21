@@ -4,6 +4,7 @@ import { DictEnum } from '@/const/dict-enum';
 import { useDictDataTagMap } from '@/hooks/dict/useDictDataTagMap';
 import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 import { oaLeaveApplyGetInfoByBizNo } from '@/services/yuan/oaLeaveApplyController';
+import { wfInstanceDetail } from '@/services/yuan/wfInstanceController';
 import { PageContainer, ProCard, ProDescriptions, ProDescriptionsItemProps } from '@ant-design/pro-components'
 import { useRequest, useSearchParams } from '@umijs/max';
 import { Button, Space } from 'antd';
@@ -22,14 +23,13 @@ const index = () => {
         return tag?.render?.() ?? value;
     };
 
-    const { data, run: fetchDetail } = useRequest(
-        (id: string) => oaLeaveApplyGetInfoByBizNo({ bizNo: id }),
+    const { data, run: fetchDetail } = useRequest(oaLeaveApplyGetInfoByBizNo,
         { manual: true }
     );
 
     useEffect(() => {
         if (bizNo) {
-            fetchDetail(bizNo);
+            fetchDetail({ bizNo: bizNo });
         }
     }, [bizNo, fetchDetail]);
 

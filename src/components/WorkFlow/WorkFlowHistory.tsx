@@ -1,75 +1,20 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { ProCard } from '@ant-design/pro-components';
 import { Badge, Empty, Space, Tag, Timeline, Typography } from 'antd';
 import type { TimelineItemProps } from 'antd';
 import dayjs from 'dayjs';
+import { useRequest } from '@umijs/max';
+import { wfInstanceDetail } from '@/services/yuan/wfInstanceController';
+import { WfAction, WfHistoryRecord, WfRecordStatus } from './types';
 
 const { Text, Paragraph } = Typography;
-
-/** ====== 类型：你后端接入时只要适配这份结构即可 ====== */
-export type WfAction =
-  | 'ANY_APPROVE' // 或签同意
-  | 'ALL_APPROVE' // 会签同意
-  | 'REJECT' // 驳回
-  | 'ROLLBACK' // 退回
-  | 'WITHDRAW' // 撤回
-  | 'TRANSFER' // 转签
-  | 'ADD_SIGN' // 加签
-  | 'START' // 发起
-  | 'SYSTEM'; // 系统动作
-
-export type WfRecordStatus = 'TODO' | 'DONE' | 'CANCELED';
-
-export interface WfHistoryRecord {
-  id: string | number;
-
-  /** 业务标识 */
-  bizNo?: string;
-
-  /** 节点信息 */
-  nodeKey?: string;
-  nodeName: string;
-
-  /** 任务信息 */
-  taskId?: string | number;
-  taskStatus?: WfRecordStatus;
-
-  /** 操作信息 */
-  action: WfAction;
-  operatorId?: string | number;
-  operatorName?: string;
-
-  /** 转签：from -> to */
-  fromOperatorName?: string;
-  toOperatorName?: string;
-
-  /** 会签：总数/完成数（可选） */
-  signTotal?: number;
-  signDone?: number;
-
-  /** 时间 */
-  startTime?: string;
-  finishTime?: string;
-
-  /** 意见 */
-  comment?: string;
-
-  /** 其它扩展字段 */
-  extra?: Record<string, any>;
-}
 
 /** ====== 组件 Props ====== */
 export interface WorkFlowDetailProps {
   bizNo?: string;
 
-  /** 传入你自己的数据（如果你不想在组件内请求） */
+  /** 外部直接传入 UI records（不想组件内请求时使用） */
   records?: WfHistoryRecord[];
-
-  /**
-   * 也可以传入 fetcher（你接接口时用）
-   * - 这里为了“能预览”，我不强依赖 useRequest，你自己接时随便用 useRequest/ReactQuery
-   */
-  fetcher?: (bizNo: string) => Promise<WfHistoryRecord[]>;
 
   title?: React.ReactNode;
   style?: React.CSSProperties;
@@ -81,7 +26,7 @@ export interface WorkFlowDetailProps {
   reverse?: boolean;
 }
 
-/** ====== 动作文案/样式映射（你后面可按需要改） ====== */
+/** ====== 动作文案/样式映射 ====== */
 function actionMeta(action: WfAction) {
   switch (action) {
     case 'START':
@@ -90,6 +35,8 @@ function actionMeta(action: WfAction) {
       return { text: '或签同意', color: 'green' as const, badge: 'success' as const };
     case 'ALL_APPROVE':
       return { text: '会签同意', color: 'green' as const, badge: 'success' as const };
+    case 'APPROVE':
+      return { text: '通过', color: 'green' as const, badge: 'success' as const };
     case 'REJECT':
       return { text: '驳回', color: 'red' as const, badge: 'error' as const };
     case 'ROLLBACK':
@@ -171,8 +118,7 @@ function buildDescription(r: WfHistoryRecord, density: 'default' | 'compact') {
         {t ? <Text type="secondary">{t}</Text> : null}
         {r.taskStatus ? (
           <Text type="secondary">
-            状态：
-            <Text code>{r.taskStatus}</Text>
+            状态：<Text code>{r.taskStatus}</Text>
           </Text>
         ) : null}
         {r.taskId ? (
@@ -194,94 +140,159 @@ function buildDescription(r: WfHistoryRecord, density: 'default' | 'compact') {
 function timelineDot(r: WfHistoryRecord) {
   const meta = actionMeta(r.action);
 
-  // DONE/审批完成 → 绿
   if (r.taskStatus === 'DONE') return <Badge status="success" />;
-
-  // TODO 当前处理中 → 蓝
   if (r.taskStatus === 'TODO') return <Badge status="processing" />;
-
-  // CANCELED → 灰
   if (r.taskStatus === 'CANCELED') return <Badge status="default" />;
 
-  // 如果没 taskStatus，用 action 的 badge
   return <Badge status={meta.badge} />;
 }
 
-/** ====== 默认 mock（为了你现在能预览） ====== */
-const mockRecords: WfHistoryRecord[] = [
-  {
-    id: 1,
-    nodeName: '发起申请',
-    action: 'START',
-    operatorName: '张三',
-    taskStatus: 'DONE',
-    finishTime: dayjs().subtract(2, 'day').toISOString(),
-    comment: '请假 3 天，家里有事',
-  },
-  {
-    id: 2,
-    nodeName: '部门领导审批',
-    action: 'TRANSFER',
-    fromOperatorName: '李主管',
-    toOperatorName: '王主管',
-    operatorName: '系统',
-    taskStatus: 'DONE',
-    finishTime: dayjs().subtract(1, 'day').toISOString(),
-    comment: '原审批人请假，转签给代班主管',
-  },
-  {
-    id: 3,
-    nodeName: '部门领导审批',
-    action: 'ANY_APPROVE',
-    operatorName: '王主管',
-    taskStatus: 'DONE',
-    finishTime: dayjs().subtract(20, 'hour').toISOString(),
-    comment: '同意，注意交接',
-  },
-  {
-    id: 4,
-    nodeName: '会签：人事审批',
-    action: 'ALL_APPROVE',
-    operatorName: 'HR-赵',
-    signDone: 1,
-    signTotal: 2,
-    taskStatus: 'DONE',
-    finishTime: dayjs().subtract(3, 'hour').toISOString(),
-    comment: '人事已确认',
-  },
-  {
-    id: 5,
-    nodeName: '会签：人事审批',
-    action: 'ALL_APPROVE',
-    operatorName: 'HR-钱',
-    signDone: 2,
-    signTotal: 2,
-    taskStatus: 'DONE',
-    finishTime: dayjs().subtract(2, 'hour').toISOString(),
-    comment: '会签完成',
-  },
-  {
-    id: 6,
-    nodeName: '结束',
-    action: 'SYSTEM',
-    taskStatus: 'TODO',
-    startTime: dayjs().subtract(10, 'minute').toISOString(),
-    comment: '流程推进中（演示用）',
-  },
-];
+/**
+ * ====== 核心：把后端 WfApprovalDetailVO 转成 Timeline 扁平 records ======
+ * 约定 wfData 结构 ：
+ * - wfData.timeline: NodeTimelineVO[]
+ * - NodeTimelineVO: { nodeInstanceId, nodeKey, nodeName, status, orderNo, operatorId, operatorName, finishedTime, tasks }
+ * - TaskTimelineVO: { taskId, status, lastAction, lastComment, lastOperatorId, lastOperatorName, createTime, finishTime, logs }
+ * - TaskLogVO: { id, action, operatorId, operatorName, comment, operateTime }
+ */
+function mapApprovalDetailToRecords(wfData: API.WfApprovalDetailVO): WfHistoryRecord[] {
+  const timeline = wfData?.timeline ?? [];
+  if (!Array.isArray(timeline) || timeline.length === 0) return [];
+
+  const bizNo: string | undefined = wfData?.biz?.bizNo; // bizRef 有 bizNo 字段可带上
+  const records: WfHistoryRecord[] = [];
+
+  // 排序：按 orderNo 升序
+  const nodes = [...timeline].sort((a: API.WfNodeInstanceVo, b: API.WfNodeInstanceVo) => (a?.orderNo ?? 0) - (b?.orderNo ?? 0));
+
+  for (const node of nodes) {
+    const nodeKey = node?.nodeKey;
+    const nodeName = node?.nodeName || nodeKey || '节点';
+
+    const tasks: any[] = Array.isArray(node?.tasks) ? node.tasks : [];
+
+    // 1) 有任务：优先用 task.logs（动作事实最完整）
+    if (tasks.length > 0) {
+      for (const task of tasks) {
+        const taskId = task?.taskId;
+        const taskStatus: WfRecordStatus | undefined = task?.status;
+
+        const logs: any[] = Array.isArray(task?.logs) ? task.logs : [];
+
+        if (logs.length > 0) {
+          for (const log of logs) {
+            const action = (log?.action || 'SYSTEM') as WfAction;
+
+            // 转交：如果你后端 log.extra 里带了 from/to，这里可以映射
+            const extra = log?.extra || {};
+
+            records.push({
+              id: log?.id ?? `${taskId}-${log?.operateTime ?? Math.random()}`,
+              bizNo,
+              nodeKey,
+              nodeName,
+
+              taskId,
+              taskStatus,
+
+              action,
+              operatorId: log?.operatorId,
+              operatorName: log?.operatorName,
+
+              fromOperatorName: extra?.fromOperatorName,
+              toOperatorName: extra?.toOperatorName,
+
+              signDone: extra?.signDone,
+              signTotal: extra?.signTotal,
+
+              finishTime: log?.operateTime,
+              comment: log?.comment,
+              extra,
+            });
+          }
+        } else if (task?.lastAction) {
+          // 2) 没有 logs：降级用 task 的 lastAction/lastComment
+          records.push({
+            id: `${taskId}-last`,
+            bizNo,
+            nodeKey,
+            nodeName,
+
+            taskId,
+            taskStatus,
+
+            action: (task?.lastAction as WfAction) || 'SYSTEM',
+            operatorId: task?.lastOperatorId,
+            operatorName: task?.lastOperatorName,
+
+            startTime: task?.createTime,
+            finishTime: task?.finishTime,
+            comment: task?.lastComment,
+          });
+        } else {
+          // 3) 任务存在但无动作（极少见）：给个占位
+          records.push({
+            id: `${taskId}-placeholder`,
+            bizNo,
+            nodeKey,
+            nodeName,
+            taskId,
+            taskStatus,
+            action: 'SYSTEM',
+            startTime: task?.createTime,
+          });
+        }
+      }
+    } else {
+      // 4) 节点没有任务：例如 START/GATEWAY/END 自动节点
+      // 用 node.status 映射一个展示状态
+      const nodeStatus = node?.status;
+      const taskStatus: WfRecordStatus =
+        nodeStatus === 'WAIT' ? 'TODO' : nodeStatus === 'CANCELED' ? 'CANCELED' : 'DONE';
+
+      records.push({
+        id: `node-${node?.id ?? nodeKey ?? Math.random()}`,
+        bizNo,
+        nodeKey,
+        nodeName,
+        taskStatus,
+        action: node?.nodeType === 'START' ? 'START' : 'SYSTEM',
+        operatorId: node?.operatorId,
+        operatorName: node?.operatorName,
+        finishTime: node?.finishedTime,
+        extra: {
+          nodeType: node?.nodeType,
+          // cancelReason: node?.cancelReason,
+          // selectedTargetKey: node?.selectedTargetKey, // 如果后面加了网关命中字段
+        },
+      });
+    }
+  }
+
+  return records;
+}
 
 const WorkFlowHistory: React.FC<WorkFlowDetailProps> = (props) => {
-  const {
-    bizNo,
-    records,
-    title = '审批历史',
-    style,
-    density = 'default',
-    reverse = true,
-  } = props;
+  const { bizNo, records, title = '审批历史', style, density = 'default', reverse = true } = props;
 
-  // 你接接口时：把 records 换成你请求得到的数据即可
-  const data = records && records.length ? records : mockRecords;
+  const {
+    data: wfData,
+    loading,
+    run: fetchWFDetail,
+    error,
+  } = useRequest(wfInstanceDetail, { manual: true });
+
+  useEffect(() => {
+    if (bizNo) {
+      fetchWFDetail({ bizNo });
+    }
+  }, [bizNo]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const data: WfHistoryRecord[] = useMemo(() => {
+    if (records?.length) return records;
+    if (wfData) return mapApprovalDetailToRecords(wfData);
+    return [];
+  }, [records, wfData]);
 
   const items: TimelineItemProps[] = useMemo(() => {
     const list = reverse ? [...data].reverse() : data;
@@ -302,10 +313,17 @@ const WorkFlowHistory: React.FC<WorkFlowDetailProps> = (props) => {
     <ProCard
       title={title}
       bordered
+      loading={loading}
       style={{ marginTop: 12, ...style }}
       extra={bizNo ? <Text type="secondary">No：{bizNo}</Text> : null}
     >
-      {items.length ? <Timeline items={items} /> : <Empty description="暂无审批历史" />}
+      {error ? (
+        <Empty description="加载失败" />
+      ) : items.length ? (
+        <Timeline items={items} />
+      ) : (
+        <Empty description="暂无审批历史" />
+      )}
     </ProCard>
   );
 };

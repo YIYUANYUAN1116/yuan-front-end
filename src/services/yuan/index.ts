@@ -4,6 +4,7 @@
 // API 唯一标识：
 import * as authController from "./authController";
 import * as oaLeaveApplyController from "./oaLeaveApplyController";
+import * as ossController from "./ossController";
 import * as sysBizNoSeqController from "./sysBizNoSeqController";
 import * as sysDeptController from "./sysDeptController";
 import * as sysDictDataController from "./sysDictDataController";
@@ -53,6 +54,7 @@ export default {
   sysDictTypeController,
   sysDictDataController,
   oaLeaveApplyController,
+  ossController,
   authController,
   workPlaceController,
 };

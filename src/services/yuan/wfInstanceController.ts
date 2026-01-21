@@ -60,6 +60,23 @@ export async function wfInstanceRemove(
   });
 }
 
+/** 修改流程定义状态 POST /workflow/wfInstance/detail/${param0} */
+export async function wfInstanceDetail(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.WfInstanceDetailParams,
+  options?: { [key: string]: any }
+) {
+  const { bizNo: param0, ...queryParams } = params;
+  return request<API.RWfApprovalDetailVO>(
+    `/workflow/wfInstance/detail/${param0}`,
+    {
+      method: "POST",
+      params: { ...queryParams },
+      ...(options || {}),
+    }
+  );
+}
+
 /** 导出wfi列表 导出wfi列表 POST /workflow/wfInstance/export */
 export async function wfInstanceExport(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)

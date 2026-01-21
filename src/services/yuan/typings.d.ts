@@ -12,6 +12,17 @@ declare namespace API {
 
   type AvatarVo = Record<string, any>;
 
+  type CompleteMultipartReq = {
+    sessionId?: string;
+    uploadId?: string;
+    bucket?: string;
+    objectKey?: string;
+    parts?: PartEtag[];
+    filename?: string;
+    contentType?: string;
+    sizeBytes?: string;
+  };
+
   type deptAllocatedUserListParams = {
     bo: SysUserBo;
     pageQuery: PageQuery;
@@ -68,6 +79,24 @@ declare namespace API {
   type dictTypeRemoveParams = {
     /** 字典ID串 */
     dictIds: string[];
+  };
+
+  type FileObjectKey = {
+    storage?: "S3_COMPATIBLE";
+    bucket?: string;
+    objectKey?: string;
+    etag?: string;
+    sizeBytes?: string;
+    contentType?: string;
+    filename?: string;
+    sha256?: string;
+  };
+
+  type InitMultipartReq = {
+    scope: OssScope;
+    filename: string;
+    contentType: string;
+    sizeBytes: string;
   };
 
   type LoginBody = {
@@ -134,6 +163,16 @@ declare namespace API {
     token?: string;
     access_token?: string;
     userInfo?: LoginUser;
+  };
+
+  type MultipartSession = {
+    uploadId?: string;
+    bucket?: string;
+    objectKey?: string;
+    partSizeBytes?: number;
+    totalParts?: number;
+    currentPartNumber?: number;
+    sessionId?: string;
   };
 
   type OaLeaveApplyBo = {
@@ -236,6 +275,24 @@ declare namespace API {
     updateTime?: string;
   };
 
+  type OpsVO = {
+    canApprove?: boolean;
+    canReject?: boolean;
+    canRollback?: boolean;
+    canTransfer?: boolean;
+    canWithdraw?: boolean;
+    /** 退回可选目标（后端算好，避免前端猜规则） */
+    rollbackTargets?: RollbackTargetVO[];
+    /** 转交候选（可选：也可以前端弹窗远程搜索） */
+    transferUsers?: UserOptionVO[];
+  };
+
+  type OssScope = {
+    tenantId?: string;
+    namespace?: "TEMP" | "FORMAL" | "PUBLIC";
+    prefix?: "OA" | "SYS" | "EXP" | "CON" | "PUR" | "WF";
+  };
+
   type PageQuery = {
     /** 分页大小 */
     pageSize?: number;
@@ -246,6 +303,11 @@ declare namespace API {
     orderByColumn?: string;
     /** 排序的方向desc或者asc */
     isAsc?: string;
+  };
+
+  type PartEtag = {
+    partNumber?: number;
+    etag?: string;
   };
 
   type postAllocatedUserListParams = {
@@ -287,6 +349,12 @@ declare namespace API {
     comment?: string;
     variables?: Record<string, any>;
     taskId: string;
+  };
+
+  type RFileObjectKey = {
+    code?: number;
+    msg?: string;
+    data?: FileObjectKey;
   };
 
   type RListReactRouterVo = {
@@ -331,6 +399,12 @@ declare namespace API {
     data?: string;
   };
 
+  type RMultipartSession = {
+    code?: number;
+    msg?: string;
+    data?: MultipartSession;
+  };
+
   type ROaLeaveApplyVo = {
     code?: number;
     msg?: string;
@@ -351,6 +425,12 @@ declare namespace API {
     roleKey?: string;
     /** 数据范围（1：所有数据权限；2：自定义数据权限；3：本部门数据权限；4：本部门及以下数据权限；5：仅本人数据权限） */
     dataScope?: string;
+  };
+
+  type RollbackTargetVO = {
+    nodeKey?: string;
+    nodeName?: string;
+    orderNo?: number;
   };
 
   type RollbackToActivityCmd = {
@@ -375,6 +455,12 @@ declare namespace API {
     code?: number;
     msg?: string;
     data?: SelectRolesVo;
+  };
+
+  type RString = {
+    code?: number;
+    msg?: string;
+    data?: string;
   };
 
   type RSysBizNoSeqVo = {
@@ -485,6 +571,12 @@ declare namespace API {
     data?: any;
   };
 
+  type RWfApprovalDetailVO = {
+    code?: number;
+    msg?: string;
+    data?: WfApprovalDetailVO;
+  };
+
   type RWfBizRefVo = {
     code?: number;
     msg?: string;
@@ -546,9 +638,9 @@ declare namespace API {
     comment?: string;
     variables?: Record<string, any>;
     definitionKey: string;
-    bizType?: string;
-    bizId?: string;
-    bizNo?: string;
+    bizType: string;
+    bizId: string;
+    bizNo: string;
     /** 业务发起人（可选，代发场景用） */
     starterId?: string;
     starterName?: string;
@@ -2025,6 +2117,10 @@ declare namespace API {
     msg?: string;
   };
 
+  type tempUploadParams = {
+    bizPrefix: string;
+  };
+
   type TransferTaskCmd = {
     /** 操作人（当前用户） */
     operatorId?: string;
@@ -2070,6 +2166,24 @@ declare namespace API {
     permissions?: string[];
     /** 角色权限 */
     roles?: string[];
+  };
+
+  type UserOptionVO = {
+    value?: string;
+    label?: string;
+  };
+
+  type WfApprovalDetailVO = {
+    /** 实例基础信息 */
+    instance?: WfInstanceVo;
+    /** 业务引用（wf_biz_ref） */
+    biz?: WfBizRefVo;
+    /** 当前操作上下文（待办页会有；申请详情页可能为空） */
+    current?: WfTaskVo;
+    /** 审批进度：节点轨迹（按 orderNo 升序） */
+    timeline?: WfNodeInstanceVo[];
+    /** 前端按钮权限 */
+    ops?: OpsVO[];
   };
 
   type WfBizRefBo = {
@@ -2293,6 +2407,10 @@ declare namespace API {
     bizNo?: string;
   };
 
+  type WfInstanceDetailParams = {
+    bizNo: string;
+  };
+
   type WfInstanceExportParams = {
     bo: WfInstanceBo;
   };
@@ -2358,12 +2476,14 @@ declare namespace API {
     assigneeType?: string;
     /** 审批人值 */
     assigneeValue?: string;
+    operatorId?: string;
     /** 状态(WAIT/DONE) */
     status: string;
     /** 执行顺序 */
     orderNo: number;
     /** createTime */
     createTime?: string;
+    finishedTime?: string;
   };
 
   type WfNodeInstanceExportParams = {
@@ -2393,17 +2513,22 @@ declare namespace API {
     nodeKey?: string;
     nodeName?: string;
     /** 节点类型(START/APPROVAL/GATEWAY/END) */
-    nodeType?: "START" | "APPROVAL" | "GATEWAY" | "END";
+    nodeType?: "START" | "USER_TASK" | "SYSTEM_TASK" | "GATEWAY" | "END";
     /** 审批人类型(USER/ROLE/DEPT) */
     assigneeType?: string;
     /** 审批人值 */
     assigneeValue?: string;
+    operatorId?: string;
     /** 状态(WAIT/DONE) */
     status?: "WAIT" | "DONE" | "CANCELED";
     /** 执行顺序 */
     orderNo?: number;
     /** createTime */
     createTime?: string;
+    finishedTime?: string;
+    /** 非数据库字段 */
+    operatorName?: string;
+    tasks?: WfTaskVo[];
   };
 
   type WfTaskBo = {
@@ -2530,6 +2655,9 @@ declare namespace API {
     createTime?: string;
     /** 完成时间 */
     finishTime?: string;
+    /** 非数据库字段 */
+    operatorName?: string;
+    logs?: WfTaskLogVo[];
   };
 
   type WithdrawCmd = {

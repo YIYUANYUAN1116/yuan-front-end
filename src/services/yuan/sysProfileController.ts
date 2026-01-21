@@ -28,13 +28,13 @@ export async function updateProfile(
 /** 个人信息 头像上传 POST /system/user/profile/avatar */
 export async function avatar(
   body: {},
-  avatarfile?: File,
+  avatarFile?: File,
   options?: { [key: string]: any }
 ) {
   const formData = new FormData();
 
-  if (avatarfile) {
-    formData.append("avatarfile", avatarfile);
+  if (avatarFile) {
+    formData.append("avatarFile", avatarFile);
   }
 
   Object.keys(body).forEach((ele) => {

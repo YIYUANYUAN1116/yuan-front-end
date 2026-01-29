@@ -33,6 +33,20 @@ const index = () => {
         }
     }, [bizNo, fetchDetail]);
 
+    
+      const {
+        data: wfData,
+        loading,
+        run: fetchWFDetail,
+        error,
+      } = useRequest(wfInstanceDetail, { manual: true });
+    
+      useEffect(() => {
+        if (bizNo) {
+          fetchWFDetail({ bizNo });
+        }
+      }, [bizNo]); 
+
     const descColumns: ProDescriptionsItemProps<API.OaLeaveApplyVo>[] = [
         {
             title: '单号',
@@ -96,6 +110,7 @@ const index = () => {
             footer={[
                 <WorkFlowActionPanel
                     bizNo={bizNo}
+                    wfData={wfData}
                 />
             ]}
         >
@@ -108,6 +123,7 @@ const index = () => {
             </ProCard>
             <WorkFlowHistory
                 bizNo={bizNo}
+                wfData={wfData}
             />
         </PageContainer >
 

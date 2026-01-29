@@ -1,3 +1,5 @@
+import { useActionRequest } from '@/hooks/action/useActionRequest';
+import { wfTaskApprove } from '@/services/yuan/wfTaskController';
 import { ActionType } from '@ant-design/pro-components';
 import { Button, Modal, Popconfirm, Space, message } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
@@ -6,7 +8,7 @@ import React, { useMemo, useState } from 'react';
 interface WorkFlowActionPanelProps {
   bizNo?: string;
   reload?: ActionType['reload'];
-  task?: API.WfTaskVo;
+  wfData?: API.WfApprovalDetailVO;
 }
 
 export type WfActionKey =
@@ -29,8 +31,9 @@ const ALL_ACTIONS: WfActionKey[] = [
 ];
 
 const WorkFlowActionPanel = (props: WorkFlowActionPanelProps) => {
-  const { bizNo } = props;
+  const { bizNo,wfData } = props;
   const [comment, setComment] = useState('');
+  const curTask = wfData?.current
 
   const allowedSet = useMemo(() => new Set(ALL_ACTIONS), []);
 
@@ -53,6 +56,8 @@ const WorkFlowActionPanel = (props: WorkFlowActionPanelProps) => {
       onOk,
     });
   };
+
+  const { run: approve } = useActionRequest(wfTaskApprove);
 
   return (
     <div
@@ -88,8 +93,9 @@ const WorkFlowActionPanel = (props: WorkFlowActionPanelProps) => {
             description={comment ? `审批意见：${comment.slice(0, 30)}` : '未填写审批意见'}
             okText="确认"
             cancelText="取消"
-            onConfirm={() => {
-              console.log('approve', { bizNo, comment });
+            onConfirm={async() => {
+              approve({taskId:curTask?.id,comment:comment})
+              console.log('approve', curTask);
             }}
           >
             <Button type="primary">同意</Button>

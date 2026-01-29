@@ -62,7 +62,7 @@ export async function wfTaskRemove(
 
 /** 审批通过 POST /workflow/wfTask/approve */
 export async function wfTaskApprove(
-  body: API.ApproveTaskCmd,
+  body: API.ApproveCmd,
   options?: { [key: string]: any }
 ) {
   return request<API.RLong>("/workflow/wfTask/approve", {
@@ -113,7 +113,7 @@ export async function wfTaskList(
 
 /** 审批拒绝 POST /workflow/wfTask/reject */
 export async function wfTaskReject(
-  body: API.RejectTaskCmd,
+  body: API.RejectCmd,
   options?: { [key: string]: any }
 ) {
   return request<API.RLong>("/workflow/wfTask/reject", {
@@ -128,10 +128,25 @@ export async function wfTaskReject(
 
 /** 退回指定节点 POST /workflow/wfTask/rollbackTo */
 export async function wfTaskRollbackTo(
-  body: API.RollbackToActivityCmd,
+  body: API.RollbackCmd,
   options?: { [key: string]: any }
 ) {
   return request<API.RLong>("/workflow/wfTask/rollbackTo", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** 退回上一节点 POST /workflow/wfTask/rollbackToPrev */
+export async function wfTaskRollbackToPrev(
+  body: API.RollbackToPreviousCmd,
+  options?: { [key: string]: any }
+) {
+  return request<API.RLong>("/workflow/wfTask/rollbackToPrev", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -1,5 +1,5 @@
 declare namespace API {
-  type ApproveTaskCmd = {
+  type ApproveCmd = {
     /** 操作人（当前用户） */
     operatorId?: string;
     operatorName?: string;
@@ -340,7 +340,7 @@ declare namespace API {
     access?: string;
   };
 
-  type RejectTaskCmd = {
+  type RejectCmd = {
     /** 操作人（当前用户） */
     operatorId?: string;
     operatorName?: string;
@@ -427,13 +427,7 @@ declare namespace API {
     dataScope?: string;
   };
 
-  type RollbackTargetVO = {
-    nodeKey?: string;
-    nodeName?: string;
-    orderNo?: number;
-  };
-
-  type RollbackToActivityCmd = {
+  type RollbackCmd = {
     /** 操作人（当前用户） */
     operatorId?: string;
     operatorName?: string;
@@ -443,6 +437,23 @@ declare namespace API {
     variables?: Record<string, any>;
     taskId: string;
     targetActivityId: string;
+  };
+
+  type RollbackTargetVO = {
+    nodeKey?: string;
+    nodeName?: string;
+    orderNo?: number;
+  };
+
+  type RollbackToPreviousCmd = {
+    /** 操作人（当前用户） */
+    operatorId?: string;
+    operatorName?: string;
+    tenantId?: string;
+    /** 备注 / 审批意见 */
+    comment?: string;
+    variables?: Record<string, any>;
+    taskId: string;
   };
 
   type RProfileVo = {
@@ -629,7 +640,7 @@ declare namespace API {
     checkedKeys?: string[];
   };
 
-  type StartProcessCmd = {
+  type StartCmd = {
     /** 操作人（当前用户） */
     operatorId?: string;
     operatorName?: string;
@@ -2181,9 +2192,9 @@ declare namespace API {
     /** 当前操作上下文（待办页会有；申请详情页可能为空） */
     current?: WfTaskVo;
     /** 审批进度：节点轨迹（按 orderNo 升序） */
-    timeline?: WfNodeInstanceVo[];
+    timeline?: WfTimelineEventVo[];
     /** 前端按钮权限 */
-    ops?: OpsVO[];
+    ops?: OpsVO;
   };
 
   type WfBizRefBo = {
@@ -2520,7 +2531,7 @@ declare namespace API {
     assigneeValue?: string;
     operatorId?: string;
     /** 状态(WAIT/DONE) */
-    status?: "WAIT" | "DONE" | "CANCELED";
+    status?: "WAIT" | "DONE" | "CANCELED" | "NOT_REACHED";
     /** 执行顺序 */
     orderNo?: number;
     /** createTime */
@@ -2529,6 +2540,12 @@ declare namespace API {
     /** 非数据库字段 */
     operatorName?: string;
     tasks?: WfTaskVo[];
+    selectNodeKey?: string;
+    /** 上一个节点 */
+    prevNodeKeys?: string[];
+    /** 下一个节点 */
+    nextNodeKeys?: string[];
+    transitionLogVo?: WfTransitionLogVo;
   };
 
   type WfTaskBo = {
@@ -2658,6 +2675,72 @@ declare namespace API {
     /** 非数据库字段 */
     operatorName?: string;
     logs?: WfTaskLogVo[];
+  };
+
+  type WfTimelineEventVo = {
+    id?: string;
+    time?: string;
+    /** START / APPROVE / ROLLBACK / TRANSFER / GATEWAY / END ... */
+    action?:
+      | "START"
+      | "END"
+      | "GATEWAY"
+      | "APPROVE"
+      | "REJECT"
+      | "ROLLBACK"
+      | "WITHDRAW"
+      | "TRANSFER"
+      | "ADD_SIGN";
+    operatorType?: "SYSTEM" | "USER";
+    operatorId?: string;
+    operatorName?: string;
+    /** 节点信息 */
+    fromNodeKey?: string;
+    fromNodeName?: string;
+    toNodeKey?: string;
+    toNodeName?: string;
+    /** 审批意见 / 转交说明 / 退回原因 */
+    comment?: string;
+    /** 网关命中条件 */
+    conditionExpr?: string;
+    /** SUCCESS / FAIL */
+    result?: "SUCCESS" | "FAIL";
+  };
+
+  type WfTransitionLogVo = {
+    id?: string;
+    /** tenantId */
+    tenantId?: string;
+    /** 流程定义Id */
+    defId?: string;
+    /** 流程定义版本 */
+    defVersion?: number;
+    /** 流程实例ID */
+    instanceId?: string;
+    /** 本次动作关联的节点实例ID（可选） */
+    nodeInstanceId?: string;
+    /** 本次动作关联的任务ID（可选） */
+    taskId?: string;
+    /** 来源节点Key（START时可为空） */
+    fromNodeKey?: string;
+    /** 目标节点Key（END时可为空） */
+    toNodeKey?: string;
+    /** START/APPROVE/REJECT/GATEWAY/ROLLBACK/WITHDRAW/TRANSFER/END */
+    action?: string;
+    /** SYSTEM/USER */
+    operatorType?: string;
+    /** operator_type=USER时为用户ID */
+    operatorId?: string;
+    /** 审批意见/退回原因/转办备注（前端展示用） */
+    comment?: string;
+    /** 网关命中条件表达式快照 */
+    conditionExpr?: string;
+    /** 参与条件判断/展示的变量快照 */
+    variablesSnapshot?: string;
+    /** SUCCESS/FAIL */
+    result?: string;
+    /** createTime */
+    createTime?: string;
   };
 
   type WithdrawCmd = {

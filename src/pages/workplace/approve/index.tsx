@@ -3,7 +3,7 @@ import { useDictDataTagMap } from '@/hooks/dict/useDictDataTagMap';
 import { useTableRequest } from '@/hooks/table/useTableRequest';
 import { workPlaceApprovals } from '@/services/yuan/workPlaceController';
 import { ActionType, PageContainer, ProColumns, ProTable } from '@ant-design/pro-components'
-import { useAccess } from '@umijs/max';
+import { history, useAccess } from '@umijs/max';
 import React, { useRef } from 'react'
 
 const index = () => {
@@ -16,18 +16,23 @@ const index = () => {
     const tag = taskActionTag[String(value)];
     return tag?.render?.() ?? value;
   };
-    const wfBizTypeTagMap = useDictDataTagMap(DictEnum.WF_BIZ_TYPE);
-  
+  const wfBizTypeTagMap = useDictDataTagMap(DictEnum.WF_BIZ_TYPE);
 
-    const wfBizType = (value: string | number) => {
-      const tag = wfBizTypeTagMap[String(value)];
-      return tag?.render?.() ?? value;
-    };
+
+  const wfBizType = (value: string | number) => {
+    const tag = wfBizTypeTagMap[String(value)];
+    return tag?.render?.() ?? value;
+  };
   const columns: ProColumns<API.WorkItemRowVO>[] = [
     {
       title: '单号',
       dataIndex: 'bizNo',
       ellipsis: true,
+      render: (_, record) => (<a onClick={() => {
+        history.push(`/workflow/detail?bizNo=${record.bizNo}`)
+      }}>
+        {record.bizNo}
+      </a>)
     },
     {
       title: '流程类型',
@@ -43,7 +48,7 @@ const index = () => {
       dataIndex: 'starterName',
     },
     {
-      title: '处理结果',
+      title: '处理动作',
       dataIndex: 'taskAction',
       render: (_, record) => taskAction(record.taskAction || '-'),
     },

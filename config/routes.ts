@@ -202,12 +202,12 @@ export default [
         component: './oa/leave/form',
         access: 'canOaLeave'
       },
-       {
-        path: '/oa/leave/detail',
-        name: 'leave',
-        component: './oa/leave/detail',
-        access: 'canOaLeave'
-      },
+      //  {
+      //   path: '/oa/leave/detail',
+      //   name: 'leave',
+      //   component: './oa/leave/detail',
+      //   access: 'canOaLeave'
+      // },
       {
         path: '/oa/claim',
         name: 'claim',
@@ -242,7 +242,12 @@ export default [
         name: 'designer',
         component: './workflow/designer',
         access: 'canWorkDesigner'
-      }
+      },
+       {
+        path: '/workflow/detail',
+        name: 'detail',
+        component: './workflow/detail',
+      },
     ],
   },
 

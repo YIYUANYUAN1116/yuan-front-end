@@ -74,7 +74,7 @@ export default {
   'menu.workplace': '工作台',
   'menu.workplace.overview': '概览',
   'menu.workplace.apply': '我的申请',
-  'menu.workplace.task': '我的代办',
+  'menu.workplace.task': '我的待办',
   'menu.workplace.approve': '我的已办',
 
   /**oa */

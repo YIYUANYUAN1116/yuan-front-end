@@ -4,7 +4,7 @@ import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 import { useTableRequest } from '@/hooks/table/useTableRequest';
 import { workPlaceMyApply } from '@/services/yuan/workPlaceController';
 import { ActionType, PageContainer, ProColumns, ProTable } from '@ant-design/pro-components'
-import { useAccess } from '@umijs/max';
+import { history, useAccess } from '@umijs/max';
 import React, { useRef } from 'react'
 
 const index = () => {
@@ -29,6 +29,11 @@ const index = () => {
       title: '单号',
       dataIndex: 'bizNo',
       ellipsis: true,
+      render: (_, record) => (<a onClick={() => {
+        history.push(`/workflow/detail?bizNo=${record.bizNo}`)
+      }}>
+        {record.bizNo}
+      </a>)
     },
     {
       title: '流程类型',
@@ -49,7 +54,7 @@ const index = () => {
     {
       title: '发起时间',
       dataIndex: 'instanceStartTime',
-      valueType: 'dateTime'
+      valueType: 'dateTime',
     },
     {
       title: "结束原因",

@@ -59,7 +59,7 @@ const WorkFlowHistory: React.FC<WorkFlowDetailProps> = (props) => {
 
     return list.map(e => ({
       color: toTimelineColor(e),
-      children: (
+      content: (
         <div style={{ width: '100%' }}>
           <Space size={8} wrap>
             <Text strong>{actionText(e)}</Text>
@@ -102,7 +102,6 @@ const WorkFlowHistory: React.FC<WorkFlowDetailProps> = (props) => {
     <ProCard
       title={'审批历史'}
       bordered
-      style={{ marginTop: 12 }}
       extra={bizNo ? <Text type="secondary">No：{bizNo}</Text> : null}
     >
       {/* Timeline */}

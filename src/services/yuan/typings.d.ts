@@ -81,6 +81,17 @@ declare namespace API {
     dictIds: string[];
   };
 
+  type Expression = {
+    /** 变量名，如 amount / leaveType */
+    field?: string;
+    /** 操作符：EQ / GT / LT / IN ... */
+    operator?: "EQ" | "NE" | "GT" | "GE" | "LT" | "LE" | "IN" | "NOT_IN";
+    /** 比较值（运行时解析） */
+    value?: string;
+    /** 预留：number/string/date/enum...（可空） */
+    valueType?: string;
+  };
+
   type FileObjectKey = {
     storage?: "S3_COMPATIBLE";
     bucket?: string;
@@ -97,6 +108,56 @@ declare namespace API {
     filename: string;
     contentType: string;
     sizeBytes: string;
+  };
+
+  type LfAssignee = {
+    kind?: "FIXED" | "RULE";
+    type?: "POST" | "ROLE" | "DEPT" | "USER";
+    /** 固定审批人 */
+    userIds?: string[];
+    /** 固定角色 */
+    roleIds?: string[];
+    /** 固定岗位 */
+    postIds?: string[];
+    /** 固定部门 */
+    deptIds?: string[];
+  };
+
+  type LfEdge = {
+    id?: string;
+    type?: string;
+    sourceNodeId?: string;
+    targetNodeId?: string;
+    text?: LfText;
+    properties?: LfProperties;
+  };
+
+  type LfGraph = {
+    nodes?: LfNode[];
+    edges?: LfEdge[];
+  };
+
+  type LfNode = {
+    id: string;
+    x?: string;
+    y?: string;
+    text?: LfText;
+    type?: string;
+    properties?: LfProperties;
+  };
+
+  type LfProperties = {
+    width?: string;
+    height?: string;
+    wfType?: string;
+    assignee?: LfAssignee;
+    condition?: Expression;
+  };
+
+  type LfText = {
+    x?: string;
+    y?: string;
+    value?: string;
   };
 
   type LoginBody = {
@@ -2193,6 +2254,9 @@ declare namespace API {
     current?: WfTaskVo;
     /** 审批进度：节点轨迹（按 orderNo 升序） */
     timeline?: WfTimelineEventVo[];
+    stepNodes?: WfNodeInstanceVo[];
+    lfGraph?: LfGraph;
+    layers?: LfNode[][];
     /** 前端按钮权限 */
     ops?: OpsVO;
   };
@@ -2541,11 +2605,6 @@ declare namespace API {
     operatorName?: string;
     tasks?: WfTaskVo[];
     selectNodeKey?: string;
-    /** 上一个节点 */
-    prevNodeKeys?: string[];
-    /** 下一个节点 */
-    nextNodeKeys?: string[];
-    transitionLogVo?: WfTransitionLogVo;
   };
 
   type WfTaskBo = {
@@ -2678,7 +2737,7 @@ declare namespace API {
   };
 
   type WfTimelineEventVo = {
-    id?: string;
+    id: string;
     time?: string;
     /** START / APPROVE / ROLLBACK / TRANSFER / GATEWAY / END ... */
     action?:
@@ -2705,42 +2764,6 @@ declare namespace API {
     conditionExpr?: string;
     /** SUCCESS / FAIL */
     result?: "SUCCESS" | "FAIL";
-  };
-
-  type WfTransitionLogVo = {
-    id?: string;
-    /** tenantId */
-    tenantId?: string;
-    /** 流程定义Id */
-    defId?: string;
-    /** 流程定义版本 */
-    defVersion?: number;
-    /** 流程实例ID */
-    instanceId?: string;
-    /** 本次动作关联的节点实例ID（可选） */
-    nodeInstanceId?: string;
-    /** 本次动作关联的任务ID（可选） */
-    taskId?: string;
-    /** 来源节点Key（START时可为空） */
-    fromNodeKey?: string;
-    /** 目标节点Key（END时可为空） */
-    toNodeKey?: string;
-    /** START/APPROVE/REJECT/GATEWAY/ROLLBACK/WITHDRAW/TRANSFER/END */
-    action?: string;
-    /** SYSTEM/USER */
-    operatorType?: string;
-    /** operator_type=USER时为用户ID */
-    operatorId?: string;
-    /** 审批意见/退回原因/转办备注（前端展示用） */
-    comment?: string;
-    /** 网关命中条件表达式快照 */
-    conditionExpr?: string;
-    /** 参与条件判断/展示的变量快照 */
-    variablesSnapshot?: string;
-    /** SUCCESS/FAIL */
-    result?: string;
-    /** createTime */
-    createTime?: string;
   };
 
   type WithdrawCmd = {

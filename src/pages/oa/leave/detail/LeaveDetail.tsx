@@ -1,20 +1,18 @@
-import WorkFlowActionPanel from '@/components/WorkFlow/WorkFlowActionPanel';
-import WorkFlowHistory from '@/components/WorkFlow/WorkFlowHistory';
 import { DictEnum } from '@/const/dict-enum';
 import { useDictDataTagMap } from '@/hooks/dict/useDictDataTagMap';
 import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 import { oaLeaveApplyGetInfoByBizNo } from '@/services/yuan/oaLeaveApplyController';
-import { wfInstanceDetail } from '@/services/yuan/wfInstanceController';
-import { PageContainer, ProCard, ProDescriptions, ProDescriptionsItemProps } from '@ant-design/pro-components'
+
+import {  ProCard, ProDescriptions, ProDescriptionsItemProps } from '@ant-design/pro-components'
 import { useRequest, useSearchParams } from '@umijs/max';
-import { Button, Space } from 'antd';
 import React, { useEffect, useMemo } from 'react'
 
-const index = () => {
-    const [sp] = useSearchParams();
-    const bizNo = useMemo(() => {
-        return sp.get('bizNo') ?? undefined;
-    }, [sp]);
+export type LeaveDetailProps = {
+     bizNo?: string;
+}
+
+const LeaveDetail = (props:LeaveDetailProps) => {
+    const {bizNo} = props;
 
     const leaveStatusEnum = useDictDataValueEnum(DictEnum.OA_APPLY_STATUS)
     const leaveTypetagMap = useDictDataTagMap(DictEnum.OA_LEAVE_TYPE)
@@ -33,19 +31,6 @@ const index = () => {
         }
     }, [bizNo, fetchDetail]);
 
-    
-      const {
-        data: wfData,
-        loading,
-        run: fetchWFDetail,
-        error,
-      } = useRequest(wfInstanceDetail, { manual: true });
-    
-      useEffect(() => {
-        if (bizNo) {
-          fetchWFDetail({ bizNo });
-        }
-      }, [bizNo]); 
 
     const descColumns: ProDescriptionsItemProps<API.OaLeaveApplyVo>[] = [
         {
@@ -104,30 +89,15 @@ const index = () => {
         },
     ];
     return (
-        <PageContainer
-            title="请假详情"
-            onBack={() => history.back()}
-            footer={[
-                <WorkFlowActionPanel
-                    bizNo={bizNo}
-                    wfData={wfData}
-                />
-            ]}
-        >
-            <ProCard>
-                <ProDescriptions
-                    column={2}
-                    columns={descColumns}
-                    dataSource={data}
-                />
-            </ProCard>
-            <WorkFlowHistory
-                bizNo={bizNo}
-                wfData={wfData}
+        <ProCard>
+            <ProDescriptions
+                column={2}
+                columns={descColumns}
+                dataSource={data}
             />
-        </PageContainer >
+        </ProCard>
 
     )
 }
 
-export default index
+export default LeaveDetail

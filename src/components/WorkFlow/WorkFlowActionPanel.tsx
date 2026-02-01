@@ -1,14 +1,15 @@
 import { useActionRequest } from '@/hooks/action/useActionRequest';
-import { wfTaskApprove } from '@/services/yuan/wfTaskController';
+import { wfTaskApprove, wfTaskReject, wfTaskWithdraw } from '@/services/yuan/wfTaskController';
 import { ActionType } from '@ant-design/pro-components';
+
 import { Button, Modal, Popconfirm, Space, message } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import React, { useMemo, useState } from 'react';
 
 interface WorkFlowActionPanelProps {
   bizNo?: string;
-  reload?: ActionType['reload'];
   wfData?: API.WfApprovalDetailVO;
+  reload: ActionType['reload'];
 }
 
 export type WfActionKey =
@@ -31,19 +32,28 @@ const ALL_ACTIONS: WfActionKey[] = [
 ];
 
 const WorkFlowActionPanel = (props: WorkFlowActionPanelProps) => {
-  const { bizNo,wfData } = props;
+  const { bizNo, wfData, reload } = props;
   const [comment, setComment] = useState('');
-  const curTask = wfData?.current
+  const [commentError, setCommentError] = useState<string | null>(null);
+  const curTask = wfData?.current;
 
   const allowedSet = useMemo(() => new Set(ALL_ACTIONS), []);
 
   /** 简单校验：拒绝必须填意见 */
-  const ensureRejectComment = () => {
-    if (!comment.trim()) {
-      message.warning('拒绝时必须填写审批意见');
+  const validateRejectComment = () => {
+    const v = comment.trim();
+    if (!v) {
+      setCommentError('拒绝时必须填写审批意见');
       return false;
     }
+    setCommentError(null);
     return true;
+  };
+
+  const onCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const v = e.target.value;
+    setComment(v);
+    if (commentError && v.trim()) setCommentError(null);
   };
 
   /** Modal.confirm（用于需要额外信息的操作） */
@@ -57,7 +67,9 @@ const WorkFlowActionPanel = (props: WorkFlowActionPanelProps) => {
     });
   };
 
-  const { run: approve } = useActionRequest(wfTaskApprove);
+  const { run: approve } = useActionRequest(wfTaskApprove, reload);
+  const { run: reject } = useActionRequest(wfTaskReject, reload)
+  const { run: withdraw } = useActionRequest(wfTaskWithdraw, reload)
 
   return (
     <div
@@ -72,10 +84,11 @@ const WorkFlowActionPanel = (props: WorkFlowActionPanelProps) => {
       <TextArea
         placeholder="审批意见（可选，拒绝必填）"
         value={comment}
-        onChange={(e) => setComment(e.target.value)}
+        onChange={onCommentChange}
         maxLength={300}
         showCount
         rows={1}
+        status={commentError ? 'error' : undefined}
         style={{
           flex: 1,
           minWidth: 360,
@@ -93,9 +106,12 @@ const WorkFlowActionPanel = (props: WorkFlowActionPanelProps) => {
             description={comment ? `审批意见：${comment.slice(0, 30)}` : '未填写审批意见'}
             okText="确认"
             cancelText="取消"
-            onConfirm={async() => {
-              approve({taskId:curTask?.id,comment:comment})
-              console.log('approve', curTask);
+            onConfirm={async () => {
+              if (!curTask?.id) {
+                message.error('当前无可操作任务');
+                return;
+              }
+              approve({ taskId: curTask.id, comment });
             }}
           >
             <Button type="primary">同意</Button>
@@ -106,12 +122,16 @@ const WorkFlowActionPanel = (props: WorkFlowActionPanelProps) => {
         {allowedSet.has('REJECT') && (
           <Popconfirm
             title="确认拒绝？"
-            description="拒绝操作必须填写审批意见"
+            description={comment ? comment : "拒绝操作必须填写审批意见"}
             okText="确认"
             cancelText="取消"
             onConfirm={() => {
-              if (!ensureRejectComment()) return;
-              console.log('reject', { bizNo, comment });
+              if (!validateRejectComment()) return;
+              if (!curTask?.id) {
+                message.error('当前无可操作任务');
+                return;
+              }
+              reject({ taskId: curTask.id, comment });
             }}
           >
             <Button danger>拒绝</Button>
@@ -148,11 +168,14 @@ const WorkFlowActionPanel = (props: WorkFlowActionPanelProps) => {
         {allowedSet.has('WITHDRAW') && (
           <Popconfirm
             title="确认撤销？"
-            description={comment ? `审批意见：${comment.slice(0, 30)}` : '未填写审批意见'}
             okText="确认"
             cancelText="取消"
             onConfirm={() => {
-              console.log('withdraw', { bizNo, comment });
+              if (!wfData?.instance) {
+                message.error('当前无可操作任务');
+                return;
+              }
+              withdraw({ instanceId: wfData?.instance.id, comment });
             }}
           >
             <Button>撤销</Button>

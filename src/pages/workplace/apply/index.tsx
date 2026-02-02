@@ -70,13 +70,9 @@ const index = () => {
       title: '操作',
       valueType: 'option',
       render: (_, row) => {
-        if (row.instanceStatus === 'RUNNING') {
-          return [
-            <a key="detail">详情</a>,
-            <a key="withdraw">撤回</a>,
-          ]
-        }
-        return [<a key="detail">详情</a>]
+        return (<a key="detail" onClick={() => {
+          history.push(`/workflow/detail?bizNo=${row.bizNo}`)
+        }}>详情</a>)
       },
     },
   ]

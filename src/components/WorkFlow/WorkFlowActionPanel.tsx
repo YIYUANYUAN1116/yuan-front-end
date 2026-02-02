@@ -1,9 +1,12 @@
 import { useActionRequest } from '@/hooks/action/useActionRequest';
-import { wfTaskApprove, wfTaskReject, wfTaskWithdraw } from '@/services/yuan/wfTaskController';
-import { ActionType } from '@ant-design/pro-components';
+import { wfTaskApprove, wfTaskReject, wfTaskRollbackNodes, wfTaskRollbackTo, wfTaskTransfer, wfTaskTransferCandidates, wfTaskWithdraw } from '@/services/yuan/wfTaskController';
+import { ActionType, ModalForm, ProForm, ProFormSelect, ProFormText, ProFormTextArea } from '@ant-design/pro-components';
+import { useRequest } from '@umijs/max';
 
 import { Button, Modal, Popconfirm, Space, message } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
+import { request } from 'express';
+import { values } from 'lodash';
 import React, { useMemo, useState } from 'react';
 
 interface WorkFlowActionPanelProps {
@@ -21,23 +24,14 @@ export type WfActionKey =
   | 'WITHDRAW'
   | 'ADD_SIGN';
 
-const ALL_ACTIONS: WfActionKey[] = [
-  'APPROVE',
-  'REJECT',
-  'ROLLBACK_PREV',
-  'ROLLBACK_TO',
-  'TRANSFER',
-  'WITHDRAW',
-  'ADD_SIGN',
-];
 
 const WorkFlowActionPanel = (props: WorkFlowActionPanelProps) => {
   const { bizNo, wfData, reload } = props;
   const [comment, setComment] = useState('');
   const [commentError, setCommentError] = useState<string | null>(null);
   const curTask = wfData?.current;
+  const canOps = wfData?.ops;
 
-  const allowedSet = useMemo(() => new Set(ALL_ACTIONS), []);
 
   /** 简单校验：拒绝必须填意见 */
   const validateRejectComment = () => {
@@ -56,16 +50,7 @@ const WorkFlowActionPanel = (props: WorkFlowActionPanelProps) => {
     if (commentError && v.trim()) setCommentError(null);
   };
 
-  /** Modal.confirm（用于需要额外信息的操作） */
-  const confirm = (actionText: string, onOk: () => void) => {
-    Modal.confirm({
-      title: `确认${actionText}？`,
-      content: comment ? `审批意见：${comment.slice(0, 30)}` : '未填写审批意见',
-      okText: '确认',
-      cancelText: '取消',
-      onOk,
-    });
-  };
+
 
   const { run: approve } = useActionRequest(wfTaskApprove, reload);
   const { run: reject } = useActionRequest(wfTaskReject, reload)
@@ -100,7 +85,7 @@ const WorkFlowActionPanel = (props: WorkFlowActionPanelProps) => {
       {/* 右侧：操作按钮 */}
       <Space wrap size={8}>
         {/* ===== 同意：Popconfirm ===== */}
-        {allowedSet.has('APPROVE') && (
+        {canOps?.canApprove && (
           <Popconfirm
             title="确认同意？"
             description={comment ? `审批意见：${comment.slice(0, 30)}` : '未填写审批意见'}
@@ -114,12 +99,12 @@ const WorkFlowActionPanel = (props: WorkFlowActionPanelProps) => {
               approve({ taskId: curTask.id, comment });
             }}
           >
-            <Button type="primary">同意</Button>
+            <Button type="primary" style={{ marginBottom: 20 }}>同意</Button>
           </Popconfirm>
         )}
 
         {/* ===== 拒绝：Popconfirm + 必填校验 ===== */}
-        {allowedSet.has('REJECT') && (
+        {canOps?.canReject && (
           <Popconfirm
             title="确认拒绝？"
             description={comment ? comment : "拒绝操作必须填写审批意见"}
@@ -134,38 +119,105 @@ const WorkFlowActionPanel = (props: WorkFlowActionPanelProps) => {
               reject({ taskId: curTask.id, comment });
             }}
           >
-            <Button danger>拒绝</Button>
+            <Button style={{ marginBottom: 20 }} danger>拒绝</Button>
           </Popconfirm>
         )}
 
         {/* ===== 退回指定节点：仍用 Modal（需要选节点） ===== */}
-        {allowedSet.has('ROLLBACK_TO') && (
-          <Button
-            onClick={() =>
-              confirm('退回至指定节点', () => {
-                console.log('rollback_to', { bizNo, comment });
-              })
-            }
+        {canOps?.canRollback && (
+          <ModalForm<API.RollbackCmd>
+            title="退回至指定节点"
+            size='small'
+            width={520}
+            trigger={<Button type="primary" ghost> 退回至指定节点 </Button>}
+            initialValues={{
+              taskId: curTask?.id,
+            }}
+            onFinish={async (values) => {
+              await wfTaskRollbackTo(values)
+              return true;
+            }}
           >
-            退回至指定节点
-          </Button>
+            <ProFormText
+              name="taskId"
+              hidden
+            />
+
+            <ProFormSelect
+              request={async () => {
+                if (curTask?.id) {
+                  const res = await wfTaskRollbackNodes({ taskId: curTask?.id });
+                  return res.data ? res.data : []
+                }
+                return [];
+              }}
+              name="targetActivityId"
+              label="退回至："
+              placeholder="请选择节点"
+              rules={[
+                { required: true, message: "请选择节点" }
+              ]}
+            />
+            <ProFormTextArea
+              name="comment"
+              label="退回理由"
+              rules={[
+                { required: true, message: "请输入理由" }
+              ]}
+            />
+
+          </ModalForm>
         )}
 
         {/* ===== 转交：仍用 Modal（需要选人） ===== */}
-        {allowedSet.has('TRANSFER') && (
-          <Button
-            onClick={() =>
-              confirm('转交', () => {
-                console.log('transfer', { bizNo, comment });
-              })
-            }
+        {canOps?.canTransfer && (
+          <ModalForm<API.TransferTaskCmd>
+            title="转交"
+            size='small'
+            width={520}
+            initialValues={{
+              taskId: curTask?.id,
+            }}
+            trigger={<Button type="primary" ghost> 转交 </Button>}
+            onFinish={async (values) => {
+              await wfTaskTransfer(values)
+              return true;
+            }}
           >
-            转交
-          </Button>
+            <ProFormText
+              name="taskId"
+              hidden
+            />
+
+            <ProFormSelect
+              request={async () => {
+                if (curTask?.id) {
+                  const res = await wfTaskTransferCandidates({ taskId: curTask?.id, userDTO: {}, pageQuery: {} });
+                  return res.data ? res.data : []
+                }
+                return [];
+              }}
+              name="toUserId"
+              label="转交至："
+              placeholder="请选择转交人"
+              rules={[
+                { required: true, message: "请选择转交人" }
+              ]}
+            />
+            <ProFormTextArea
+              name="comment"
+              label="转交理由"
+              rules={[
+                { required: true, message: "请输入理由" }
+              ]}
+            />
+
+          </ModalForm>
+
         )}
 
         {/* ===== 撤销：Popconfirm ===== */}
-        {allowedSet.has('WITHDRAW') && (
+        {canOps?.canWithdraw && (
           <Popconfirm
             title="确认撤销？"
             okText="确认"
@@ -178,18 +230,19 @@ const WorkFlowActionPanel = (props: WorkFlowActionPanelProps) => {
               withdraw({ instanceId: wfData?.instance.id, comment });
             }}
           >
-            <Button>撤销</Button>
+            <Button style={{ marginBottom: 20 }} type="primary" ghost>撤销</Button>
           </Popconfirm>
         )}
 
         {/* ===== 加签：仍用 Modal（需要选人） ===== */}
-        {allowedSet.has('ADD_SIGN') && (
+        {canOps?.canAddSign && (
           <Button
-            onClick={() =>
-              confirm('加签', () => {
-                console.log('add_sign', { bizNo, comment });
-              })
+            onClick={() => {
+
             }
+            }
+            style={{ marginBottom: 20 }}
+            type="primary" ghost
           >
             加签
           </Button>

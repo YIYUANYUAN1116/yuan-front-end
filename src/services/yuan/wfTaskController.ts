@@ -60,6 +60,46 @@ export async function wfTaskRemove(
   });
 }
 
+/** 可退回结点 GET /workflow/wfTask/${param0}/rollback-nodes */
+export async function wfTaskRollbackNodes(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.WfTaskRollbackNodesParams,
+  options?: { [key: string]: any }
+) {
+  const { taskId: param0, ...queryParams } = params;
+  return request<API.RListStrSelectModel>(
+    `/workflow/wfTask/${param0}/rollback-nodes`,
+    {
+      method: "GET",
+      params: { ...queryParams },
+      ...(options || {}),
+    }
+  );
+}
+
+/** 获取可转交人 GET /workflow/wfTask/${param0}/transfer-candidates */
+export async function wfTaskTransferCandidates(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.WfTaskTransferCandidatesParams,
+  options?: { [key: string]: any }
+) {
+  const { taskId: param0, ...queryParams } = params;
+  return request<API.RListSelectModel>(
+    `/workflow/wfTask/${param0}/transfer-candidates`,
+    {
+      method: "GET",
+      params: {
+        ...queryParams,
+        userDTO: undefined,
+        ...queryParams["userDTO"],
+        pageQuery: undefined,
+        ...queryParams["pageQuery"],
+      },
+      ...(options || {}),
+    }
+  );
+}
+
 /** 审批通过 POST /workflow/wfTask/approve */
 export async function wfTaskApprove(
   body: API.ApproveCmd,

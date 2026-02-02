@@ -342,10 +342,7 @@ declare namespace API {
     canRollback?: boolean;
     canTransfer?: boolean;
     canWithdraw?: boolean;
-    /** 退回可选目标（后端算好，避免前端猜规则） */
-    rollbackTargets?: RollbackTargetVO[];
-    /** 转交候选（可选：也可以前端弹窗远程搜索） */
-    transferUsers?: UserOptionVO[];
+    canAddSign?: boolean;
   };
 
   type OssScope = {
@@ -430,6 +427,12 @@ declare namespace API {
     data?: SelectModel[];
   };
 
+  type RListStrSelectModel = {
+    code?: number;
+    msg?: string;
+    data?: StrSelectModel[];
+  };
+
   type RListSysDictDataVo = {
     code?: number;
     msg?: string;
@@ -498,12 +501,6 @@ declare namespace API {
     variables?: Record<string, any>;
     taskId: string;
     targetActivityId: string;
-  };
-
-  type RollbackTargetVO = {
-    nodeKey?: string;
-    nodeName?: string;
-    orderNo?: number;
   };
 
   type RollbackToPreviousCmd = {
@@ -719,6 +716,11 @@ declare namespace API {
     starterDeptId?: string;
     starterDeptName?: string;
     title?: string;
+  };
+
+  type StrSelectModel = {
+    value?: string;
+    label?: string;
   };
 
   type SysBizNoSeqBo = {
@@ -1717,6 +1719,23 @@ declare namespace API {
     primaryPostId?: string;
   };
 
+  type SysUserDTO = {
+    userId?: string;
+    openId?: string;
+    userGrade?: string;
+    userBalance?: number;
+    tenantId?: string;
+    deptId?: string;
+    userName?: string;
+    nickName?: string;
+    userType?: string;
+    email?: string;
+    phonenumber?: string;
+    sex?: string;
+    avatar?: string;
+    wxAvatar?: string;
+  };
+
   type sysUserExportParams = {
     bo: SysUserBo;
   };
@@ -2240,11 +2259,6 @@ declare namespace API {
     roles?: string[];
   };
 
-  type UserOptionVO = {
-    value?: string;
-    label?: string;
-  };
-
   type WfApprovalDetailVO = {
     /** 实例基础信息 */
     instance?: WfInstanceVo;
@@ -2700,6 +2714,16 @@ declare namespace API {
   type WfTaskRemoveParams = {
     /** 主键串 */
     ids: string[];
+  };
+
+  type WfTaskRollbackNodesParams = {
+    taskId: string;
+  };
+
+  type WfTaskTransferCandidatesParams = {
+    taskId: string;
+    userDTO: SysUserDTO;
+    pageQuery: PageQuery;
   };
 
   type WfTaskVo = {

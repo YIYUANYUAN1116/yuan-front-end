@@ -146,9 +146,8 @@ export default () => {
         actionRef={actionRef}
         cardBordered
         request={request}
-        pagination={false}
+        pagination={{ pageSize: 10 }}
         headerTitle="流程实例管理"
-
         columnsState={{
           persistenceKey: 'wf-Instance-pro-table',
           persistenceType: 'localStorage',

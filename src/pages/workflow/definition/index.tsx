@@ -160,7 +160,7 @@ export default () => {
         actionRef={actionRef}
         cardBordered
         request={request}
-        pagination={false}
+        pagination={{ pageSize: 10 }}
         headerTitle="流程定义管理"
         columnsState={{
           persistenceKey: 'wf-definition-pro-table',

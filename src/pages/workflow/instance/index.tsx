@@ -4,7 +4,7 @@ import { useTableRequest } from "@/hooks/table/useTableRequest";
 import { HIDE_COLUMN } from "@/util/ColumsUtils";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { PageContainer, ProTable } from "@ant-design/pro-components";
-import { Access, useAccess } from "@umijs/max";
+import { Access, useAccess, history } from "@umijs/max";
 import { Button, Popconfirm, Space, Table } from "antd";
 import { useRef } from "react";
 import { wfDefinitionList, wfDefinitionRemove } from "@/services/yuan/wfDefinitionController";
@@ -53,7 +53,7 @@ export default () => {
     {
       title: "业务单号",
       dataIndex: "bizNo",
-      render: (_, r) => r.bizNo ? <a>{r.bizNo}</a> : '-',
+      render: (_, r) => r.bizNo ? <a onClick={() => history.push(`/workflow/detail?bizNo=${r.bizNo}&bizType=Leave`)}>{r.bizNo}</a> : '-',
     },
     {
       title: "版本号",
@@ -98,8 +98,8 @@ export default () => {
       dataIndex: "startTime",
       valueType: "dateTime",
       hideInSearch: true,
-      sorter:true,
-      defaultSortOrder:'descend'
+      sorter: true,
+      defaultSortOrder: 'descend'
     },
 
     {
@@ -116,6 +116,9 @@ export default () => {
       hideInSearch: true,
       render: (text, record) => (
         <Space size="small">
+          <a onClick={() => history.push(`/workflow/detail?bizNo=${record.bizNo}`)}>
+            查看
+          </a>
           <Access key="delete" accessible={access.canAccess("workflow:wfInstance:remove")}>
             <Popconfirm
               title="删除"

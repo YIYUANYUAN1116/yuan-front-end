@@ -66,11 +66,11 @@ export default [
       }
     ]
   },
-    {
+  {
     path: '/workplace',
     name: 'workplace',
     icon: 'workplace',
-      routes: [
+    routes: [
       {
         path: '/workplace',
         redirect: '/workplace/overview',
@@ -98,6 +98,11 @@ export default [
         name: 'approve',
         component: './workplace/approve',
         access: 'canWorkplaceApprove'
+      },
+      {
+        path: '/workplace/detail',
+        component: './workflow/detail',
+        hideInMenu: true,
       },
     ]
   },
@@ -181,7 +186,7 @@ export default [
       },
     ]
   },
-   {
+  {
     path: '/oa',
     name: 'oa',
     icon: 'crown',
@@ -201,6 +206,11 @@ export default [
         name: 'leave',
         component: './oa/leave/form',
         access: 'canOaLeave'
+      },
+      {
+        path: '/oa/workflow/detail',
+        component: './workflow/detail',
+        hideInMenu: true,
       },
       //  {
       //   path: '/oa/leave/detail',
@@ -243,10 +253,11 @@ export default [
         component: './workflow/designer',
         access: 'canWorkDesigner'
       },
-       {
+      {
         path: '/workflow/detail',
         name: 'detail',
         component: './workflow/detail',
+        hideInMenu: true,
       },
     ],
   },

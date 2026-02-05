@@ -35,7 +35,7 @@ const index = () => {
       ellipsis: true,
       fixed: 'left',
       render: (_, record) => (<a onClick={() => {
-        history.push(`/workflow/detail?bizNo=${record.applyNo}`)
+        history.push(`/oa/workflow/detail?bizNo=${record.applyNo}&bizType=Leave`)
       }}>
         {record.applyNo}
       </a>),
@@ -101,7 +101,7 @@ const index = () => {
         const isApproving = r.status === 'APPROVING';
         return (
           <Space size='small'>
-            <a onClick={() => history.push(`/workflow/detail?bizNo=${r.applyNo}&bizType=Leave`)}>
+            <a onClick={() => history.push(`/oa/workflow/detail?bizNo=${r.applyNo}&bizType=Leave`)}>
               查看
             </a>
 

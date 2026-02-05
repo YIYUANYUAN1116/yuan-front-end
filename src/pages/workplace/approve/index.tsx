@@ -32,7 +32,7 @@ const index = () => {
       ellipsis: true,
       render: (_, record) => (
         <a onClick={() => {
-          history.push(`/workflow/detail?bizNo=${record.bizNo}`)
+          history.push(`/workplace/detail?bizNo=${record.bizNo}`)
         }}>
           {record.bizNo}
         </a>
@@ -78,7 +78,7 @@ const index = () => {
       valueType: 'option',
       width: 120,
       render: (_, row) => [
-        <a key="detail" onClick={() => history.push(`/workflow/detail?bizNo=${row.bizNo}`)}>详情</a>,
+        <a key="detail" onClick={() => history.push(`/workplace/detail?bizNo=${row.bizNo}`)}>详情</a>,
       ],
     },
   ]

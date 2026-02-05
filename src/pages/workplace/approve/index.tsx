@@ -1,5 +1,6 @@
 import { DictEnum } from '@/const/dict-enum';
 import { useDictDataTagMap } from '@/hooks/dict/useDictDataTagMap';
+import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 import { useTableRequest } from '@/hooks/table/useTableRequest';
 import { workPlaceApprovals } from '@/services/yuan/workPlaceController';
 import { ActionType, PageContainer, ProColumns, ProTable } from '@ant-design/pro-components'
@@ -12,36 +13,41 @@ const index = () => {
 
   const actionRef = useRef<ActionType | null>(null);
   const taskActionTag = useDictDataTagMap(DictEnum.WF_TASK_ACTION);
+  const taskActionEnum = useDictDataValueEnum(DictEnum.WF_TASK_ACTION);
   const taskAction = (value: string | number) => {
     const tag = taskActionTag[String(value)];
     return tag?.render?.() ?? value;
   };
+  const bizTypeEnum = useDictDataValueEnum(DictEnum.WF_BIZ_TYPE);
   const wfBizTypeTagMap = useDictDataTagMap(DictEnum.WF_BIZ_TYPE);
-
-
   const wfBizType = (value: string | number) => {
     const tag = wfBizTypeTagMap[String(value)];
     return tag?.render?.() ?? value;
   };
+
   const columns: ProColumns<API.WorkItemRowVO>[] = [
     {
       title: '单号',
       dataIndex: 'bizNo',
       ellipsis: true,
-      render: (_, record) => (<a onClick={() => {
-        history.push(`/workflow/detail?bizNo=${record.bizNo}`)
-      }}>
-        {record.bizNo}
-      </a>)
+      render: (_, record) => (
+        <a onClick={() => {
+          history.push(`/workflow/detail?bizNo=${record.bizNo}`)
+        }}>
+          {record.bizNo}
+        </a>
+      ),
     },
     {
       title: '流程类型',
       dataIndex: 'bizType',
-      render: (_, record) => wfBizType(record.bizType || '-'),
+      valueEnum: bizTypeEnum,
+      render: (_, row) => wfBizType(row.bizType || ''),
     },
     {
       title: '节点',
       dataIndex: 'nodeName',
+      search: false
     },
     {
       title: '发起人',
@@ -50,6 +56,7 @@ const index = () => {
     {
       title: '处理动作',
       dataIndex: 'taskAction',
+      valueEnum: taskActionEnum,
       render: (_, record) => taskAction(record.taskAction || '-'),
     },
     {
@@ -57,19 +64,21 @@ const index = () => {
       dataIndex: 'taskFinishTime',
       valueType: 'dateTime',
       width: 180,
+      search: false
     },
     {
       title: '审批意见',
       dataIndex: 'taskComment',
       ellipsis: true,
       width: 260,
+      search: false
     },
     {
       title: '操作',
       valueType: 'option',
       width: 120,
       render: (_, row) => [
-        <a key="detail">详情</a>,
+        <a key="detail" onClick={() => history.push(`/workflow/detail?bizNo=${row.bizNo}`)}>详情</a>,
       ],
     },
   ]

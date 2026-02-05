@@ -13,7 +13,6 @@ export type LeaveDetailProps = {
 
 const LeaveDetail = (props:LeaveDetailProps) => {
     const {bizNo} = props;
-
     const leaveStatusEnum = useDictDataValueEnum(DictEnum.OA_APPLY_STATUS)
     const leaveTypetagMap = useDictDataTagMap(DictEnum.OA_LEAVE_TYPE)
     const leaveType = (value: string | number) => {

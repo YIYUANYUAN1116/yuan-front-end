@@ -217,7 +217,7 @@ const WfFlowProgressBar: React.FC<WfFlowProgressBarProps> = ({ layers = [], time
   }, [layerMeta, currentIndex]);
 
   return (
-    <Card title={title} bordered>
+    <Card title={title} variant={'outlined'}>
       <Steps
         orientation="horizontal"
         responsive

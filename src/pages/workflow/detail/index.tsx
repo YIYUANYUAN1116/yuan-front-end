@@ -17,8 +17,14 @@ const index = () => {
         return sp.get('bizNo') ?? undefined;
     }, [sp]);
 
+    //未发起申请的携带 bizType
+    const bizType = useMemo(() => {
+        return sp.get('bizType') ?? undefined;
+    }, [sp]);
+    console.log("123", bizNo)
+    console.log("123", bizType)
     const {
-        data: wfData, run: fetchWFDetail,
+        data: wfData, run: fetchWFDetail, loading: loading
     } = useRequest(wfInstanceDetail, { manual: true });
 
     useEffect(() => {
@@ -31,8 +37,9 @@ const index = () => {
 
     return (
         <PageContainer
-            title="请假详情"
+            title="申请详细"
             onBack={() => history.back()}
+            loading={loading}
             footer={[
                 <WorkFlowActionPanel
                     bizNo={bizNo}
@@ -41,22 +48,27 @@ const index = () => {
                 />
             ]}
         >
-            <Space orientation='vertical'>
+            <Space orientation='vertical' >
                 {
-                    wfData?.biz?.bizType == "Leave" && (<LeaveDetail
+                    (bizType == 'Leave' || wfData?.biz?.bizType == "Leave") && (<LeaveDetail
                         bizNo={bizNo}
                     />)
                 }
 
-                <WfFlowProgressBar
-                    layers={wfData?.layers}
-                    timeline={wfData?.timeline}
-                />
+                {
+                    (wfData && <WfFlowProgressBar
+                        layers={wfData?.layers}
+                        timeline={wfData?.timeline}
+                    />)
+                }
 
-                <WorkFlowHistory
-                    bizNo={bizNo}
-                    wfData={wfData}
-                />
+                {
+                    wfData && <WorkFlowHistory
+                        bizNo={bizNo}
+                        wfData={wfData}
+                    />
+                }
+
             </Space>
 
 

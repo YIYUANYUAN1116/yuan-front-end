@@ -16,6 +16,7 @@ export default () => {
   /**权限控制 */
   const access = useAccess();
   const statusEnum = useDictDataValueEnum(DictEnum.WF_INSTANCE_STATUS);
+  const endReasonEnum = useDictDataValueEnum(DictEnum.WF_END_REASON);
   const endReasonTag = useDictDataTagMap(DictEnum.WF_END_REASON);
   const actionRef = useRef<ActionType | null>(null);
   const endReason = (value: string | number) => {
@@ -97,6 +98,8 @@ export default () => {
       dataIndex: "startTime",
       valueType: "dateTime",
       hideInSearch: true,
+      sorter:true,
+      defaultSortOrder:'descend'
     },
 
     {

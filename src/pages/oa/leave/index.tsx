@@ -14,6 +14,7 @@ const index = () => {
   const actionRef = useRef<ActionType | null>(null);
   const leaveStatusEnum = useDictDataValueEnum(DictEnum.OA_APPLY_STATUS)
   const leaveTypetagMap = useDictDataTagMap(DictEnum.OA_LEAVE_TYPE)
+  const leaveTypeEnum = useDictDataValueEnum(DictEnum.OA_LEAVE_TYPE);
 
   const leaveType = (value: string | number) => {
     const tag = leaveTypetagMap[String(value)];
@@ -42,6 +43,7 @@ const index = () => {
     {
       title: '请假类型',
       dataIndex: 'leaveType',
+      valueEnum:leaveTypeEnum,
       render: (_, record) => leaveType(record.leaveType || ''),
       width: 100
     },
@@ -99,7 +101,7 @@ const index = () => {
         const isApproving = r.status === 'APPROVING';
         return (
           <Space size='small'>
-            <a onClick={() => history.push(`/workflow/detail?bizNo=${r.applyNo}`)}>
+            <a onClick={() => history.push(`/workflow/detail?bizNo=${r.applyNo}&bizType=Leave`)}>
               查看
             </a>
 
@@ -128,12 +130,6 @@ const index = () => {
                   <a style={{ color: 'red' }}>删除</a>
                 </Popconfirm>
               </>
-            )}
-
-            {isApproving && (
-              <Popconfirm title="确认撤销该请假申请？">
-                <a style={{ color: 'red' }}>撤销</a>
-              </Popconfirm>
             )}
           </Space>
         );

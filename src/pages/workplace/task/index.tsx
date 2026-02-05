@@ -13,15 +13,12 @@ const index = () => {
 
   const actionRef = useRef<ActionType | null>(null);
   const statusEnum = useDictDataValueEnum(DictEnum.WF_TASK_STATUS);
-
+  const bizTypeEnum = useDictDataValueEnum(DictEnum.WF_BIZ_TYPE);
   const wfBizTypeTagMap = useDictDataTagMap(DictEnum.WF_BIZ_TYPE);
-
-
   const wfBizType = (value: string | number) => {
     const tag = wfBizTypeTagMap[String(value)];
     return tag?.render?.() ?? value;
   };
-
   const columns: ProColumns<API.WorkItemRowVO>[] = [
     {
       title: '单号',
@@ -36,11 +33,13 @@ const index = () => {
     {
       title: '流程类型',
       dataIndex: 'bizType',
-      render: (_, record) => wfBizType(record.bizType || '-'),
+      valueEnum: bizTypeEnum,
+      render: (_, row) => wfBizType(row.bizType || '')
     },
     {
       title: '当前节点',
-      dataIndex: 'nodeName'
+      dataIndex: 'nodeName',
+      search: false,
     },
     {
       title: '发起人',
@@ -49,7 +48,8 @@ const index = () => {
     {
       title: '到达时间',
       dataIndex: 'taskCreateTime',
-      valueType: 'dateTime'
+      valueType: 'dateTime',
+      search: false,
     },
     {
       title: '状态',
@@ -60,10 +60,11 @@ const index = () => {
       title: '操作',
       valueType: 'option',
       width: 200,
-      render: (_, row) => [
-        <a key="handle">处理</a>,
-        <a key="transfer">转交</a>,
-      ],
+      render: (_, record) => (<a onClick={() => {
+        history.push(`/workflow/detail?bizNo=${record.bizNo}`)
+      }}>
+        详细
+      </a>)
     },
   ]
   const request = useTableRequest(workPlaceMyTask)

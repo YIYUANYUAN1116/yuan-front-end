@@ -13,7 +13,10 @@ const index = () => {
   const actionRef = useRef<ActionType | null>(null);
   const statusEnum = useDictDataValueEnum(DictEnum.WF_INSTANCE_STATUS);
   const endReasonTag = useDictDataTagMap(DictEnum.WF_END_REASON);
+  const bizTypeEnum = useDictDataValueEnum(DictEnum.WF_BIZ_TYPE);
   const wfBizTypeTagMap = useDictDataTagMap(DictEnum.WF_BIZ_TYPE);
+  const endReasonENUM = useDictDataValueEnum(DictEnum.WF_END_REASON);
+
 
   const endReason = (value: string | number) => {
     const tag = endReasonTag[String(value)];
@@ -38,11 +41,13 @@ const index = () => {
     {
       title: '流程类型',
       dataIndex: 'bizType',
-      render: (_, record) => wfBizType(record.bizType || '-'),
+      valueEnum: bizTypeEnum,
+      render: (_,row) => wfBizType(row.bizType || '')
     },
     {
       title: '当前节点',
       dataIndex: 'nodeName',
+      search: false,
       render: (_, row) =>
         row.instanceStatus === 'RUNNING' ? row.nodeName : '已结束',
     },
@@ -55,16 +60,19 @@ const index = () => {
       title: '发起时间',
       dataIndex: 'instanceStartTime',
       valueType: 'dateTime',
+      search: false,
     },
     {
       title: "结束原因",
       dataIndex: "endReason",
+      valueEnum:endReasonENUM,
       render: (_, record) => endReason(record.instanceEndReason || '-'),
     },
     {
       title: '结束时间',
       dataIndex: 'instanceEndTime',
-      valueType: 'dateTime'
+      valueType: 'dateTime',
+      search: false,
     },
     {
       title: '操作',
@@ -93,7 +101,7 @@ const index = () => {
           },
         }}
 
-        search={{ labelWidth: 'auto' }}
+        search={{ labelWidth: 'auto'}}
         pagination={{ pageSize: 10 }}
 
 

@@ -60,6 +60,7 @@ export default {
   'menu.system.dept': '部门管理',
   'menu.system.post': '岗位管理',
   'menu.system.tenant': '租户管理',
+  'menu.system.llm': 'LLM配置',
 
   /** 工作流*/
   'menu.workflow': '工作流管理',

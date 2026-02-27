@@ -163,11 +163,6 @@ export default [
         hideInMenu: true,
       },
       {
-        path: '/system/llm',
-        name: 'llm',
-        component: './system/llm',
-      },
-      {
         path: '/system/log',
         name: 'log',
         routes: [
@@ -191,6 +186,25 @@ export default [
       },
     ],
   },
+  {
+    path: '/llm',
+    name: 'LLM管理',
+    icon: 'RobotOutlined',
+    routes: [
+      {
+        path: '/llm/provider',
+        name: '供应商管理',
+        component: './llm/provider',
+      },
+      {
+        path: '/llm/endpoint',
+        name: '接入点管理',
+        component: './llm/endpoint',
+      },
+      { path: '/llm/model', name: '模型管理', component: './llm/model' },
+    ],
+  },
+
   {
     path: '/oa',
     name: 'oa',

@@ -82,4 +82,10 @@ export default {
   'menu.oa': 'OA管理',
   'menu.oa.leave': '请假申请',
   'menu.oa.claim': '报销申请',
+
+  /** */
+  'menu.llm': 'LLM管理',
+  'menu.llm.provider': '供应商管理',
+  'menu.llm.model': '模型管理',
+  'menu.llm.endpoint': '接入点管理',
 };

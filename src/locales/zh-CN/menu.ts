@@ -83,9 +83,14 @@ export default {
   'menu.oa.leave': '请假申请',
   'menu.oa.claim': '报销申请',
 
-  /** */
+  /**LLM*/
   'menu.llm': 'LLM管理',
   'menu.llm.provider': '供应商管理',
   'menu.llm.model': '模型管理',
   'menu.llm.endpoint': '接入点管理',
+
+  
+  /**AI */
+  'menu.ai': 'AI应用',
+
 };

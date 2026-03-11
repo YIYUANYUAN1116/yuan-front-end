@@ -1,191 +1,148 @@
-import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import {
-  ModalForm,
-  PageContainer,
-  ProFormSelect,
-  ProFormSwitch,
-  ProFormText,
-  ProFormTextArea,
-  ProTable,
-} from '@ant-design/pro-components';
-import { Button, message, Space, Tag } from 'antd';
-import React, { useMemo, useRef, useState } from 'react';
-import { initialProviders, now, uid } from '../mock';
-import type { LlmProvider, ProviderType } from '../types';
+import { useTableRequest } from '@/hooks/table/useTableRequest';
+import { llmProviderList, llmProviderRemove } from '@/services/yuan/llmProviderController';
+import { ActionType, PageContainer, ProColumns, ProTable } from '@ant-design/pro-components';
+import { Access, useAccess } from '@umijs/max';
+import { Button, Popconfirm, Space, Table, Tag } from 'antd';
+import React, { useRef } from 'react'
+import { LlmProviderDrawerForm } from './components/LlmProviderDrawerForm';
+import { PlusOutlined } from '@ant-design/icons';
+import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
+import { HIDE_COLUMN } from '@/util/ColumsUtils';
+import { useActionRequest } from '@/hooks/action/useActionRequest';
+import { DictEnum } from '@/const/dict-enum';
+import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 
-const ProviderPage: React.FC = () => {
-  const actionRef = useRef<ActionType>();
-  const [data, setData] = useState<LlmProvider[]>(initialProviders);
-  const [editing, setEditing] = useState<LlmProvider | null>(null);
-  const [open, setOpen] = useState(false);
+const index = () => {
+  const actionRef = useRef<ActionType | null>(null);
+  const access = useAccess();
 
-  const providerOptions = useMemo(
-    () =>
-      (
-        [
-          'OPENAI',
-          'OPENAI_COMPAT',
-          'GEMINI',
-          'QWEN',
-          'OLLAMA',
-          'DIFY',
-        ] as ProviderType[]
-      ).map((v) => ({
-        label: v,
-        value: v,
-      })),
-    [],
-  );
-
-  const columns: ProColumns<LlmProvider>[] = [
+  const columns: ProColumns<API.LlmProviderVo>[] = [
     {
-      title: '编码',
+      title: 'Id',
+      dataIndex: 'id',
+      ...HIDE_COLUMN,
+    },
+    {
+      title: '序号',
+      dataIndex: 'index',
+      valueType: 'indexBorder',
+      width: 48,
+    },
+    {
+      title: '供应商名称',
+      dataIndex: 'name',
+    },
+    {
+      title: '供应商编号',
       dataIndex: 'code',
-      width: 140,
-      render: (_, r) => <Tag>{r.code}</Tag>,
-    },
-    { title: '名称', dataIndex: 'name', ellipsis: true },
-    {
-      title: '类型',
-      dataIndex: 'category',
-      width: 160,
-      valueType: 'select',
-      valueEnum: {
-        'OpenAI-Compatible': 'OpenAI-Compatible',
-        Native: 'Native',
-        Workflow: 'Workflow',
-      },
     },
     {
-      title: '启用',
-      dataIndex: 'enabled',
-      width: 90,
-      render: (_, r) =>
-        r.enabled ? <Tag color="green">启用</Tag> : <Tag>停用</Tag>,
-      filters: true,
-      onFilter: (v, r) => r.enabled === (v === 'true'),
-      filterMultiple: false,
-      valueEnum: { true: { text: '启用' }, false: { text: '停用' } },
+      title: '接口协议',
+      dataIndex: 'protocol',
     },
-    { title: '备注', dataIndex: 'remark', ellipsis: true },
-    { title: '创建时间', dataIndex: 'createdAt', width: 180 },
+    {
+      title: '备注',
+      dataIndex: 'remark',
+      hideInSearch: true,
+    },
+    { title: '创建时间', dataIndex: 'createTime', width: 180 },
+    { title: '更新时间', dataIndex: 'updateTime', width: 180 },
     {
       title: '操作',
       valueType: 'option',
-      width: 160,
-      render: (_, r) => (
-        <Space>
-          <a
-            onClick={() => {
-              setEditing(r);
-              setOpen(true);
-            }}
+      key: 'option',
+      hideInSearch: true,
+      render: (text, record) => (
+        <Space size="small">
+          <Access
+            key="edit"
+            accessible={access.canAccess('ai:llmProvider:list') || false}
           >
-            编辑
-          </a>
-          <a
-            onClick={() => {
-              setData((prev) =>
-                prev.map((x) =>
-                  x.id === r.id ? { ...x, enabled: !x.enabled } : x,
-                ),
-              );
-              message.success('已更新状态');
-            }}
+            <LlmProviderDrawerForm
+              mode="edit"
+              trigger={<a>编辑</a>}
+              record={record}
+              reload={actionRef.current?.reload}
+            />
+          </Access>
+
+          <Access
+            key="remove"
+            accessible={access.canAccess('ai:llmProvider:remove')}
           >
-            {r.enabled ? '停用' : '启用'}
-          </a>
+            <Popconfirm
+              title="供应商删除"
+              description={`确认删除供应商：${record.name}`}
+              okText="确认"
+              cancelText="取消"
+              okButtonProps={{ loading: deleteLoading }}
+              onConfirm={() => deleteRun({ ids: [record.id] })}
+            >
+              <a style={{ color: 'red' }}>删除</a>
+            </Popconfirm>
+          </Access>
         </Space>
       ),
     },
   ];
 
+  const { run: deleteRun, loading: deleteLoading } = useActionRequest(
+    llmProviderRemove,
+    actionRef.current?.reload,
+  );
+
+  const request = useTableRequest(llmProviderList);
   return (
     <PageContainer>
-      <ProTable<LlmProvider>
-        rowKey="id"
-        actionRef={actionRef}
-        search={{ labelWidth: 90 }}
+      <ProTable<API.LlmProviderVo>
         columns={columns}
-        dataSource={data}
-        pagination={{ pageSize: 10 }}
-        toolBarRender={() => [
-          <Button
-            key="add"
-            type="primary"
-            onClick={() => {
-              setEditing(null);
-              setOpen(true);
-            }}
-          >
-            新增供应商
-          </Button>,
-        ]}
-      />
-
-      <ModalForm<LlmProvider>
-        title={editing ? '编辑供应商' : '新增供应商'}
-        open={open}
-        modalProps={{ destroyOnClose: true, onCancel: () => setOpen(false) }}
-        initialValues={
-          editing ?? { enabled: true, category: 'OpenAI-Compatible' }
-        }
-        onFinish={async (values) => {
-          if (!values.code || !values.name) return false;
-
-          if (editing) {
-            setData((prev) =>
-              prev.map((x) =>
-                x.id === editing.id
-                  ? { ...x, ...values, createdAt: x.createdAt }
-                  : x,
-              ),
-            );
-            message.success('已保存');
-          } else {
-            const item: LlmProvider = {
-              id: uid('p'),
-              code: values.code as ProviderType,
-              name: values.name,
-              category: values.category!,
-              enabled: !!values.enabled,
-              remark: values.remark,
-              createdAt: now(),
-            };
-            setData((prev) => [item, ...prev]);
-            message.success('已新增');
-          }
-          setOpen(false);
-          return true;
+        actionRef={actionRef}
+        request={request}
+        columnsState={{
+          persistenceKey: 'sys-user-pro-table',
+          persistenceType: 'localStorage',
+          defaultValue: {
+            option: { fixed: 'right', disable: true },
+          },
         }}
-      >
-        <ProFormSelect
-          name="code"
-          label="供应商编码"
-          options={providerOptions}
-          rules={[{ required: true }]}
-          disabled={!!editing}
-        />
-        <ProFormText
-          name="name"
-          label="供应商名称"
-          rules={[{ required: true }]}
-        />
-        <ProFormSelect
-          name="category"
-          label="类型"
-          rules={[{ required: true }]}
-          options={[
-            { label: 'OpenAI-Compatible', value: 'OpenAI-Compatible' },
-            { label: 'Native', value: 'Native' },
-            { label: 'Workflow', value: 'Workflow' },
-          ]}
-        />
-        <ProFormSwitch name="enabled" label="启用" />
-        <ProFormTextArea name="remark" label="备注" fieldProps={{ rows: 3 }} />
-      </ModalForm>
+        rowKey="userId"
+        search={{ labelWidth: 'auto' }}
+        pagination={{ pageSize: 10 }}
+        headerTitle="供应商管理"
+        toolBarRender={() => [
+          <Access key="add" accessible={access.canAccess('system:user:add')}>
+            <LlmProviderDrawerForm
+              mode="add"
+              trigger={
+                <Button type="primary" icon={<PlusOutlined />}>
+                  新增供应商
+                </Button>
+              }
+              reload={actionRef.current?.reload}
+            />
+          </Access>,
+        ]}
+        rowSelection={{
+          // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
+          // 注释该行则默认不显示下拉选项
+          selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
+        }}
+        tableAlertOptionRender={false}
+        tableAlertRender={(props) => (
+          <Access
+            key="remove"
+            accessible={access.canAccess('ai:llmProvider:remove')}
+          >
+            <BatchDeleteAlert<API.LlmProviderVo>
+              {...props}
+              actionRef={actionRef}
+              onDelete={(keys) => llmProviderRemove({ ids: keys as string[] })}
+            />
+          </Access>
+        )}
+      />
     </PageContainer>
   );
-};
+}
 
-export default ProviderPage;
+export default index

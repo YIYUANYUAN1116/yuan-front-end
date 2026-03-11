@@ -3,6 +3,19 @@
 // API 更新时间：
 // API 唯一标识：
 import * as authController from "./authController";
+import * as chatAttachmentController from "./chatAttachmentController";
+import * as chatController from "./chatController";
+import * as chatConversationController from "./chatConversationController";
+import * as chatMessageChunkController from "./chatMessageChunkController";
+import * as chatMessageController from "./chatMessageController";
+import * as chatModelController from "./chatModelController";
+import * as chatSessionController from "./chatSessionController";
+import * as llmEndpointController from "./llmEndpointController";
+import * as llmInvocationController from "./llmInvocationController";
+import * as llmModelController from "./llmModelController";
+import * as llmPolicyController from "./llmPolicyController";
+import * as llmProviderController from "./llmProviderController";
+import * as llmRouteRuleController from "./llmRouteRuleController";
 import * as oaLeaveApplyController from "./oaLeaveApplyController";
 import * as ossController from "./ossController";
 import * as sysBizNoSeqController from "./sysBizNoSeqController";
@@ -54,7 +67,20 @@ export default {
   sysDictTypeController,
   sysDictDataController,
   oaLeaveApplyController,
+  llmRouteRuleController,
+  llmProviderController,
+  llmPolicyController,
+  llmModelController,
+  llmInvocationController,
+  llmEndpointController,
+  chatSessionController,
+  chatModelController,
+  chatMessageController,
+  chatMessageChunkController,
+  chatConversationController,
+  chatAttachmentController,
   ossController,
   authController,
+  chatController,
   workPlaceController,
 };

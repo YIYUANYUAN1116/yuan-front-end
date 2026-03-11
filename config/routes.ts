@@ -206,6 +206,24 @@ export default [
   },
 
   {
+    path: '/ai',
+    name: 'ai应用',
+    icon: 'RobotOutlined',
+    routes: [
+      {
+        path: '/ai',
+        redirect: '/ai/chat',
+      },
+      {
+        path: '/ai/chat',
+        name: '对话',
+        component: './ai/chat/index',
+      },
+
+    ],
+  },
+
+  {
     path: '/oa',
     name: 'oa',
     icon: 'crown',

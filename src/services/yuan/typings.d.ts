@@ -12,6 +12,437 @@ declare namespace API {
 
   type AvatarVo = Record<string, any>;
 
+  type ChatAttachmentBo = {
+    id?: string;
+    /** tenantId */
+    tenantId: string;
+    /** messageId */
+    messageId: string;
+    /** fileName */
+    fileName: string;
+    /** fileType */
+    fileType?: string;
+    /** fileSize */
+    fileSize?: string;
+    /** storage */
+    storage: string;
+    /** objectKey */
+    objectKey: string;
+    /** url */
+    url?: string;
+    /** metaJson */
+    metaJson?: string;
+    /** createTime */
+    createTime: string;
+  };
+
+  type ChatAttachmentExportParams = {
+    bo: ChatAttachmentBo;
+  };
+
+  type ChatAttachmentGetInfoParams = {
+    /** 主键 */
+    id: string;
+  };
+
+  type ChatAttachmentListParams = {
+    bo: ChatAttachmentBo;
+    pageQuery: PageQuery;
+  };
+
+  type ChatAttachmentRemoveParams = {
+    /** 主键串 */
+    ids: string[];
+  };
+
+  type ChatAttachmentVo = {
+    id: string;
+    /** tenantId */
+    tenantId?: string;
+    /** messageId */
+    messageId?: string;
+    /** fileName */
+    fileName?: string;
+    /** fileType */
+    fileType?: string;
+    /** fileSize */
+    fileSize?: string;
+    /** storage */
+    storage?: string;
+    /** objectKey */
+    objectKey?: string;
+    /** url */
+    url?: string;
+    /** metaJson */
+    metaJson?: string;
+    /** createTime */
+    createTime?: string;
+  };
+
+  type ChatConversationBo = {
+    id?: string;
+    /** tenantId */
+    tenantId: string;
+    /** userId */
+    userId: string;
+    /** appId */
+    appId?: string;
+    /** title */
+    title?: string;
+    /** defaultEndpointKey */
+    defaultEndpointKey?: string;
+    /** metaJson */
+    metaJson?: string;
+    /** lastMessageAt */
+    lastMessageAt?: string;
+    /** createTime */
+    createTime: string;
+    /** updateTime */
+    updateTime: string;
+  };
+
+  type ChatConversationExportParams = {
+    bo: ChatConversationBo;
+  };
+
+  type ChatConversationGetInfoParams = {
+    /** 主键 */
+    id: string;
+  };
+
+  type ChatConversationListParams = {
+    bo: ChatConversationBo;
+    pageQuery: PageQuery;
+  };
+
+  type ChatConversationRemoveParams = {
+    /** 主键串 */
+    ids: string[];
+  };
+
+  type ChatConversationVo = {
+    id: string;
+    /** tenantId */
+    tenantId?: string;
+    /** userId */
+    userId?: string;
+    /** appId */
+    appId?: string;
+    /** title */
+    title?: string;
+    /** defaultEndpointKey */
+    defaultEndpointKey?: string;
+    /** metaJson */
+    metaJson?: string;
+    /** lastMessageAt */
+    lastMessageAt?: string;
+    /** createTime */
+    createTime?: string;
+    /** updateTime */
+    updateTime?: string;
+  };
+
+  type ChatMessageBo = {
+    id?: string;
+    /** tenantId */
+    tenantId: string;
+    /** conversationId */
+    conversationId: string;
+    /** userId */
+    userId: string;
+    /** system/user/assistant/tool */
+    role: string;
+    /** content */
+    content?: string;
+    /** contentFormat */
+    contentFormat: string;
+    /** parentId */
+    parentId?: string;
+    /** PENDING/STREAMING/DONE/FAILED */
+    status: string;
+    /** endpointKey */
+    endpointKey?: string;
+    /** invocationId */
+    invocationId?: string;
+    /** tokenIn */
+    tokenIn?: number;
+    /** tokenOut */
+    tokenOut?: number;
+    /** costAmount */
+    costAmount?: number;
+    /** finishReason */
+    finishReason?: string;
+    /** errorMsg */
+    errorMsg?: string;
+    /** createTime */
+    createTime: string;
+    /** updateTime */
+    updateTime: string;
+  };
+
+  type ChatMessageChunkBo = {
+    id?: string;
+    /** tenantId */
+    tenantId: string;
+    /** messageId */
+    messageId: string;
+    /** seq */
+    seq: number;
+    /** deltaText */
+    deltaText: string;
+    /** createTime */
+    createTime: string;
+  };
+
+  type ChatMessageChunkExportParams = {
+    bo: ChatMessageChunkBo;
+  };
+
+  type ChatMessageChunkGetInfoParams = {
+    /** 主键 */
+    id: string;
+  };
+
+  type ChatMessageChunkListParams = {
+    bo: ChatMessageChunkBo;
+    pageQuery: PageQuery;
+  };
+
+  type ChatMessageChunkRemoveParams = {
+    /** 主键串 */
+    ids: string[];
+  };
+
+  type ChatMessageChunkVo = {
+    id: string;
+    /** tenantId */
+    tenantId?: string;
+    /** messageId */
+    messageId?: string;
+    /** seq */
+    seq?: number;
+    /** deltaText */
+    deltaText?: string;
+    /** createTime */
+    createTime?: string;
+  };
+
+  type ChatMessageExportParams = {
+    bo: ChatMessageBo;
+  };
+
+  type ChatMessageGetInfoParams = {
+    /** 主键 */
+    id: string;
+  };
+
+  type ChatMessageListParams = {
+    bo: ChatMessageBo;
+    pageQuery: PageQuery;
+  };
+
+  type ChatMessageRemoveParams = {
+    /** 主键串 */
+    ids: string[];
+  };
+
+  type ChatMessageVo = {
+    id: string;
+    /** tenantId */
+    tenantId?: string;
+    /** conversationId */
+    conversationId?: string;
+    /** userId */
+    userId?: string;
+    /** system/user/assistant/tool */
+    role?: string;
+    /** content */
+    content?: string;
+    /** contentFormat */
+    contentFormat?: string;
+    /** parentId */
+    parentId?: string;
+    /** PENDING/STREAMING/DONE/FAILED */
+    status?: string;
+    /** endpointKey */
+    endpointKey?: string;
+    /** invocationId */
+    invocationId?: string;
+    /** tokenIn */
+    tokenIn?: number;
+    /** tokenOut */
+    tokenOut?: number;
+    /** costAmount */
+    costAmount?: number;
+    /** finishReason */
+    finishReason?: string;
+    /** errorMsg */
+    errorMsg?: string;
+    /** createTime */
+    createTime?: string;
+    /** updateTime */
+    updateTime?: string;
+  };
+
+  type ChatModelBo = {
+    id?: string;
+    /** 租户编号 */
+    tenantId?: string;
+    /** 模型分类 */
+    category?: string;
+    /** 模型名称 */
+    modelName?: string;
+    /** 模型供应商 */
+    providerName?: string;
+    /** 模型描述 */
+    modelDescribe?: string;
+    /** 模型价格 */
+    modelPrice?: number;
+    /** 计费类型 */
+    modelType?: string;
+    /** 是否显示 */
+    modelShow?: string;
+    /** 系统提示词 */
+    systemPrompt?: string;
+    /** 请求地址 */
+    apiHost?: string;
+    /** 密钥 */
+    apiKey?: string;
+    /** 请求后缀 */
+    apiUrl?: string;
+    /** 创建部门 */
+    createDept?: string;
+    /** 创建者 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 更新者 */
+    updateBy?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 备注 */
+    remark?: string;
+    /** 模型优先级(值越大优先级越高) */
+    priority?: number;
+  };
+
+  type ChatModelVo = {
+    id: string;
+    /** 租户编号 */
+    tenantId?: string;
+    /** 模型分类 */
+    category?: string;
+    /** 模型名称 */
+    modelName?: string;
+    /** 模型供应商 */
+    providerName?: string;
+    /** 模型描述 */
+    modelDescribe?: string;
+    /** 模型价格 */
+    modelPrice?: number;
+    /** 计费类型 */
+    modelType?: string;
+    /** 是否显示 */
+    modelShow?: string;
+    /** 系统提示词 */
+    systemPrompt?: string;
+    /** 请求地址 */
+    apiHost?: string;
+    /** 密钥 */
+    apiKey?: string;
+    /** 请求后缀 */
+    apiUrl?: string;
+    /** 创建部门 */
+    createDept?: string;
+    /** 创建者 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 更新者 */
+    updateBy?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 备注 */
+    remark?: string;
+    /** 模型优先级(值越大优先级越高) */
+    priority?: number;
+  };
+
+  type ChatMsg = {
+    role: string;
+    content: string;
+  };
+
+  type ChatRequest = {
+    tenantId: string;
+    traceId: string;
+    messages: ChatMsg[];
+    /** 前端首选：直接传 endpointKey */
+    endpointKey?: string;
+    /** 自动选模型：endpointKey 为空时用路由规则 */
+    autoSelectModel?: boolean;
+    /** 业务侧字段（可选） */
+    userId?: string;
+    conversationId?: string;
+    appId?: string;
+    /** 可选提示词 */
+    systemPrompt?: string;
+    prompt?: string;
+    /** 是否流式 */
+    stream?: boolean;
+    /** thinking 标记（用于路由策略） */
+    enableThinking?: boolean;
+    token?: string;
+  };
+
+  type ChatSessionBo = {
+    id?: string;
+    /** 用户id */
+    userId?: string;
+    /** 会话标题 */
+    sessionTitle?: string;
+    /** 会话内容 */
+    sessionContent?: string;
+    /** 部门 */
+    createDept?: string;
+    /** 创建者 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 更新者 */
+    updateBy?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 备注 */
+    remark?: string;
+    /** 会话ID */
+    conversationId?: string;
+  };
+
+  type ChatSessionVo = {
+    id: string;
+    /** 用户id */
+    userId?: string;
+    /** 会话标题 */
+    sessionTitle?: string;
+    /** 会话内容 */
+    sessionContent?: string;
+    /** 部门 */
+    createDept?: string;
+    /** 创建者 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 更新者 */
+    updateBy?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 备注 */
+    remark?: string;
+    /** 会话ID */
+    conversationId?: string;
+  };
+
   type CompleteMultipartReq = {
     sessionId?: string;
     uploadId?: string;
@@ -81,6 +512,14 @@ declare namespace API {
     dictIds: string[];
   };
 
+  type export1Params = {
+    bo: ChatModelBo;
+  };
+
+  type exportUsingPOSTParams = {
+    bo: ChatSessionBo;
+  };
+
   type Expression = {
     /** 变量名，如 amount / leaveType */
     field?: string;
@@ -101,6 +540,16 @@ declare namespace API {
     contentType?: string;
     filename?: string;
     sha256?: string;
+  };
+
+  type getInfo1Params = {
+    /** 主键 */
+    id: number;
+  };
+
+  type getInfoParams = {
+    /** 主键 */
+    id: number;
   };
 
   type InitMultipartReq = {
@@ -158,6 +607,410 @@ declare namespace API {
     x?: string;
     y?: string;
     value?: string;
+  };
+
+  type list1Params = {
+    bo: ChatModelBo;
+    pageQuery: PageQuery;
+  };
+
+  type listParams = {
+    bo: ChatSessionBo;
+    pageQuery: PageQuery;
+  };
+
+  type LlmEndpointBo = {
+    id?: string;
+    /** tenantId */
+    tenantId?: string;
+    /** front-end selection key */
+    endpointKey?: string;
+    endpointName?: string;
+    /** providerCode */
+    providerCode: string;
+    /** OpenAI-compatible baseUrl like https://api.openai.com or http://localhost:11434/v1 */
+    baseUrl: string;
+    /** DEMO ONLY; prod should use api_key_ref + secret manager */
+    apiKey?: string;
+    /** defaultModelId */
+    defaultModelId?: string;
+    /** enabled */
+    status?: string;
+    /** priority */
+    priority?: number;
+    /** {"cheap":true,"think":true} */
+    tagsJson?: string;
+    /** createTime */
+    createTime?: string;
+    /** updateTime */
+    updateTime?: string;
+    chatCompletionsPath?: string;
+    embeddingsPath?: string;
+    authHeaderName?: string;
+    authHeaderPrefix?: string;
+    extraHeadersJson?: string;
+    extraParamsJson?: string;
+  };
+
+  type LlmEndpointExportParams = {
+    bo: LlmEndpointBo;
+  };
+
+  type LlmEndpointGetInfoParams = {
+    /** 主键 */
+    id: string;
+  };
+
+  type LlmEndpointListParams = {
+    bo: LlmEndpointBo;
+    pageQuery: PageQuery;
+  };
+
+  type LlmEndpointRemoveParams = {
+    /** 主键串 */
+    ids: string[];
+  };
+
+  type LlmEndpointVo = {
+    id: string;
+    /** tenantId */
+    tenantId?: string;
+    /** front-end selection key */
+    endpointKey?: string;
+    endpointName?: string;
+    /** providerCode */
+    providerCode?: string;
+    /** OpenAI-compatible baseUrl like https://api.openai.com or http://localhost:11434/v1 */
+    baseUrl?: string;
+    /** DEMO ONLY; prod should use api_key_ref + secret manager */
+    apiKey?: string;
+    /** defaultModelId */
+    defaultModelId?: string;
+    /** enabled */
+    status?: string;
+    /** priority */
+    priority?: number;
+    /** {"cheap":true,"think":true} */
+    tagsJson?: string;
+    /** createTime */
+    createTime?: string;
+    /** updateTime */
+    updateTime?: string;
+    chatCompletionsPath?: string;
+    embeddingsPath?: string;
+    authHeaderName?: string;
+    authHeaderPrefix?: string;
+    extraHeadersJson?: string;
+    extraParamsJson?: string;
+  };
+
+  type LlmInvocationBo = {
+    id?: string;
+    /** tenantId */
+    tenantId: string;
+    /** traceId */
+    traceId: string;
+    /** endpointKey */
+    endpointKey: string;
+    /** providerCode */
+    providerCode: string;
+    /** modelName */
+    modelName: string;
+    /** conversationId */
+    conversationId?: string;
+    /** messageId */
+    messageId?: string;
+    /** requestJson */
+    requestJson: string;
+    /** responseText */
+    responseText?: string;
+    /** responseJson */
+    responseJson?: string;
+    /** tokenIn */
+    tokenIn?: number;
+    /** tokenOut */
+    tokenOut?: number;
+    /** costAmount */
+    costAmount?: number;
+    /** latencyMs */
+    latencyMs?: number;
+    /** SUCCESS/FAILED */
+    status: string;
+    /** errorMsg */
+    errorMsg?: string;
+    /** createTime */
+    createTime: string;
+  };
+
+  type LlmInvocationExportParams = {
+    bo: LlmInvocationBo;
+  };
+
+  type LlmInvocationGetInfoParams = {
+    /** 主键 */
+    id: string;
+  };
+
+  type LlmInvocationListParams = {
+    bo: LlmInvocationBo;
+    pageQuery: PageQuery;
+  };
+
+  type LlmInvocationRemoveParams = {
+    /** 主键串 */
+    ids: string[];
+  };
+
+  type LlmInvocationVo = {
+    id: string;
+    /** tenantId */
+    tenantId?: string;
+    /** traceId */
+    traceId?: string;
+    /** endpointKey */
+    endpointKey?: string;
+    /** providerCode */
+    providerCode?: string;
+    /** modelName */
+    modelName?: string;
+    /** conversationId */
+    conversationId?: string;
+    /** messageId */
+    messageId?: string;
+    /** requestJson */
+    requestJson?: string;
+    /** responseText */
+    responseText?: string;
+    /** responseJson */
+    responseJson?: string;
+    /** tokenIn */
+    tokenIn?: number;
+    /** tokenOut */
+    tokenOut?: number;
+    /** costAmount */
+    costAmount?: number;
+    /** latencyMs */
+    latencyMs?: number;
+    /** SUCCESS/FAILED */
+    status?: string;
+    /** errorMsg */
+    errorMsg?: string;
+    /** createTime */
+    createTime?: string;
+  };
+
+  type LlmModelBo = {
+    id?: string;
+    /** providerCode */
+    providerCode: string;
+    endpointKey?: string;
+    /** remote model name, e.g. gpt-4o-mini */
+    modelName: string;
+    /** displayName */
+    displayName?: string;
+    /** {"stream":true,"json":true,"tools":true,"vision":false,"thinking":false} */
+    capabilityJson?: string;
+    /** contextWindow */
+    contextWindow?: number;
+    /** enabled */
+    status?: string;
+  };
+
+  type LlmModelExportParams = {
+    bo: LlmModelBo;
+  };
+
+  type LlmModelGetInfoParams = {
+    /** 主键 */
+    id: string;
+  };
+
+  type LlmModelListParams = {
+    bo: LlmModelBo;
+    pageQuery: PageQuery;
+  };
+
+  type LlmModelRemoveParams = {
+    /** 主键串 */
+    ids: string[];
+  };
+
+  type LlmModelVo = {
+    id: string;
+    endpointKey?: string;
+    /** providerCode */
+    providerCode?: string;
+    /** remote model name, e.g. gpt-4o-mini */
+    modelName?: string;
+    /** displayName */
+    displayName?: string;
+    /** {"stream":true,"json":true,"tools":true,"vision":false,"thinking":false} */
+    capabilityJson?: string;
+    /** contextWindow */
+    contextWindow?: number;
+    /** enabled */
+    status?: string;
+  };
+
+  type LlmPolicyBo = {
+    id?: string;
+    /** tenantId */
+    tenantId: string;
+    /** TENANT/USER/APP */
+    scopeType: string;
+    /** scopeId */
+    scopeId: string;
+    /** dailyCalls */
+    dailyCalls: number;
+    /** dailyTokens */
+    dailyTokens: number;
+    /** concurrency */
+    concurrency: number;
+    /** allowEndpoints */
+    allowEndpoints?: string;
+    /** enabled */
+    enabled: number;
+  };
+
+  type LlmPolicyExportParams = {
+    bo: LlmPolicyBo;
+  };
+
+  type LlmPolicyGetInfoParams = {
+    /** 主键 */
+    id: string;
+  };
+
+  type LlmPolicyListParams = {
+    bo: LlmPolicyBo;
+    pageQuery: PageQuery;
+  };
+
+  type LlmPolicyRemoveParams = {
+    /** 主键串 */
+    ids: string[];
+  };
+
+  type LlmPolicyVo = {
+    id: string;
+    /** tenantId */
+    tenantId?: string;
+    /** TENANT/USER/APP */
+    scopeType?: string;
+    /** scopeId */
+    scopeId?: string;
+    /** dailyCalls */
+    dailyCalls?: number;
+    /** dailyTokens */
+    dailyTokens?: number;
+    /** concurrency */
+    concurrency?: number;
+    /** allowEndpoints */
+    allowEndpoints?: string;
+    /** enabled */
+    enabled?: number;
+  };
+
+  type LlmProviderBo = {
+    id?: string;
+    /** OPENAI_COMPAT/AZURE/OLLAMA/SELF_HOST */
+    code: string;
+    /** name */
+    name: string;
+    /** openai_compat/azure/ollama/... */
+    protocol?: string;
+    remark?: string;
+    createTime?: string;
+  };
+
+  type LlmProviderExportParams = {
+    bo: LlmProviderBo;
+  };
+
+  type LlmProviderGetInfoParams = {
+    /** 主键 */
+    id: string;
+  };
+
+  type LlmProviderListParams = {
+    bo: LlmProviderBo;
+    pageQuery: PageQuery;
+  };
+
+  type LlmProviderRemoveParams = {
+    /** 主键串 */
+    ids: string[];
+  };
+
+  type LlmProviderVo = {
+    id: string;
+    /** OPENAI_COMPAT/AZURE/OLLAMA/SELF_HOST */
+    code?: string;
+    /** name */
+    name?: string;
+    /** openai_compat/azure/ollama/... */
+    protocol?: string;
+    /** createTime */
+    createTime?: string;
+    remark?: string;
+    createBy?: string;
+    updateBy?: string;
+    updateTime?: string;
+  };
+
+  type LlmRouteRuleBo = {
+    id?: string;
+    /** tenantId */
+    tenantId: string;
+    /** ruleName */
+    ruleName: string;
+    /** {"enableThinking":true,"stream":true} */
+    matchJson: string;
+    /** ["tenantA_openai_4o","tenantA_deepseek_r1"] */
+    candidateEndpoints: string;
+    /** PRIORITY/COST_MIN/LATENCY_MIN */
+    strategy: string;
+    /** enabled */
+    enabled: number;
+    /** priority */
+    priority: number;
+  };
+
+  type LlmRouteRuleExportParams = {
+    bo: LlmRouteRuleBo;
+  };
+
+  type LlmRouteRuleGetInfoParams = {
+    /** 主键 */
+    id: string;
+  };
+
+  type LlmRouteRuleListParams = {
+    bo: LlmRouteRuleBo;
+    pageQuery: PageQuery;
+  };
+
+  type LlmRouteRuleRemoveParams = {
+    /** 主键串 */
+    ids: string[];
+  };
+
+  type LlmRouteRuleVo = {
+    id: string;
+    /** tenantId */
+    tenantId?: string;
+    /** ruleName */
+    ruleName?: string;
+    /** {"enableThinking":true,"stream":true} */
+    matchJson?: string;
+    /** ["tenantA_openai_4o","tenantA_deepseek_r1"] */
+    candidateEndpoints?: string;
+    /** PRIORITY/COST_MIN/LATENCY_MIN */
+    strategy?: string;
+    /** enabled */
+    enabled?: number;
+    /** priority */
+    priority?: number;
   };
 
   type LoginBody = {
@@ -388,6 +1241,42 @@ declare namespace API {
     data?: AvatarVo;
   };
 
+  type RChatAttachmentVo = {
+    code?: number;
+    msg?: string;
+    data?: ChatAttachmentVo;
+  };
+
+  type RChatConversationVo = {
+    code?: number;
+    msg?: string;
+    data?: ChatConversationVo;
+  };
+
+  type RChatMessageChunkVo = {
+    code?: number;
+    msg?: string;
+    data?: ChatMessageChunkVo;
+  };
+
+  type RChatMessageVo = {
+    code?: number;
+    msg?: string;
+    data?: ChatMessageVo;
+  };
+
+  type RChatModelVo = {
+    code?: number;
+    msg?: string;
+    data?: ChatModelVo;
+  };
+
+  type RChatSessionVo = {
+    code?: number;
+    msg?: string;
+    data?: ChatSessionVo;
+  };
+
   type ReactRouterVo = {
     name?: string;
     path?: string;
@@ -407,6 +1296,16 @@ declare namespace API {
     comment?: string;
     variables?: Record<string, any>;
     taskId: string;
+  };
+
+  type remove1Params = {
+    /** 主键串 */
+    ids: number[];
+  };
+
+  type removeParams = {
+    /** 主键串 */
+    ids: number[];
   };
 
   type RFileObjectKey = {
@@ -449,6 +1348,42 @@ declare namespace API {
     code?: number;
     msg?: string;
     data?: SysPostVo[];
+  };
+
+  type RLlmEndpointVo = {
+    code?: number;
+    msg?: string;
+    data?: LlmEndpointVo;
+  };
+
+  type RLlmInvocationVo = {
+    code?: number;
+    msg?: string;
+    data?: LlmInvocationVo;
+  };
+
+  type RLlmModelVo = {
+    code?: number;
+    msg?: string;
+    data?: LlmModelVo;
+  };
+
+  type RLlmPolicyVo = {
+    code?: number;
+    msg?: string;
+    data?: LlmPolicyVo;
+  };
+
+  type RLlmProviderVo = {
+    code?: number;
+    msg?: string;
+    data?: LlmProviderVo;
+  };
+
+  type RLlmRouteRuleVo = {
+    code?: number;
+    msg?: string;
+    data?: LlmRouteRuleVo;
   };
 
   type RLoginVo = {
@@ -688,6 +1623,10 @@ declare namespace API {
     data?: WfTaskVo;
   };
 
+  type selectEndpointParams = {
+    providerCode: string;
+  };
+
   type SelectModel = {
     value?: string;
     label?: string;
@@ -696,6 +1635,10 @@ declare namespace API {
   type SelectRolesVo = {
     roles?: SysRoleVo[];
     checkedKeys?: string[];
+  };
+
+  type SseEmitter = {
+    timeout?: string;
   };
 
   type StartCmd = {
@@ -1901,6 +2844,138 @@ declare namespace API {
     primaryPostId?: string;
   };
 
+  type TableDataInfoChatAttachmentVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: ChatAttachmentVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoChatConversationVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: ChatConversationVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoChatMessageChunkVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: ChatMessageChunkVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoChatMessageVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: ChatMessageVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoChatModelVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: ChatModelVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoChatSessionVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: ChatSessionVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoLlmEndpointVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: LlmEndpointVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoLlmInvocationVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: LlmInvocationVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoLlmModelVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: LlmModelVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoLlmPolicyVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: LlmPolicyVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoLlmProviderVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: LlmProviderVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoLlmRouteRuleVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: LlmRouteRuleVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
   type TableDataInfoOaLeaveApplyVo = {
     /** 总记录数 */
     total?: string;
@@ -2644,6 +3719,8 @@ declare namespace API {
     createTime?: string;
     /** 完成时间 */
     finishTime?: string;
+    bizType?: string;
+    instanceStatus?: string;
   };
 
   type WfTaskExportParams = {
@@ -2701,6 +3778,7 @@ declare namespace API {
     taskId?: string;
     /** 流程实例ID */
     instanceId?: string;
+    nodeInstanceId?: string;
     /** 操作(APPROVE/REJECT/TRANSFER) */
     action?: string;
     /** 操作人 */
@@ -2748,7 +3826,8 @@ declare namespace API {
       | "TRANSFER"
       | "ADD_SIGN"
       | "ALL_APPROVE"
-      | "WITHDRAW";
+      | "WITHDRAW"
+      | "SYSTEM_PROCESS";
     /** 审批意见 */
     comment?: string;
     /** createTime */
@@ -2790,6 +3869,18 @@ declare namespace API {
     result?: "SUCCESS" | "FAIL";
   };
 
+  type WfWorklistQueryBo = {
+    bizType?: string;
+    bizNo?: string;
+    instanceStatus?: string;
+    taskStatus?: string;
+    instanceStartTime?: string;
+    instanceEndTime?: string;
+    starterName?: string;
+    taskAction?: string;
+    endReason?: string;
+  };
+
   type WithdrawCmd = {
     /** 操作人（当前用户） */
     operatorId?: string;
@@ -2813,7 +3904,8 @@ declare namespace API {
       | "TRANSFER"
       | "ADD_SIGN"
       | "ALL_APPROVE"
-      | "WITHDRAW";
+      | "WITHDRAW"
+      | "SYSTEM_PROCESS";
     taskComment?: string;
     taskCreateTime?: string;
     taskFinishTime?: string;
@@ -2834,17 +3926,17 @@ declare namespace API {
   };
 
   type workPlaceApprovalsParams = {
-    bo: WfTaskBo;
+    bo: WfWorklistQueryBo;
     pageQuery: PageQuery;
   };
 
   type workPlaceMyApplyParams = {
-    bo: WfInstanceBo;
+    bo: WfWorklistQueryBo;
     pageQuery: PageQuery;
   };
 
   type workPlaceMyTaskParams = {
-    bo: WfTaskBo;
+    bo: WfWorklistQueryBo;
     pageQuery: PageQuery;
   };
 }

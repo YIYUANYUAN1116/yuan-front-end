@@ -1,769 +1,1296 @@
-import { DeleteOutlined, OpenAIOutlined, SyncOutlined } from '@ant-design/icons';
 import {
-  Actions,
-  Bubble,
-  BubbleListProps,
-  Conversations,
-  Sender,
-  SenderProps,
-  XProvider,
-} from '@ant-design/x';
+  CopyOutlined,
+  DeleteOutlined,
+  EllipsisOutlined,
+  EditOutlined,
+  PlusOutlined,
+  ReloadOutlined,
+  RobotOutlined,
+  SendOutlined,
+} from '@ant-design/icons';
 import XMarkdown from '@ant-design/x-markdown';
-import { Flex, GetRef, message as antdMessage, Select, Space, Tag } from 'antd';
+import { useModel } from '@umijs/max';
+import { Button, Input, Popconfirm, Popover, Select, Space, Tooltip, Typography, message } from 'antd';
 import { createStyles } from 'antd-style';
-import { clsx } from 'clsx';
 import dayjs from 'dayjs';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import '@ant-design/x-markdown/themes/light.css';
 import '@ant-design/x-markdown/themes/dark.css';
-import { BubbleListRef } from '@ant-design/x/es/bubble';
+import '@ant-design/x-markdown/themes/light.css';
+import {
+  chatPageApi,
+  type ChatMessage,
+  type ConversationItem,
+  type LoadChatMessagesResult,
+  type ModelOption,
+  type SendChatMessageResult,
+} from './api';
+import { useActionRequest } from '@/hooks/action/useActionRequest';
 import { useMarkdownTheme } from './utils';
-import locale from './locat';
 
-// ===== 实际接口 =====
-import { selectProvider } from '@/services/yuan/llmProviderController';
-import { selectEndpoint } from '@/services/yuan/llmEndpointController';
+const uid = (prefix = 'id') => `${prefix}_${Math.random().toString(16).slice(2)}_${Date.now()}`;
 
-
-// ✅ 你的后端 SSE URL（POST）
-const CHAT_URL = '/api/ai/chat';
-
-type Role = 'user' | 'assistant' | 'system';
-type MsgStatus = 'loading' | 'updating' | 'success' | 'error';
-
-type Msg = {
-  id: string;
-  message: {
-    role: Role;
-    content: string;
-    extraInfo?: any;
-  };
-  status: MsgStatus;
-};
-
-type OptionItem = {
-  label: string;
-  value: string;
-  raw?: any;
-};
-
-const uid = (p = 'm') => `${p}_${Math.random().toString(16).slice(2)}_${Date.now()}`;
-
-// =============== styles ===============
-const useStyle = createStyles(({ token, css }) => {
-  return {
-    layout: css`
-      width: 100%;
-      height: 100vh;
-      display: flex;
-      background: ${token.colorBgContainer};
-      overflow: hidden;
-    `,
-    side: css`
-      background: ${token.colorBgLayout};
-      width: 280px;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      padding: 0 12px;
-      box-sizing: border-box;
-    `,
-    logo: css`
-      display: flex;
-      align-items: center;
-      justify-content: start;
-      padding: 0 24px;
-      box-sizing: border-box;
-      gap: 8px;
-      margin: 24px 0;
-
-      span {
-        font-weight: bold;
-        color: ${token.colorText};
-        font-size: 16px;
-      }
-    `,
-    conversations: css`
-      overflow-y: auto;
-      margin-top: 12px;
-      padding: 0;
-      flex: 1;
-      .ant-conversations-list {
-        padding-inline-start: 0;
-      }
-    `,
-    chat: css`
-      height: 100%;
-      width: calc(100% - 240px);
-      overflow: auto;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      padding-block: ${token.paddingLG}px;
-      padding-inline: ${token.paddingLG}px;
-      gap: 16px;
-      .ant-bubble-content-updating {
-        background-image: linear-gradient(90deg, #ff6b23 0%, #af3cb8 31%, #53b6ff 89%);
-        background-size: 100% 2px;
-        background-repeat: no-repeat;
-        background-position: bottom;
-      }
-    `,
-    startPage: css`
-      display: flex;
-      width: 100%;
-      max-width: 840px;
-      flex-direction: column;
-      align-items: center;
-      height: 100%;
-    `,
-    agentName: css`
-      margin-block-start: 25%;
-      font-size: 32px;
-      margin-block-end: 38px;
-      font-weight: 600;
-    `,
-    chatList: css`
-      display: flex;
-      align-items: center;
-      width: 100%;
-      height: 100%;
-      flex-direction: column;
-      justify-content: space-between;
-    `,
-  };
-});
-
-const DEFAULT_CONVERSATIONS_ITEMS = [
-  { key: 'default-0', label: locale.whatIsAntDesignX, group: locale.today },
-];
-
-type Conv = { key: string; label: string; group?: string };
-const groupBy = (items: Conv[]) => items;
-
-const slotConfig: SenderProps['slotConfig'] = [
-  { type: 'text', value: locale.slotTextStart },
-  {
-    type: 'select',
-    key: 'destination',
-    props: {
-      defaultValue: 'Chat',
-      options: ['Chat'],
-    },
-  },
-  { type: 'text', value: locale.slotTextEnd },
-];
-
-const ChatContext = React.createContext<{ onRetry?: (assistantId: string) => void }>({});
-
-const Footer: React.FC<{ id?: string; content: string; status?: string }> = ({
-  id,
-  content,
-  status,
-}) => {
-  const context = React.useContext(ChatContext);
-  const items = [
-    {
-      key: 'retry',
-      label: locale.retry,
-      icon: <SyncOutlined />,
-      onItemClick: () => id && context?.onRetry?.(id),
-    },
-    { key: 'copy', actionRender: <Actions.Copy text={content} /> },
-  ];
-  return status !== 'updating' && status !== 'loading' ? (
-    <div style={{ display: 'flex' }}>{id && <Actions items={items} />}</div>
-  ) : null;
-};
-
-const getRole = (className: string): BubbleListProps['role'] => ({
-  assistant: {
-    placement: 'start',
-    footer: (content, { status, key }) => <Footer content={content} status={status} id={key as string} />,
-    contentRender: (content: any, { status }) => {
-      const newContent = String(content ?? '').replace(/\n\n/g, '<br/><br/>');
-      return (
-        <XMarkdown
-          paragraphTag="div"
-          className={className}
-          streaming={{
-            hasNextChunk: status === 'updating',
-            enableAnimation: true,
-          }}
-        >
-          {newContent}
-        </XMarkdown>
-      );
-    },
-  },
-  user: { placement: 'end' },
-});
-
-// ==================== SSE(POST) 解析 ====================
-type SseEvent = { event: string; data: string };
-
-function parseSse(buffer: string): { events: SseEvent[]; rest: string } {
-  const parts = buffer.split('\n\n');
-  const rest = parts.pop() ?? '';
-  const events: SseEvent[] = [];
-
-  for (const block of parts) {
-    const lines = block.split('\n').map((l) => l.trimEnd());
-    let eventName = 'message';
-    const dataLines: string[] = [];
-    for (const line of lines) {
-      if (line.startsWith('event:')) eventName = line.slice(6).trim();
-      if (line.startsWith('data:')) dataLines.push(line.slice(5).trimStart());
-    }
-    events.push({ event: eventName, data: dataLines.join('\n') });
+const makeConversationTitle = (input: string) => {
+  const trimmed = input.trim().replace(/\s+/g, ' ');
+  if (!trimmed) {
+    return '新对话';
   }
-  return { events, rest };
-}
+  return trimmed.length > 18 ? `${trimmed.slice(0, 18)}...` : trimmed;
+};
 
-// ==================== 请求体 ====================
-function buildChatBody(args: {
-  tenantId: string;
-  traceId: string;
-  stream: boolean;
-  enableThinking: boolean;
+const getPreview = (content: string) => {
+  const trimmed = content.trim().replace(/\s+/g, ' ');
+  return trimmed.length > 32 ? `${trimmed.slice(0, 32)}...` : trimmed;
+};
 
-  providerCode?: string;
-  endpointKey?: string;
-  modelId?: string;
+const formatRelativeGroup = (value: string) => {
+  const date = dayjs(value);
+  if (date.isSame(dayjs(), 'day')) {
+    return '今天';
+  }
+  if (dayjs().diff(date, 'day') < 7) {
+    return '最近 7 天';
+  }
+  return '更早';
+};
 
-  conversationId: string;
-  assistantMsgId: string;
+const createDraftConversation = (model = ''): ConversationItem => ({
+  id: uid('conv'),
+  title: '新对话',
+  preview: '开始一段新的对话',
+  model,
+  updatedAt: dayjs().toISOString(),
+  messages: [],
+  isDraft: true,
+});
 
-  systemPrompt?: string;
-  history: { role: Role; content: string }[];
-  prompt: string;
-}) {
-  return {
-    tenantId: args.tenantId,
-    traceId: args.traceId,
-    stream: args.stream,
-    enableThinking: args.enableThinking,
+const isLastAssistantMessage = (item: ChatMessage, index: number, messages: ChatMessage[]) =>
+  index === messages.length - 1 && item.role === 'assistant';
 
-    providerCode: args.providerCode,
-    endpointKey: args.endpointKey,
-    modelId: args.modelId,
+const findLastUserIndex = (messages: ChatMessage[]) => {
+  for (let index = messages.length - 1; index >= 0; index -= 1) {
+    if (messages[index].role === 'user') {
+      return index;
+    }
+  }
+  return -1;
+};
 
-    conversationId: args.conversationId,
-    assistantMsgId: args.assistantMsgId,
+const isPersistedConversationId = (value?: string) => Boolean(value && /^\d+$/.test(value));
 
-    systemPrompt: args.systemPrompt ?? '',
-    messages: args.history,
-    prompt: args.prompt,
-  };
-}
+type ConversationPaging = {
+  pageNum: number;
+  pageSize: number;
+  total: number;
+  hasMore: boolean;
+};
 
-const App = () => {
-  const [className] = useMarkdownTheme();
-  const senderRef = useRef<GetRef<typeof Sender>>(null);
-  const listRef = useRef<BubbleListRef>(null);
+const useStyle = createStyles(({ token, css }) => ({
+  page: css`
+    display: flex;
+    height: calc(100vh - 112px);
+    min-height: 720px;
+    overflow: hidden;
+    border: 1px solid ${token.colorBorderSecondary};
+    border-radius: 24px;
+    background:
+      radial-gradient(circle at top left, rgba(24, 144, 255, 0.08), transparent 24%),
+      linear-gradient(180deg, #fafafa 0%, #f3f5f7 100%);
+    box-shadow: 0 20px 80px rgba(15, 23, 42, 0.08);
+  `,
+  sidebar: css`
+    width: 280px;
+    padding: 18px 14px;
+    border-right: 1px solid ${token.colorBorderSecondary};
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(14px);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  `,
+  brand: css`
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 8px 0;
+  `,
+  brandIcon: css`
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #111827 0%, #374151 100%);
+    color: #fff;
+    font-size: 18px;
+  `,
+  sidebarBody: css`
+    flex: 1;
+    overflow: auto;
+    padding-right: 2px;
+  `,
+  groupTitle: css`
+    margin: 16px 8px 8px;
+    color: ${token.colorTextDescription};
+    font-size: 12px;
+  `,
+  conversationList: css`
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  `,
+  conversationItem: css`
+    width: 100%;
+    border: none;
+    text-align: left;
+    padding: 12px;
+    border-radius: 16px;
+    cursor: pointer;
+    background: transparent;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(15, 23, 42, 0.05);
+    }
+
+    &[data-active='true'] {
+      background: #ffffff;
+      box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.06);
+    }
+  `,
+  conversationTitle: css`
+    color: ${token.colorText};
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 4px;
+  `,
+  conversationPreview: css`
+    color: ${token.colorTextDescription};
+    font-size: 12px;
+    line-height: 1.4;
+  `,
+  conversationMain: css`
+    flex: 1;
+    min-width: 0;
+  `,
+  conversationAction: css`
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+
+    button {
+      color: ${token.colorTextDescription};
+    }
+
+    [data-active='true'] &,
+    button:hover & {
+      opacity: 1;
+    }
+  `,
+  main: css`
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    background: rgba(248, 250, 252, 0.76);
+    backdrop-filter: blur(10px);
+  `,
+  header: css`
+    padding: 18px 24px;
+    border-bottom: 1px solid ${token.colorBorderSecondary};
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.72);
+  `,
+  headerMeta: css`
+    min-width: 0;
+  `,
+  conversationEditRow: css`
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  `,
+  messageScroll: css`
+    flex: 1;
+    overflow: auto;
+    padding: 0 24px;
+  `,
+  messageInner: css`
+    width: min(100%, 880px);
+    margin: 0 auto;
+    padding: 24px 0 16px;
+  `,
+  welcome: css`
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 20px;
+    padding: 24px 0 48px;
+  `,
+  welcomeTitle: css`
+    font-size: clamp(28px, 3vw, 40px);
+    font-weight: 700;
+    color: #111827;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  `,
+  welcomeDesc: css`
+    max-width: 640px;
+    color: ${token.colorTextDescription};
+    font-size: 15px;
+    line-height: 1.7;
+  `,
+  loadMoreWrap: css`
+    display: flex;
+    justify-content: center;
+    padding-bottom: 18px;
+  `,
+  messageRow: css`
+    display: flex;
+    margin-bottom: 14px;
+
+    &[data-role='user'] {
+      justify-content: flex-end;
+    }
+  `,
+  assistantShell: css`
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+  `,
+  userShell: css`
+    max-width: min(100%, 720px);
+    display: flex;
+    justify-content: flex-end;
+  `,
+  assistantContent: css`
+    flex: 1;
+    min-width: 0;
+  `,
+  userBubble: css`
+    padding: 14px 16px;
+    border-radius: 22px;
+    background: #ffffff;
+    color: ${token.colorText};
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    line-height: 1.75;
+    white-space: pre-wrap;
+  `,
+  assistantBubble: css`
+    padding: 2px 2px 0;
+    color: ${token.colorText};
+    line-height: 1.75;
+  `,
+  assistantToolbar: css`
+    margin-top: 10px;
+  `,
+  userToolbar: css`
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  `,
+  userMessageWrap: css`
+    &:hover .user-toolbar {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  `,
+  markdown: css`
+    color: inherit;
+
+    p {
+      margin: 0 0 10px;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+
+    pre {
+      border-radius: 14px;
+    }
+  `,
+  thinking: css`
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: ${token.colorTextDescription};
+    font-size: 13px;
+
+    span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulse 1.2s infinite ease-in-out;
+    }
+
+    span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes pulse {
+      0%,
+      80%,
+      100% {
+        transform: scale(0.7);
+        opacity: 0.55;
+      }
+
+      40% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+  `,
+  composerOuter: css`
+    padding: 18px 24px 24px;
+    border-top: 1px solid ${token.colorBorderSecondary};
+    background:
+      linear-gradient(180deg, rgba(248, 250, 252, 0.4) 0%, rgba(255, 255, 255, 0.92) 100%);
+  `,
+  composerInner: css`
+    width: min(100%, 880px);
+    margin: 0 auto;
+  `,
+  composerPanel: css`
+    border-radius: 24px;
+    padding: 14px;
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 16px 44px rgba(15, 23, 42, 0.08);
+  `,
+  composerFooter: css`
+    margin-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+
+    @media (max-width: 900px) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  `,
+  composerHint: css`
+    color: ${token.colorTextDescription};
+    font-size: 12px;
+  `,
+  composerControls: css`
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  `,
+}));
+
+const ChatPage: React.FC = () => {
   const { styles } = useStyle();
-  const [messageApi, contextHolder] = antdMessage.useMessage();
+  const initialDraftRef = useRef<ConversationItem>(createDraftConversation());
+  const { initialState } = useModel('@@initialState');
+  const [markdownClassName] = useMarkdownTheme();
+  const [modelOptions, setModelOptions] = useState<ModelOption[]>([]);
+  const [conversations, setConversations] = useState<ConversationItem[]>([initialDraftRef.current]);
+  const [activeConversationId, setActiveConversationId] = useState(initialDraftRef.current.id);
+  const [inputValue, setInputValue] = useState('');
+  const [pendingAssistantId, setPendingAssistantId] = useState<string>();
+  const [loadingModels, setLoadingModels] = useState(true);
+  const [loadingConversations, setLoadingConversations] = useState(true);
+  const [loadingMessages, setLoadingMessages] = useState(false);
+  const [loadingMoreMessages, setLoadingMoreMessages] = useState(false);
+  const [editingConversationId, setEditingConversationId] = useState<string>();
+  const [titleInputValue, setTitleInputValue] = useState('');
+  const [openConversationMenuId, setOpenConversationMenuId] = useState<string>();
+  const [conversationPagingMap, setConversationPagingMap] = useState<Record<string, ConversationPaging>>({});
+  const bottomRef = useRef<HTMLDivElement>(null);
 
-  // ===== 真实 provider / endpoint / model =====
-  const [providerOptions, setProviderOptions] = useState<OptionItem[]>([]);
-  const [endpointOptions, setEndpointOptions] = useState<OptionItem[]>([]);
-  const [modelOptions, setModelOptions] = useState<OptionItem[]>([]);
+  const runtimeContext = useMemo(
+    () => ({
+      tenantId: initialState?.currentUser?.user?.tenantId ?? '',
+      userId: initialState?.currentUser?.user?.userId ?? '',
+    }),
+    [initialState?.currentUser?.user?.tenantId, initialState?.currentUser?.user?.userId],
+  );
 
-  const [providerCode, setProviderCode] = useState<string>();
-  const [endpointKey, setEndpointKey] = useState<string>();
-  const [modelId, setModelId] = useState<string>();
+  const defaultModel = modelOptions[0]?.value ?? '';
 
-  const [providerLoading, setProviderLoading] = useState(false);
-  const [endpointLoading, setEndpointLoading] = useState(false);
-  const [modelLoading, setModelLoading] = useState(false);
+  const sortedConversations = useMemo(() => {
+    return [...conversations].sort((a, b) => dayjs(b.updatedAt).valueOf() - dayjs(a.updatedAt).valueOf());
+  }, [conversations]);
 
-  // ===== 会话 =====
-  const [conversations, setConversations] = useState<Conv[]>(DEFAULT_CONVERSATIONS_ITEMS);
-  const [curConversation, setCurConversation] = useState<string>(DEFAULT_CONVERSATIONS_ITEMS[0].key);
+  const groupedConversations = useMemo(() => {
+    return sortedConversations.reduce<Record<string, ConversationItem[]>>((acc, item) => {
+      const group = formatRelativeGroup(item.updatedAt);
+      acc[group] = acc[group] ?? [];
+      acc[group].push(item);
+      return acc;
+    }, {});
+  }, [sortedConversations]);
 
-  const [messagesMap, setMessagesMap] = useState<Record<string, Msg[]>>({
-    [DEFAULT_CONVERSATIONS_ITEMS[0].key]: [],
-  });
+  const activeConversation = useMemo(() => {
+    return conversations.find((item) => item.id === activeConversationId) ?? conversations[0];
+  }, [activeConversationId, conversations]);
 
-  const messages = messagesMap[curConversation] ?? [];
-  const retryMapRef = useRef<Record<string, { prompt: string; snapshot: Msg[] }>>({});
-  const abortRef = useRef<AbortController | null>(null);
-  const [isRequesting, setIsRequesting] = useState(false);
-  const [deepThink, setDeepThink] = useState<boolean>(false);
+  const currentMessages = activeConversation?.messages ?? [];
+  const currentPaging = activeConversation ? conversationPagingMap[activeConversation.id] : undefined;
+  const isResponding = currentMessages.some(
+    (item) => item.id === pendingAssistantId && item.status === 'streaming',
+  );
+  const { runAsync: renameConversationRun, loading: renameConversationLoading } = useActionRequest(
+    chatPageApi.renameConversation,
+    undefined
+  );
+  const { runAsync: deleteConversationRun, loading: deleteConversationLoading } = useActionRequest(
+    chatPageApi.deleteConversation,
+    undefined
+  );
 
-  useEffect(() => {
-    senderRef.current?.focus?.({ cursor: 'end' });
-  }, []);
-
-  // ===== 初始化加载 provider =====
-  useEffect(() => {
-    loadProviders();
-  }, []);
-
-  const loadProviders = async () => {
-    try {
-      setProviderLoading(true);
-      const res = await selectProvider();
-      const list = (res?.data ?? []).map((item: any) => ({
-        label: item.label ?? item.providerName ?? item.name,
-        value: item.value ?? item.providerCode ?? item.code,
-        raw: item,
-      }));
-      setProviderOptions(list);
-
-      if (list.length > 0) {
-        const firstProvider = list[0].value;
-        setProviderCode(firstProvider);
-      }
-    } catch (e) {
-      messageApi.error('加载供应商失败');
-    } finally {
-      setProviderLoading(false);
-    }
-  };
-
-  // ===== provider 切换 -> 加载 endpoint =====
-  useEffect(() => {
-    if (!providerCode) {
-      setEndpointOptions([]);
-      setEndpointKey(undefined);
-      setModelOptions([]);
-      setModelId(undefined);
-      return;
-    }
-    loadEndpoints(providerCode);
-  }, [providerCode]);
-
-  const loadEndpoints = async (providerCodeValue: string) => {
-    try {
-      setEndpointLoading(true);
-      setEndpointKey(undefined);
-      setEndpointOptions([]);
-      setModelOptions([]);
-      setModelId(undefined);
-
-      const res = await selectEndpoint({providerCode:providerCodeValue});
-      const list = (res?.data ?? []).map((item: any) => ({
-        label: item.label ?? item.endpointName ?? item.name,
-        value: item.value ?? item.endpointKey ?? item.key,
-        raw: item,
-      }));
-      setEndpointOptions(list);
-
-      if (list.length > 0) {
-        setEndpointKey(list[0].value);
-      }
-    } catch (e) {
-      messageApi.error('加载接入点失败');
-    } finally {
-      setEndpointLoading(false);
-    }
-  };
-
-  // ===== endpoint 切换 -> 加载 model =====
-  useEffect(() => {
-    if (!endpointKey) {
-      setModelOptions([]);
-      setModelId(undefined);
-      return;
-    }
-    loadModels(endpointKey);
-  }, [endpointKey]);
-
-  const loadModels = async (endpointKeyValue: string) => {
-    try {
-      setModelLoading(true);
-      setModelId(undefined);
-      setModelOptions([]);
-
-      const res = await selectModelByEndpointKey(endpointKeyValue);
-      const list = (res?.data ?? []).map((item: any) => ({
-        label: item.label ?? item.displayName ?? item.modelName,
-        value: item.value ?? String(item.id ?? item.modelId ?? item.modelName),
-        raw: item,
-      }));
-      setModelOptions(list);
-
-      if (list.length > 0) {
-        setModelId(list[0].value);
-      }
-    } catch (e) {
-      messageApi.error('加载模型失败');
-    } finally {
-      setModelLoading(false);
-    }
-  };
-
-  const setCurMessages = (updater: (prev: Msg[]) => Msg[]) => {
-    setMessagesMap((prev) => {
-      const list = prev[curConversation] ?? [];
-      return { ...prev, [curConversation]: updater(list) };
+  const mergeConversationState = (
+    nextItems: ConversationItem[],
+    previousItems: ConversationItem[],
+  ) => {
+    return nextItems.map((item) => {
+      const previous = previousItems.find((candidate) => candidate.id === item.id);
+      return previous
+        ? {
+            ...item,
+            model: previous.model || item.model,
+            preview: item.preview || previous.preview,
+            messages: previous.messages.length ? previous.messages : item.messages,
+          }
+        : item;
     });
   };
 
-  const abort = () => {
-    abortRef.current?.abort();
-    abortRef.current = null;
-    setIsRequesting(false);
-  };
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [activeConversationId, currentMessages]);
 
-  const scrollToBottom = () => listRef.current?.scrollTo?.({ top: 'bottom' });
+  useEffect(() => {
+    setEditingConversationId(undefined);
+    setTitleInputValue(activeConversation?.title ?? '');
+  }, [activeConversation?.id, activeConversation?.title]);
 
-  const runChat = async (prompt: string, baseHistory?: Msg[]) => {
-    if (isRequesting) return;
-    if (!prompt?.trim()) return;
+  useEffect(() => {
+    let cancelled = false;
 
-    if (!providerCode) {
-      messageApi.warning('请先选择供应商');
-      return;
-    }
-    if (!endpointKey) {
-      messageApi.warning('请先选择接入点');
-      return;
-    }
-    if (!modelId) {
-      messageApi.warning('请先选择模型');
-      return;
-    }
-
-    setIsRequesting(true);
-
-    const userId = uid('u');
-    const asstId = uid('a');
-    const historyMsgs = baseHistory ?? messages;
-
-    const nextList: Msg[] = [
-      ...historyMsgs,
-      { id: userId, message: { role: 'user', content: prompt }, status: 'success' },
-      { id: asstId, message: { role: 'assistant', content: '' }, status: 'loading' },
-    ];
-    setMessagesMap((prev) => ({ ...prev, [curConversation]: nextList }));
-    retryMapRef.current[asstId] = { prompt, snapshot: historyMsgs };
-
-    const ac = new AbortController();
-    abortRef.current = ac;
-
-    try {
-      const body = buildChatBody({
-        tenantId: 'T1',
-        traceId: uid('trace'),
-        stream: true,
-        enableThinking: deepThink,
-
-        providerCode,
-        endpointKey,
-        modelId,
-
-        conversationId: curConversation,
-        assistantMsgId: asstId,
-
-        systemPrompt: '',
-        history: historyMsgs.map((m) => ({
-          role: m.message.role,
-          content: m.message.content,
-        })),
-        prompt,
-      });
-
-      const resp = await fetch(CHAT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-        signal: ac.signal,
-      });
-
-      if (!resp.ok || !resp.body) {
-        throw new Error(`HTTP ${resp.status} ${resp.statusText}`);
+    const initializePage = async () => {
+      if (!runtimeContext.tenantId || !runtimeContext.userId) {
+        return;
       }
 
-      const reader = resp.body.getReader();
-      const decoder = new TextDecoder('utf-8');
-      let buffer = '';
-      let started = false;
+      setLoadingModels(true);
+      setLoadingConversations(true);
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
+      try {
+        const remoteModels = await chatPageApi.loadModels();
+        if (cancelled) {
+          return;
+        }
 
-        buffer += decoder.decode(value, { stream: true });
-        const parsed = parseSse(buffer);
-        buffer = parsed.rest;
+        setModelOptions(remoteModels);
+        const resolvedDefaultModel = remoteModels[0]?.value ?? '';
+        setConversations((prev) =>
+          prev.map((item) => ({
+            ...item,
+            model: item.model || resolvedDefaultModel,
+          })),
+        );
 
-        for (const ev of parsed.events) {
-          if (ev.event === 'delta') {
-            started = true;
-            const delta = ev.data ?? '';
-            if (!delta) continue;
+        const remoteConversations = await chatPageApi.loadConversations({
+          ...runtimeContext,
+          defaultModel: resolvedDefaultModel,
+        });
+        if (cancelled) {
+          return;
+        }
 
-            setCurMessages((prev) =>
-              prev.map((m) =>
-                m.id === asstId
-                  ? {
-                      ...m,
-                      status: 'updating',
-                      message: { ...m.message, content: (m.message.content ?? '') + delta },
-                    }
-                  : m,
-              ),
-            );
-            scrollToBottom();
-          } else if (ev.event === 'message') {
-            started = true;
-            setCurMessages((prev) =>
-              prev.map((m) =>
-                m.id === asstId
-                  ? {
-                      ...m,
-                      status: 'success',
-                      message: { ...m.message, content: ev.data ?? '' },
-                    }
-                  : m,
-              ),
-            );
-            scrollToBottom();
-          } else if (ev.event === 'error') {
-            setCurMessages((prev) =>
-              prev.map((m) =>
-                m.id === asstId
-                  ? {
-                      ...m,
-                      status: 'error',
-                      message: { ...m.message, content: ev.data || 'error' },
-                    }
-                  : m,
-              ),
-            );
-          } else if (ev.event === 'done') {
-            setCurMessages((prev) =>
-              prev.map((m) => (m.id === asstId ? { ...m, status: 'success' } : m)),
-            );
-          }
+        if (remoteConversations.length > 0) {
+          setConversations((prev) => mergeConversationState(remoteConversations, prev));
+          setActiveConversationId((prev) =>
+            remoteConversations.some((item) => item.id === prev)
+              ? prev
+              : remoteConversations[0]?.id,
+          );
+          return;
+        }
+
+        const draftConversation = createDraftConversation(resolvedDefaultModel);
+        setConversations([draftConversation]);
+        setActiveConversationId(draftConversation.id);
+      } catch (_error) {
+        if (cancelled) {
+          return;
+        }
+        message.error('聊天页面初始化失败');
+      } finally {
+        if (!cancelled) {
+          setLoadingModels(false);
+          setLoadingConversations(false);
         }
       }
+    };
 
-      if (started) {
-        setCurMessages((prev) =>
-          prev.map((m) =>
-            m.id === asstId && m.status === 'updating' ? { ...m, status: 'success' } : m,
-          ),
-        );
-      } else {
-        setCurMessages((prev) =>
-          prev.map((m) =>
-            m.id === asstId
-              ? {
-                  ...m,
-                  status: 'error',
-                  message: { ...m.message, content: locale.noData },
-                }
-              : m,
-          ),
-        );
-      }
-    } catch (e: any) {
-      if (e?.name === 'AbortError') {
-        setCurMessages((prev) =>
-          prev.map((m) => (m.id === asstId ? { ...m, status: 'success' } : m)),
-        );
-      } else {
-        setCurMessages((prev) =>
-          prev.map((m) =>
-            m.id === asstId
-              ? {
-                  ...m,
-                  status: 'error',
-                  message: { ...m.message, content: e?.message ?? locale.requestFailed },
-                }
-              : m,
-          ),
-        );
-      }
-    } finally {
-      abortRef.current = null;
-      setIsRequesting(false);
-    }
+    void initializePage();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [runtimeContext.tenantId, runtimeContext.userId]);
+
+  const updateConversation = (conversationId: string, updater: (item: ConversationItem) => ConversationItem) => {
+    setConversations((prev) =>
+      prev.map((item) => (item.id === conversationId ? updater(item) : item)),
+    );
   };
 
-  const onRetry = async (assistantId: string) => {
-    const info = retryMapRef.current[assistantId];
-    if (!info) {
-      messageApi.warning('找不到可重试的信息');
-      return;
-    }
-    abort();
-    await runChat(info.prompt, info.snapshot);
+  const updateConversationPaging = (conversationId: string, paging: ConversationPaging) => {
+    setConversationPagingMap((prev) => ({
+      ...prev,
+      [conversationId]: paging,
+    }));
   };
+
+  const mergeMessagesById = (messages: ChatMessage[]) => {
+    const map = new Map<string, ChatMessage>();
+    for (const item of messages) {
+      map.set(item.id, item);
+    }
+    return [...map.values()].sort((left, right) => dayjs(left.createdAt).valueOf() - dayjs(right.createdAt).valueOf());
+  };
+
+  const applyLoadedMessages = (
+    conversationId: string,
+    result: LoadChatMessagesResult,
+    mode: 'replace' | 'prepend' = 'replace',
+  ) => {
+    updateConversation(conversationId, (item) => ({
+      ...item,
+      messages:
+        mode === 'replace'
+          ? result.messages
+          : mergeMessagesById([...result.messages, ...item.messages]),
+      preview: getPreview(
+        (mode === 'replace'
+          ? result.messages[result.messages.length - 1]?.content
+          : item.messages[item.messages.length - 1]?.content) || item.preview,
+      ) || item.preview,
+    }));
+
+    updateConversationPaging(conversationId, {
+      pageNum: result.pageNum,
+      pageSize: result.pageSize,
+      total: result.total,
+      hasMore: result.hasMore,
+    });
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadActiveMessages = async () => {
+      if (!activeConversation || activeConversation.isDraft) {
+        return;
+      }
+      if (!isPersistedConversationId(activeConversation.id)) {
+        return;
+      }
+      if (!runtimeContext.tenantId || !runtimeContext.userId) {
+        return;
+      }
+
+      setLoadingMessages(true);
+      try {
+        const remoteMessages = await chatPageApi.loadMessages({
+          ...runtimeContext,
+          conversationId: activeConversation.id,
+        });
+        if (cancelled) {
+          return;
+        }
+
+        applyLoadedMessages(activeConversation.id, remoteMessages);
+      } catch (_error) {
+        if (!cancelled) {
+          message.error('消息列表加载失败');
+        }
+      } finally {
+        if (!cancelled) {
+          setLoadingMessages(false);
+        }
+      }
+    };
+
+    void loadActiveMessages();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeConversation?.id, activeConversation?.isDraft, runtimeContext.tenantId, runtimeContext.userId]);
 
   const createConversation = () => {
-    if ((messagesMap[curConversation] ?? []).length === 0) {
-      messageApi.error(locale.itIsNowANewConversation);
-      return;
-    }
-    const nowKey = dayjs().valueOf().toString();
-    const newConv: Conv = {
-      key: nowKey,
-      label: `新会话 ${conversations.length + 1}`,
-      group: locale.today,
-    };
-    setConversations((prev) => [newConv, ...prev]);
-    setMessagesMap((prev) => ({ ...prev, [nowKey]: [] }));
-    setCurConversation(nowKey);
+    const nextConversation = createDraftConversation(activeConversation?.model ?? defaultModel);
+    setConversations((prev) => [nextConversation, ...prev]);
+    setActiveConversationId(nextConversation.id);
+    setInputValue('');
+    setPendingAssistantId(undefined);
   };
 
-  return (
-    <XProvider locale={locale}>
-      {contextHolder}
-      <ChatContext.Provider value={{ onRetry }}>
-        <div className={styles.layout}>
-          <div className={styles.side}>
-            <div className={styles.logo}>
-              <img
-                src="https://mdn.alipayobjects.com/huamei_iwk9zp/afts/img/A*eco6RrQhxbMAAAAAAAAAAAAADgCCAQ/original"
-                draggable={false}
-                alt="logo"
-                width={24}
-                height={24}
-              />
-              <span>AI Chat</span>
-            </div>
+  const appendAssistantPlaceholder = (conversationId: string, regenerate = false) => {
+    const assistantId = uid('assistant');
 
-            <Conversations
-              creation={{ onClick: createConversation }}
-              items={groupBy(conversations)}
-              className={styles.conversations}
-              activeKey={curConversation}
-              onActiveChange={(val) => setCurConversation(val)}
-              groupable
-              styles={{ item: { padding: '0 8px' } }}
-              menu={(conversation) => ({
-                items: [
-                  {
-                    label: locale.delete,
-                    key: 'delete',
-                    icon: <DeleteOutlined />,
-                    danger: true,
-                    onClick: () => {
-                      const newList = conversations.filter((item) => item.key !== conversation.key);
-                      const newKey = newList?.[0]?.key;
-                      setConversations(newList);
-                      setMessagesMap((prev) => {
-                        const copy = { ...prev };
-                        delete copy[conversation.key];
-                        return copy;
-                      });
-                      if (conversation.key === curConversation && newKey) {
-                        setCurConversation(newKey);
-                      }
-                    },
-                  },
-                ],
-              })}
-            />
+    updateConversation(conversationId, (item) => {
+      const nextMessages = regenerate
+        ? item.messages.filter((messageItem, index, messages) => !isLastAssistantMessage(messageItem, index, messages))
+        : item.messages;
+
+      return {
+        ...item,
+        updatedAt: dayjs().toISOString(),
+        preview: '等待回复...',
+        messages: [
+          ...nextMessages,
+          {
+            id: assistantId,
+            role: 'assistant',
+            content: '',
+            status: 'streaming',
+            createdAt: dayjs().toISOString(),
+          },
+        ],
+      };
+    });
+
+    setPendingAssistantId(assistantId);
+    return assistantId;
+  };
+
+  const updateAssistantPlaceholder = (conversationId: string, assistantId: string, content: string) => {
+    updateConversation(conversationId, (item) => ({
+      ...item,
+      updatedAt: dayjs().toISOString(),
+      preview: getPreview(content) || item.preview,
+      messages: item.messages.map((messageItem) =>
+        messageItem.id === assistantId
+          ? {
+              ...messageItem,
+              content,
+              status: 'streaming',
+            }
+          : messageItem,
+      ),
+    }));
+  };
+
+  const applyAssistantResult = (
+    sourceConversationId: string,
+    assistantId: string,
+    result: SendChatMessageResult,
+  ) => {
+    const persistedConversationId = isPersistedConversationId(result.conversationId)
+      ? result.conversationId
+      : undefined;
+    const nextConversationId = persistedConversationId ?? sourceConversationId;
+
+    setConversations((prev) =>
+      prev.map((item) => {
+        if (item.id !== sourceConversationId) {
+          return item;
+        }
+
+        const assistantMessage = {
+          ...result.assistantMessage,
+          status: 'done' as const,
+        };
+
+        return {
+          ...item,
+          id: nextConversationId,
+          isDraft: !!(!persistedConversationId && item.isDraft),
+          title: result.title ?? item.title,
+          preview: result.preview ?? getPreview(assistantMessage.content),
+          updatedAt: assistantMessage.createdAt || dayjs().toISOString(),
+          messages: item.messages.map((messageItem) =>
+            messageItem.id === assistantId ? assistantMessage : messageItem,
+          ),
+        };
+      }),
+    );
+
+    if (persistedConversationId || !conversations.find((item) => item.id === sourceConversationId)?.isDraft) {
+      setActiveConversationId(nextConversationId);
+    }
+    setPendingAssistantId(undefined);
+  };
+
+  const refreshConversationData = async (preferredConversationId?: string, preferredModel?: string) => {
+    if (!runtimeContext.tenantId || !runtimeContext.userId) {
+      return;
+    }
+
+    const remoteConversations = await chatPageApi.loadConversations({
+      ...runtimeContext,
+      defaultModel: preferredModel ?? defaultModel,
+    });
+
+    if (remoteConversations.length === 0) {
+      const draftConversation = createDraftConversation(preferredModel ?? defaultModel);
+      setConversations([draftConversation]);
+      setActiveConversationId(draftConversation.id);
+      return;
+    }
+
+    const nextActiveId =
+      preferredConversationId && remoteConversations.some((item) => item.id === preferredConversationId)
+        ? preferredConversationId
+        : remoteConversations[0].id;
+
+    setConversations((prev) => mergeConversationState(remoteConversations, prev));
+    setActiveConversationId(nextActiveId);
+
+    const remoteMessages = await chatPageApi.loadMessages({
+      ...runtimeContext,
+      conversationId: nextActiveId,
+    });
+
+    setConversations((prev) =>
+      prev.map((item) =>
+        item.id === nextActiveId
+          ? {
+              ...item,
+              model: item.model || preferredModel || defaultModel,
+            }
+          : item,
+      ),
+    );
+    applyLoadedMessages(nextActiveId, remoteMessages);
+  };
+
+  const removeAssistantPlaceholder = (conversationId: string, assistantId: string) => {
+    updateConversation(conversationId, (item) => ({
+      ...item,
+      preview:
+        getPreview(
+          item.messages.filter((messageItem) => messageItem.id !== assistantId).slice(-1)[0]?.content,
+        ) || item.preview,
+      messages: item.messages.filter((messageItem) => messageItem.id !== assistantId),
+    }));
+    setPendingAssistantId(undefined);
+  };
+
+  const handleSend = async (rawValue?: string) => {
+    const content = (rawValue ?? inputValue).trim();
+    if (!content || !activeConversation) {
+      return;
+    }
+
+    if (isResponding) {
+      message.warning('上一条回复还未完成');
+      return;
+    }
+    if (!runtimeContext.tenantId || !runtimeContext.userId) {
+      message.warning('当前用户信息未加载完成');
+      return;
+    }
+    if (!activeConversation.model) {
+      message.warning('请先选择模型');
+      return;
+    }
+
+    const nextUserMessage: ChatMessage = {
+      id: uid('user'),
+      role: 'user',
+      content,
+      createdAt: dayjs().toISOString(),
+    };
+
+    updateConversation(activeConversation.id, (item) => {
+      const isNewConversation = item.messages.length === 0;
+      return {
+        ...item,
+        title: isNewConversation ? makeConversationTitle(content) : item.title,
+        preview: getPreview(content),
+        updatedAt: dayjs().toISOString(),
+        messages: [...item.messages, nextUserMessage],
+      };
+    });
+
+    setInputValue('');
+    const assistantId = appendAssistantPlaceholder(activeConversation.id);
+
+    try {
+      const result = await chatPageApi.sendMessage({
+        ...runtimeContext,
+        conversationId: activeConversation.isDraft ? undefined : activeConversation.id,
+        model: activeConversation.model,
+        content,
+        messages: currentMessages,
+        onDelta: (deltaText) => {
+          updateAssistantPlaceholder(activeConversation.id, assistantId, deltaText);
+        },
+      });
+      applyAssistantResult(activeConversation.id, assistantId, result);
+      await refreshConversationData(result.conversationId ?? (activeConversation.isDraft ? undefined : activeConversation.id), activeConversation.model);
+    } catch (_error) {
+      removeAssistantPlaceholder(activeConversation.id, assistantId);
+      message.error('发送失败，请检查聊天接口或服务状态');
+    }
+  };
+
+  const handleRegenerate = async () => {
+    if (!activeConversation || isResponding) {
+      return;
+    }
+
+    const lastUserMessage = [...activeConversation.messages].reverse().find((item) => item.role === 'user');
+    if (!lastUserMessage) {
+      message.info('当前没有可重试的消息');
+      return;
+    }
+    if (!runtimeContext.tenantId || !runtimeContext.userId) {
+      message.warning('当前用户信息未加载完成');
+      return;
+    }
+
+    const assistantId = appendAssistantPlaceholder(activeConversation.id, true);
+    const lastUserIndex = findLastUserIndex(activeConversation.messages);
+    const requestMessages =
+      lastUserIndex >= 0 ? activeConversation.messages.slice(0, lastUserIndex) : activeConversation.messages;
+
+    try {
+      const result = await chatPageApi.sendMessage({
+        ...runtimeContext,
+        conversationId: activeConversation.isDraft ? undefined : activeConversation.id,
+        model: activeConversation.model,
+        content: lastUserMessage.content,
+        messages: requestMessages,
+        regenerate: true,
+        onDelta: (deltaText) => {
+          updateAssistantPlaceholder(activeConversation.id, assistantId, deltaText);
+        },
+      });
+      applyAssistantResult(activeConversation.id, assistantId, result);
+      await refreshConversationData(result.conversationId ?? (activeConversation.isDraft ? undefined : activeConversation.id), activeConversation.model);
+    } catch (_error) {
+      removeAssistantPlaceholder(activeConversation.id, assistantId);
+      message.error('重新生成失败，请检查聊天接口或服务状态');
+    }
+  };
+
+  const handleCopy = async (content: string) => {
+    try {
+      await navigator.clipboard.writeText(content);
+      message.success('已复制消息内容');
+    } catch (_error) {
+      message.error('复制失败，请手动复制');
+    }
+  };
+
+  const handleStartConversationRename = (conversation: ConversationItem) => {
+    setOpenConversationMenuId(undefined);
+    setTitleInputValue(conversation.title);
+    setEditingConversationId(conversation.id);
+  };
+
+  const handleSaveRename = async () => {
+    const targetConversation = conversations.find((item) => item.id === editingConversationId);
+    if (!targetConversation) {
+      return;
+    }
+
+    const nextTitle = titleInputValue.trim();
+    if (!nextTitle) {
+      message.warning('标题不能为空');
+      return;
+    }
+
+    if (targetConversation.isDraft) {
+      updateConversation(targetConversation.id, (item) => ({
+        ...item,
+        title: nextTitle,
+      }));
+      setEditingConversationId(undefined);
+      return;
+    }
+
+    try {
+      await renameConversationRun({
+        ...runtimeContext,
+        conversationId: targetConversation.id,
+        title: nextTitle,
+      });
+      updateConversation(targetConversation.id, (item) => ({
+        ...item,
+        title: nextTitle,
+      }));
+      setEditingConversationId(undefined);
+    } catch (_error) {
+      return;
+    }
+  };
+
+  const removeConversationLocally = (conversationId: string) => {
+    const remaining = conversations.filter((item) => item.id !== conversationId);
+    setConversations(remaining.length ? remaining : [createDraftConversation(defaultModel)]);
+    setConversationPagingMap((prev) => {
+      const next = { ...prev };
+      delete next[conversationId];
+      return next;
+    });
+
+    if (activeConversationId === conversationId) {
+      const nextActiveId = remaining[0]?.id;
+      if (nextActiveId) {
+        setActiveConversationId(nextActiveId);
+      } else {
+        const draftConversation = createDraftConversation(defaultModel);
+        setConversations([draftConversation]);
+        setActiveConversationId(draftConversation.id);
+      }
+    }
+  };
+
+  const handleDeleteConversation = async (conversation: ConversationItem) => {
+    if (conversation.isDraft) {
+      removeConversationLocally(conversation.id);
+      return;
+    }
+
+    try {
+      await deleteConversationRun(conversation.id);
+      removeConversationLocally(conversation.id);
+    } catch (_error) {
+      return;
+    }
+  };
+
+  const handleLoadMoreMessages = async () => {
+    if (!activeConversation || activeConversation.isDraft || !isPersistedConversationId(activeConversation.id)) {
+      return;
+    }
+    if (!currentPaging?.hasMore || loadingMoreMessages) {
+      return;
+    }
+
+    setLoadingMoreMessages(true);
+    try {
+      const result = await chatPageApi.loadMessages({
+        ...runtimeContext,
+        conversationId: activeConversation.id,
+        pageNum: currentPaging.pageNum + 1,
+        pageSize: currentPaging.pageSize,
+      });
+      applyLoadedMessages(activeConversation.id, result, 'prepend');
+    } catch (_error) {
+      message.error('加载更多消息失败');
+    } finally {
+      setLoadingMoreMessages(false);
+    }
+  };
+
+  const shouldShowWelcome = currentMessages.length === 0;
+
+  return (
+    <div className={styles.page}>
+      <aside className={styles.sidebar}>
+        <div className={styles.brand}>
+          <div className={styles.brandIcon}>
+            <RobotOutlined />
+          </div>
+          <div>
+            <Typography.Text strong>AI Chat</Typography.Text>
+            <div style={{ color: 'rgba(0, 0, 0, 0.45)', fontSize: 12 }}>Assistant Workspace</div>
+          </div>
+        </div>
+
+        <Button block type="primary" icon={<PlusOutlined />} size="large" onClick={createConversation}>
+          新建聊天
+        </Button>
+
+        <div className={styles.sidebarBody}>
+          {Object.entries(groupedConversations).map(([group, items]) => (
+            <div key={group}>
+              <div className={styles.groupTitle}>{group}</div>
+              <div className={styles.conversationList}>
+                {items.map((item) => (
+                  <button
+                    key={item.id}
+                    className={styles.conversationItem}
+                    data-active={item.id === activeConversationId}
+                    onClick={() => setActiveConversationId(item.id)}
+                    type="button"
+                  >
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                      <div className={styles.conversationMain}>
+                        {editingConversationId === item.id ? (
+                          <div
+                            className={styles.conversationEditRow}
+                            onClick={(event) => event.stopPropagation()}
+                          >
+                            <Input
+                              size="small"
+                              value={titleInputValue}
+                              onChange={(event) => setTitleInputValue(event.target.value)}
+                              onPressEnter={() => void handleSaveRename()}
+                              disabled={renameConversationLoading}
+                            />
+                            <Tooltip title="保存">
+                              <Button
+                                type="text"
+                                size="small"
+                                icon={<EditOutlined />}
+                                loading={renameConversationLoading}
+                                onClick={() => void handleSaveRename()}
+                              />
+                            </Tooltip>
+                            <Tooltip title="取消">
+                              <Button
+                                type="text"
+                                size="small"
+                                icon={<DeleteOutlined rotate={45} />}
+                                disabled={renameConversationLoading}
+                                onClick={() => {
+                                  setEditingConversationId(undefined);
+                                  setTitleInputValue(activeConversation?.title ?? '');
+                                }}
+                              />
+                            </Tooltip>
+                          </div>
+                        ) : (
+                          <>
+                            <div className={styles.conversationTitle}>{item.title}</div>
+                            <div className={styles.conversationPreview}>{item.preview || '暂无内容'}</div>
+                          </>
+                        )}
+                      </div>
+                      <div className={styles.conversationAction} data-active={item.id === activeConversationId}>
+                        <Popover
+                          trigger="click"
+                          open={openConversationMenuId === item.id}
+                          onOpenChange={(open) => {
+                            setOpenConversationMenuId(open ? item.id : undefined);
+                          }}
+                          content={
+                            <Space size={4}>
+                              <Tooltip title="编辑">
+                                <Button
+                                  type="text"
+                                  size="small"
+                                  icon={<EditOutlined />}
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    handleStartConversationRename(item);
+                                  }}
+                                />
+                              </Tooltip>
+                              <Popconfirm
+                                title="删除这个会话？"
+                                okText="删除"
+                                cancelText="取消"
+                                onConfirm={() => void handleDeleteConversation(item)}
+                              >
+                                <Button
+                                  type="text"
+                                  size="small"
+                                  icon={<DeleteOutlined />}
+                                  loading={deleteConversationLoading && activeConversationId === item.id}
+                                  onClick={(event) => event.stopPropagation()}
+                                />
+                              </Popconfirm>
+                            </Space>
+                          }
+                        >
+                          <Button
+                            type="text"
+                            size="small"
+                            icon={<EllipsisOutlined />}
+                            onClick={(event) => event.stopPropagation()}
+                          />
+                        </Popover>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </aside>
+
+      <main className={styles.main}>
+        <header className={styles.header}>
+          <div className={styles.headerMeta}>
+            <Typography.Title level={4} style={{ margin: 0 }}>
+              {activeConversation?.title ?? '新对话'}
+            </Typography.Title>
           </div>
 
-          <div className={styles.chat}>
-            <div className={styles.chatList}>
-              <Flex style={{ width: '100%', maxWidth: 1120 }} justify="space-between" align="center">
-                <Space wrap>
-                  <Tag color="blue">Provider</Tag>
-                  <Select
-                    style={{ width: 180 }}
-                    value={providerCode}
-                    options={providerOptions}
-                    loading={providerLoading}
-                    placeholder="请选择供应商"
-                    onChange={(val) => setProviderCode(val)}
-                  />
+          <Space wrap />
+        </header>
 
-                  <Tag color="geekblue">Endpoint</Tag>
-                  <Select
-                    style={{ width: 220 }}
-                    value={endpointKey}
-                    options={endpointOptions}
-                    loading={endpointLoading}
-                    placeholder="请选择接入点"
-                    disabled={!providerCode}
-                    onChange={(val) => setEndpointKey(val)}
-                  />
+        <div className={styles.messageScroll}>
+          <div className={styles.messageInner}>
+            {shouldShowWelcome ? (
+              <div className={styles.welcome}>
+                <div className={styles.welcomeTitle}>今天想聊点什么？</div>
+                {loadingConversations ? (
+                  <div className={styles.welcomeDesc}>正在加载会话列表...</div>
+                ) : !runtimeContext.tenantId || !runtimeContext.userId ? (
+                  <div className={styles.welcomeDesc}>正在加载用户信息...</div>
+                ) : loadingModels ? (
+                  <div className={styles.welcomeDesc}>正在加载模型列表...</div>
+                ) : null}
+              </div>
+            ) : (
+              <>
+                {currentPaging?.hasMore ? (
+                  <div className={styles.loadMoreWrap}>
+                    <Button loading={loadingMoreMessages} onClick={() => void handleLoadMoreMessages()}>
+                      加载更多消息
+                    </Button>
+                  </div>
+                ) : null}
+                {currentMessages.map((item) => (
+                  <div key={item.id} className={styles.messageRow} data-role={item.role}>
+                  {item.role === 'assistant' ? (
+                    <div className={styles.assistantShell}>
+                      <div className={styles.assistantContent}>
+                        <div className={styles.assistantBubble}>
+                          {item.content ? (
+                              <XMarkdown className={`${markdownClassName} ${styles.markdown}`} paragraphTag="div">
+                                {item.content}
+                              </XMarkdown>
+                            ) : (
+                              <div className={styles.thinking}>
+                                <span />
+                                <span />
+                                <span />
+                                正在等待回复
+                              </div>
+                            )}
+                          </div>
 
-                  <Tag color="purple">Model</Tag>
+                          {item.status !== 'streaming' && item.content ? (
+                          <Space className={styles.assistantToolbar} size={4}>
+                              <Tooltip title="复制">
+                                <Button
+                                  type="text"
+                                  size="small"
+                                  icon={<CopyOutlined />}
+                                  onClick={() => handleCopy(item.content)}
+                                />
+                              </Tooltip>
+                              {item.id === currentMessages[currentMessages.length - 1]?.id ? (
+                                <Tooltip title="重新生成">
+                                  <Button
+                                    type="text"
+                                    size="small"
+                                    icon={<ReloadOutlined />}
+                                    onClick={() => void handleRegenerate()}
+                                  />
+                                </Tooltip>
+                              ) : null}
+                            </Space>
+                          ) : null}
+                        </div>
+                      </div>
+                  ) : (
+                    <div className={styles.userShell}>
+                      <div className={styles.userMessageWrap}>
+                        <div className={styles.userBubble}>{item.content}</div>
+                        <div className={`${styles.userToolbar} user-toolbar`}>
+                          <Tooltip title="复制">
+                            <Button
+                              type="text"
+                              size="small"
+                              icon={<CopyOutlined />}
+                              onClick={() => handleCopy(item.content)}
+                            />
+                          </Tooltip>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  </div>
+                ))}
+              </>
+            )}
+
+            <div ref={bottomRef} />
+          </div>
+        </div>
+
+        <div className={styles.composerOuter}>
+          <div className={styles.composerInner}>
+            <div className={styles.composerPanel}>
+              <Input.TextArea
+                autoSize={{ minRows: 1, maxRows: 8 }}
+                bordered={false}
+                placeholder="输入消息，Enter 发送，Shift + Enter 换行"
+                value={inputValue}
+                onChange={(event) => setInputValue(event.target.value)}
+                onPressEnter={(event) => {
+                  if (event.shiftKey) {
+                    return;
+                  }
+                  event.preventDefault();
+                  void handleSend();
+                }}
+              />
+
+              <div className={styles.composerFooter}>
+                <div className={styles.composerControls}>
+                  <div className={styles.composerHint}>当前模型：</div>
                   <Select
-                    style={{ width: 240 }}
-                    value={modelId}
                     options={modelOptions}
-                    loading={modelLoading}
-                    placeholder="请选择模型"
-                    disabled={!endpointKey}
-                    onChange={(val) => setModelId(val)}
+                    style={{ width: 200 }}
+                    value={activeConversation?.model}
+                    loading={loadingModels}
+                    disabled={!modelOptions.length}
+                    placeholder="选择模型"
+                    onChange={(value) => {
+                      if (!activeConversation) {
+                        return;
+                      }
+                      updateConversation(activeConversation.id, (item) => ({ ...item, model: value }));
+                    }}
                   />
-                </Space>
-
+                  {loadingMessages ? <div className={styles.composerHint}>正在加载消息</div> : null}
+                </div>
                 <Space>
-                  <Sender.Switch
-                    value={deepThink}
-                    onChange={(checked: boolean) => setDeepThink(checked)}
-                    icon={<OpenAIOutlined />}
+                  <Button onClick={() => void handleRegenerate()} disabled={!currentMessages.length || isResponding}>
+                    重新生成
+                  </Button>
+                  <Button
+                    type="primary"
+                    icon={<SendOutlined />}
+                    onClick={() => void handleSend()}
+                    disabled={!inputValue.trim() || isResponding || !activeConversation?.model}
                   >
-                    深度思考
-                  </Sender.Switch>
+                    发送
+                  </Button>
                 </Space>
-              </Flex>
-
-              {messages.length !== 0 && (
-                <Bubble.List
-                  ref={listRef}
-                  styles={{
-                    root: {
-                      maxWidth: 940,
-                      height: 'calc(100% - 220px)',
-                      marginBlockEnd: 24,
-                    },
-                  }}
-                  items={messages.map((i) => ({
-                    ...i.message,
-                    key: i.id,
-                    status:
-                      i.status === 'success'
-                        ? 'success'
-                        : i.status === 'error'
-                        ? 'error'
-                        : i.status,
-                    loading: i.status === 'loading',
-                    extraInfo: i.message.extraInfo,
-                  }))}
-                  role={getRole(className)}
-                />
-              )}
-
-              <div
-                style={{ width: '100%', maxWidth: 840 }}
-                className={clsx({ [styles.startPage]: messages.length === 0 })}
-              >
-                {messages.length === 0 && <div className={styles.agentName}>{locale.agentName}</div>}
-
-                <Sender
-                  suffix={false}
-                  ref={senderRef}
-                  key={curConversation}
-                  slotConfig={slotConfig}
-                  loading={isRequesting}
-                  onSubmit={(val) => {
-                    if (!val) return;
-                    runChat(val);
-                    scrollToBottom();
-                    senderRef.current?.clear?.();
-                  }}
-                  onCancel={() => abort()}
-                  placeholder={locale.placeholder}
-                  autoSize={{ minRows: 3, maxRows: 6 }}
-                />
               </div>
             </div>
           </div>
         </div>
-      </ChatContext.Provider>
-    </XProvider>
+      </main>
+    </div>
   );
 };
 
-export default App;
+export default ChatPage;

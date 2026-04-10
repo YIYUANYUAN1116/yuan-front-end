@@ -96,17 +96,20 @@ export async function llmEndpointList(
   });
 }
 
-/** 获取供应商选择框列表 GET /ai/llmEndpoint/selectEndpoint */
-export async function selectEndpoint(
+/** 获取供应商选择框列表 GET /ai/llmEndpoint/selectEndpointByProvider */
+export async function selectEndpointByProvider(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.selectEndpointParams,
+  params: API.selectEndpointByProviderParams,
   options?: { [key: string]: any }
 ) {
-  return request<API.RListStrSelectModel>("/ai/llmEndpoint/selectEndpoint", {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  return request<API.RListSelectModel>(
+    "/ai/llmEndpoint/selectEndpointByProvider",
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }

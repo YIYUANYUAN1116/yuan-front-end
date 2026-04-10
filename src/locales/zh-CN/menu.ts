@@ -92,5 +92,6 @@ export default {
   
   /**AI */
   'menu.ai': 'AI应用',
+  'menu.ai.chat':'AI对话'
 
 };

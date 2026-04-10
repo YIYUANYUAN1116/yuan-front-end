@@ -95,3 +95,26 @@ export async function llmModelList(
     ...(options || {}),
   });
 }
+
+/** 获取供应商选择框列表 GET /ai/llmModel/selectModel */
+export async function selectModel(options?: { [key: string]: any }) {
+  return request<API.RListSelectModel>("/ai/llmModel/selectModel", {
+    method: "GET",
+    ...(options || {}),
+  });
+}
+
+/** 获取供应商选择框列表 GET /ai/llmModel/selectModelByEndpoint */
+export async function selectModelByEndpoint(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.selectModelByEndpointParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.RListSelectModel>("/ai/llmModel/selectModelByEndpoint", {
+    method: "GET",
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}

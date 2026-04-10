@@ -17,7 +17,7 @@ export const LlmEndpointDrawerForm = (props: LlmEndpointDrawerFormProps) => {
     const { mode, trigger, reload, record } = props;
     const isEdit = mode == OperationModes.EDIT
     const { run: run, loading: loading } = useActionRequest(isEdit ? llmEndpointEdit : llmEndpointAdd, reload)
-
+    
     return (
         <ModalForm<API.LlmEndpointBo>
             title={isEdit ? '编辑接入点' : '新增接入点'}
@@ -37,15 +37,21 @@ export const LlmEndpointDrawerForm = (props: LlmEndpointDrawerFormProps) => {
             <ProFormText name="id" hidden />
 
             <ProFormText
-
-                name="endpointKey"
+                name="endpointName"
                 label="接入点名称"
                 placeholder="请输入接入点名称"
                 rules={[{ required: true, message: '请输入接入点名称' }]}
             />
 
+            <ProFormText
+                name="endpointCode"
+                label="接入点编号"
+                placeholder="请输入接入点编号"
+                rules={[{ required: true, message: '请输入接入点编号' }]}
+            />
+
             <ProFormSelect
-                name="providerCode"
+                name="providerId"
                 label="供应商"
                 placeholder="请选择供应商"
                 rules={[{ required: true, message: '请选择供应商' }]}
@@ -71,7 +77,7 @@ export const LlmEndpointDrawerForm = (props: LlmEndpointDrawerFormProps) => {
 
             <ProFormSelect
                 width="md"
-                name="enabled"
+                name="status"
                 label="状态"
                 options={[
                     { value: '0', label: '启用' },

@@ -98,7 +98,7 @@ export async function llmProviderList(
 
 /** 获取供应商选择框列表 GET /ai/llmProvider/selectProvider */
 export async function selectProvider(options?: { [key: string]: any }) {
-  return request<API.RListStrSelectModel>("/ai/llmProvider/selectProvider", {
+  return request<API.RListSelectModel>("/ai/llmProvider/selectProvider", {
     method: "GET",
     ...(options || {}),
   });

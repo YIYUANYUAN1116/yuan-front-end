@@ -1,7 +1,7 @@
 import { OperationMode, OperationModes } from '@/const/Const';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
+import { selectEndpointByProvider } from '@/services/yuan/llmEndpointController';
 import { llmModelAdd, llmModelEdit } from '@/services/yuan/llmModelController';
-import { selectEndpoint} from '@/services/yuan/llmEndpointController';
 import { selectProvider } from '@/services/yuan/llmProviderController';
 import {
   ActionType,
@@ -22,7 +22,7 @@ interface LlmModelDrawerFormProps {
 export const LlmModelDrawerForm = (props: LlmModelDrawerFormProps) => {
   const { mode, trigger, reload, record } = props;
   const isEdit = mode === OperationModes.EDIT;
-  const formRef = useRef<any>();
+  const formRef = useRef<any>(null);
 
   const { run, loading } = useActionRequest(
     isEdit ? llmModelEdit : llmModelAdd,
@@ -62,7 +62,7 @@ export const LlmModelDrawerForm = (props: LlmModelDrawerFormProps) => {
       />
 
       <ProFormSelect
-        name="providerCode"
+        name="providerId"
         label="供应商"
         placeholder="请选择供应商"
         rules={[{ required: true, message: '请选择供应商' }]}
@@ -73,27 +73,27 @@ export const LlmModelDrawerForm = (props: LlmModelDrawerFormProps) => {
         fieldProps={{
           onChange: () => {
             formRef.current?.setFieldsValue({
-              endpointKey: undefined,
+              endpointId: undefined,
             });
           },
         }}
       />
 
-      <ProFormDependency name={['providerCode']}>
-        {({ providerCode }) => {
+      <ProFormDependency name={['providerId']}>
+        {({ providerId }) => {
           return (
             <ProFormSelect
-              name="endpointKey"
+              name="endpointId"
               label="接入点"
-              placeholder={providerCode ? '请选择接入点' : '请先选择供应商'}
+              placeholder={providerId ? '请选择接入点' : '请先选择供应商'}
               rules={[{ required: true, message: '请选择接入点' }]}
-              disabled={!providerCode}
-              params={{ providerCode }}
-              request={async ({ providerCode }) => {
-                if (!providerCode) {
+              disabled={!providerId}
+              params={{ providerId }}
+              request={async ({ providerId }) => {
+                if (!providerId) {
                   return [];
                 }
-                const res = await selectEndpoint({providerCode:providerCode});
+                const res = await selectEndpointByProvider({providerId:providerId});
                 return res.data ?? [];
               }}
             />

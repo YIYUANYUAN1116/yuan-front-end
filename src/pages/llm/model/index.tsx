@@ -29,17 +29,29 @@ const index = () => {
       valueType: 'indexBorder',
       width: 48,
     },
-    { title: '显示名称', dataIndex: 'displayName', ellipsis: true },
-    { title: '模型名', dataIndex: 'modelName', copyable: true, ellipsis: true },
+    { title: '显示名称', dataIndex: 'displayName' ,width:150},
+    { title: '模型名', dataIndex: 'modelName', copyable: true ,width:150},
     {
       title: '供应商',
-      dataIndex: 'providerCode',
-      width: 200
+      dataIndex: 'providerId',
+      width: 150,
+      ...HIDE_COLUMN
+    },
+    {
+      title: '供应商',
+      dataIndex: 'providerName',
+      width: 150
     },
     {
       title: '接入点',
-      dataIndex: 'endpointKey',
-      width: 200
+      dataIndex: 'endpointName',
+      width: 150
+    },
+    {
+      title: '供应商',
+      dataIndex: 'endpointId',
+      width: 200,
+      ...HIDE_COLUMN
     },
     {
       title: '状态',

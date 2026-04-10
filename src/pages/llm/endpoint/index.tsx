@@ -29,14 +29,22 @@ const index = () => {
     {
       title: '接入点名称',
       dataIndex: 'endpointName',
+      width: 100,
     },
     {
       title: '接入点编号',
-      dataIndex: 'endpointKey',
+      dataIndex: 'endpointCode',
+      width: 100,
     },
     {
       title: '供应商',
-      dataIndex: 'providerCode',
+      dataIndex: 'providerId',
+      ...HIDE_COLUMN
+    },
+    {
+      title: '供应商',
+      dataIndex: 'providerName',
+      width: 100,
     },
     {
       title: '地址',
@@ -47,12 +55,13 @@ const index = () => {
       title: '密钥',
       dataIndex: 'apiKey',
       hideInSearch: true,
+      valueType: 'password'
     },
-    {
-      title: '优先级',
-      dataIndex: 'priority',
-      hideInSearch: true,
-    },
+    // {
+    //   title: '优先级',
+    //   dataIndex: 'priority',
+    //   hideInSearch: true,
+    // },
     { title: '创建时间', dataIndex: 'createTime', width: 180 },
     { title: '更新时间', dataIndex: 'updateTime', width: 180 },
     {
@@ -80,7 +89,7 @@ const index = () => {
           >
             <Popconfirm
               title="接入点删除"
-              description={`确认删除接入点：${record.endpointKey}`}
+              description={`确认删除接入点：${record.endpointName}`}
               okText="确认"
               cancelText="取消"
               okButtonProps={{ loading: deleteLoading }}

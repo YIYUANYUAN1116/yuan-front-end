@@ -1,4 +1,24 @@
 declare namespace API {
+  type AiNodeConfig = {
+    /** 模式：
+ SUGGEST = 建议
+ ROUTE = 路由
+ 后续如要扩 AUTO_APPROVE，再加 */
+    aiMode?: string;
+    /** 模板编码 */
+    templateCode?: string;
+    /** 输出变量前缀
+ 例如 aiReview / aiRoute */
+    outputVarPrefix?: string;
+    /** 是否要求 JSON 返回 */
+    jsonOutput?: boolean;
+    /** 超时时间（毫秒） */
+    timeoutMs?: number;
+    /** 失败策略
+ BLOCK / TO_MANUAL */
+    failStrategy?: string;
+  };
+
   type ApproveCmd = {
     /** 操作人（当前用户） */
     operatorId?: string;
@@ -82,23 +102,23 @@ declare namespace API {
   type ChatConversationBo = {
     id?: string;
     /** tenantId */
-    tenantId: string;
+    tenantId?: string;
     /** userId */
-    userId: string;
+    userId?: string;
     /** appId */
     appId?: string;
     /** title */
     title?: string;
     /** defaultEndpointKey */
-    defaultEndpointKey?: string;
+    modelId?: string;
     /** metaJson */
     metaJson?: string;
     /** lastMessageAt */
     lastMessageAt?: string;
     /** createTime */
-    createTime: string;
+    createTime?: string;
     /** updateTime */
-    updateTime: string;
+    updateTime?: string;
   };
 
   type ChatConversationExportParams = {
@@ -131,7 +151,7 @@ declare namespace API {
     /** title */
     title?: string;
     /** defaultEndpointKey */
-    defaultEndpointKey?: string;
+    modelId?: string;
     /** metaJson */
     metaJson?: string;
     /** lastMessageAt */
@@ -161,7 +181,7 @@ declare namespace API {
     /** PENDING/STREAMING/DONE/FAILED */
     status: string;
     /** endpointKey */
-    endpointKey?: string;
+    modelId?: string;
     /** invocationId */
     invocationId?: string;
     /** tokenIn */
@@ -265,7 +285,7 @@ declare namespace API {
     /** PENDING/STREAMING/DONE/FAILED */
     status?: string;
     /** endpointKey */
-    endpointKey?: string;
+    modelId?: string;
     /** invocationId */
     invocationId?: string;
     /** tokenIn */
@@ -376,9 +396,10 @@ declare namespace API {
   type ChatRequest = {
     tenantId: string;
     traceId: string;
-    messages: ChatMsg[];
+    messages?: ChatMsg[];
     /** 前端首选：直接传 endpointKey */
-    endpointKey?: string;
+    modelId?: string;
+    endpointCode?: string;
     /** 自动选模型：endpointKey 为空时用路由规则 */
     autoSelectModel?: boolean;
     /** 业务侧字段（可选） */
@@ -393,6 +414,10 @@ declare namespace API {
     /** thinking 标记（用于路由策略） */
     enableThinking?: boolean;
     token?: string;
+    persistChatMessage?: boolean;
+    sceneCode?: string;
+    bizType?: string;
+    bizId?: string;
   };
 
   type ChatSessionBo = {
@@ -601,6 +626,7 @@ declare namespace API {
     wfType?: string;
     assignee?: LfAssignee;
     condition?: Expression;
+    aiNodeConfig?: AiNodeConfig;
   };
 
   type LfText = {
@@ -624,10 +650,9 @@ declare namespace API {
     /** tenantId */
     tenantId?: string;
     /** front-end selection key */
-    endpointKey?: string;
+    endpointCode?: string;
     endpointName?: string;
-    /** providerCode */
-    providerCode: string;
+    providerId?: string;
     /** OpenAI-compatible baseUrl like https://api.openai.com or http://localhost:11434/v1 */
     baseUrl: string;
     /** DEMO ONLY; prod should use api_key_ref + secret manager */
@@ -676,10 +701,11 @@ declare namespace API {
     /** tenantId */
     tenantId?: string;
     /** front-end selection key */
-    endpointKey?: string;
+    endpointCode?: string;
     endpointName?: string;
     /** providerCode */
-    providerCode?: string;
+    providerName?: string;
+    providerId?: string;
     /** OpenAI-compatible baseUrl like https://api.openai.com or http://localhost:11434/v1 */
     baseUrl?: string;
     /** DEMO ONLY; prod should use api_key_ref + secret manager */
@@ -710,10 +736,8 @@ declare namespace API {
     tenantId: string;
     /** traceId */
     traceId: string;
-    /** endpointKey */
-    endpointKey: string;
-    /** providerCode */
-    providerCode: string;
+    endpointId?: string;
+    providerId?: string;
     /** modelName */
     modelName: string;
     /** conversationId */
@@ -767,10 +791,8 @@ declare namespace API {
     tenantId?: string;
     /** traceId */
     traceId?: string;
-    /** endpointKey */
-    endpointKey?: string;
-    /** providerCode */
-    providerCode?: string;
+    endpointId?: string;
+    providerId?: string;
     /** modelName */
     modelName?: string;
     /** conversationId */
@@ -801,11 +823,10 @@ declare namespace API {
 
   type LlmModelBo = {
     id?: string;
-    /** providerCode */
-    providerCode: string;
-    endpointKey?: string;
+    providerId?: string;
+    endpointId?: string;
     /** remote model name, e.g. gpt-4o-mini */
-    modelName: string;
+    modelName?: string;
     /** displayName */
     displayName?: string;
     /** {"stream":true,"json":true,"tools":true,"vision":false,"thinking":false} */
@@ -814,6 +835,8 @@ declare namespace API {
     contextWindow?: number;
     /** enabled */
     status?: string;
+    providerName?: string;
+    endpointName?: string;
   };
 
   type LlmModelExportParams = {
@@ -837,9 +860,11 @@ declare namespace API {
 
   type LlmModelVo = {
     id: string;
-    endpointKey?: string;
+    endpointName?: string;
+    endpointId?: string;
     /** providerCode */
-    providerCode?: string;
+    providerName?: string;
+    providerId?: string;
     /** remote model name, e.g. gpt-4o-mini */
     modelName?: string;
     /** displayName */
@@ -850,6 +875,9 @@ declare namespace API {
     contextWindow?: number;
     /** enabled */
     status?: string;
+    createTime?: string;
+    /** updateTime */
+    updateTime?: string;
   };
 
   type LlmPolicyBo = {
@@ -914,9 +942,9 @@ declare namespace API {
   type LlmProviderBo = {
     id?: string;
     /** OPENAI_COMPAT/AZURE/OLLAMA/SELF_HOST */
-    code: string;
+    providerCode: string;
     /** name */
-    name: string;
+    providerName: string;
     /** openai_compat/azure/ollama/... */
     protocol?: string;
     remark?: string;
@@ -945,9 +973,9 @@ declare namespace API {
   type LlmProviderVo = {
     id: string;
     /** OPENAI_COMPAT/AZURE/OLLAMA/SELF_HOST */
-    code?: string;
+    providerCode?: string;
     /** name */
-    name?: string;
+    providerName?: string;
     /** openai_compat/azure/ollama/... */
     protocol?: string;
     /** createTime */
@@ -1623,13 +1651,17 @@ declare namespace API {
     data?: WfTaskVo;
   };
 
-  type selectEndpointParams = {
-    providerCode: string;
+  type selectEndpointByProviderParams = {
+    providerId: string;
   };
 
   type SelectModel = {
     value?: string;
     label?: string;
+  };
+
+  type selectModelByEndpointParams = {
+    endpointId: string;
   };
 
   type SelectRolesVo = {
@@ -3677,7 +3709,13 @@ declare namespace API {
     nodeKey?: string;
     nodeName?: string;
     /** 节点类型(START/APPROVAL/GATEWAY/END) */
-    nodeType?: "START" | "USER_TASK" | "SYSTEM_TASK" | "GATEWAY" | "END";
+    nodeType?:
+      | "START"
+      | "USER_TASK"
+      | "SYSTEM_TASK"
+      | "AI_TASK"
+      | "GATEWAY"
+      | "END";
     /** 审批人类型(USER/ROLE/DEPT) */
     assigneeType?: string;
     /** 审批人值 */
@@ -3852,7 +3890,8 @@ declare namespace API {
       | "ROLLBACK"
       | "WITHDRAW"
       | "TRANSFER"
-      | "ADD_SIGN";
+      | "ADD_SIGN"
+      | "AI_SUGGEST";
     operatorType?: "SYSTEM" | "USER";
     operatorId?: string;
     operatorName?: string;

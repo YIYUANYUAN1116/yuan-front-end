@@ -30,11 +30,11 @@ const index = () => {
     },
     {
       title: '供应商名称',
-      dataIndex: 'name',
+      dataIndex: 'providerName',
     },
     {
       title: '供应商编号',
-      dataIndex: 'code',
+      dataIndex: 'providerCode',
     },
     {
       title: '接口协议',
@@ -72,7 +72,7 @@ const index = () => {
           >
             <Popconfirm
               title="供应商删除"
-              description={`确认删除供应商：${record.name}`}
+              description={`确认删除供应商：${record.providerName}`}
               okText="确认"
               cancelText="取消"
               okButtonProps={{ loading: deleteLoading }}

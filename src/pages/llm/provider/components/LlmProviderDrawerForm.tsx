@@ -34,14 +34,14 @@ export const LlmProviderDrawerForm = (props: LlmProviderDrawerFormProps) => {
             <ProFormText name="id" hidden />
 
             <ProFormText
-                name="name"
+                name="providerName"
                 label="供应商名称"
                 placeholder="请输入供应商名称"
                 rules={[{ required: true, message: '请输入供应商名称' }]}
             />
             <ProFormText
 
-                name="code"
+                name="providerCode"
                 label="供应商编码"
                 placeholder="请输入供应商编码"
                 rules={[{ required: true, message: '请输入供应商名称' }]}

@@ -60,6 +60,7 @@ export default {
   'menu.system.dept': '部门管理',
   'menu.system.post': '岗位管理',
   'menu.system.tenant': '租户管理',
+  'menu.system.llm': 'LLM配置',
 
   /** 工作流*/
   'menu.workflow': '工作流管理',
@@ -81,4 +82,16 @@ export default {
   'menu.oa': 'OA管理',
   'menu.oa.leave': '请假申请',
   'menu.oa.claim': '报销申请',
+
+  /**LLM*/
+  'menu.llm': 'LLM管理',
+  'menu.llm.provider': '供应商管理',
+  'menu.llm.model': '模型管理',
+  'menu.llm.endpoint': '接入点管理',
+
+  
+  /**AI */
+  'menu.ai': 'AI应用',
+  'menu.ai.chat':'AI对话'
+
 };

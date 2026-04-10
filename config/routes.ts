@@ -1,6 +1,6 @@
-﻿import component from "@/locales/bn-BD/component";
-import { access } from "fs";
-import path from "path";
+﻿import { access } from 'fs';
+import path from 'path';
+import component from '@/locales/bn-BD/component';
 
 /**
  * @name umi 的路由配置
@@ -62,9 +62,9 @@ export default [
         path: '/dashboard/analysis',
         name: 'analysis',
         component: './dashboard/analysis',
-        access: 'canDashboardAnalysis'
-      }
-    ]
+        access: 'canDashboardAnalysis',
+      },
+    ],
   },
   {
     path: '/workplace',
@@ -79,32 +79,32 @@ export default [
         path: '/workplace/overview',
         name: 'overview',
         component: './workplace/overview',
-        access: 'canWorkplaceOverview'
+        access: 'canWorkplaceOverview',
       },
       {
         path: '/workplace/apply',
         name: 'apply',
         component: './workplace/apply',
-        access: 'canWorkplaceApply'
+        access: 'canWorkplaceApply',
       },
       {
         path: '/workplace/task',
         name: 'task',
         component: './workplace/task',
-        access: 'canWorkplaceTask'
+        access: 'canWorkplaceTask',
       },
       {
         path: '/workplace/approve',
         name: 'approve',
         component: './workplace/approve',
-        access: 'canWorkplaceApprove'
+        access: 'canWorkplaceApprove',
       },
       {
         path: '/workplace/detail',
         component: './workflow/detail',
         hideInMenu: true,
       },
-    ]
+    ],
   },
   {
     path: '/system',
@@ -182,10 +182,47 @@ export default [
             component: './system/log/loginfor',
             access: 'canSystemLoginforList',
           },
-        ]
+        ],
       },
-    ]
+    ],
   },
+  {
+    path: '/llm',
+    name: 'LLM管理',
+    icon: 'RobotOutlined',
+    routes: [
+      {
+        path: '/llm/provider',
+        name: '供应商管理',
+        component: './llm/provider',
+      },
+      {
+        path: '/llm/endpoint',
+        name: '接入点管理',
+        component: './llm/endpoint',
+      },
+      { path: '/llm/model', name: '模型管理', component: './llm/model' },
+    ],
+  },
+
+  {
+    path: '/ai',
+    name: 'ai应用',
+    icon: 'RobotOutlined',
+    routes: [
+      {
+        path: '/ai',
+        redirect: '/ai/chat',
+      },
+      {
+        path: '/ai/chat',
+        name: '对话',
+        component: './ai/chat/index',
+      },
+
+    ],
+  },
+
   {
     path: '/oa',
     name: 'oa',
@@ -199,13 +236,13 @@ export default [
         path: '/oa/leave',
         name: 'leave',
         component: './oa/leave',
-        access: 'canOaLeave'
+        access: 'canOaLeave',
       },
       {
         path: '/oa/leave/form',
         name: 'leave',
         component: './oa/leave/form',
-        access: 'canOaLeave'
+        access: 'canOaLeave',
       },
       {
         path: '/oa/workflow/detail',
@@ -239,19 +276,19 @@ export default [
         path: '/workflow/definition',
         name: 'definition',
         component: './workflow/definition',
-        access: 'canWorkDefinition'
+        access: 'canWorkDefinition',
       },
       {
         path: '/workflow/instance',
         name: 'instance',
         component: './workflow/instance',
-        access: 'canWorkInstance'
+        access: 'canWorkInstance',
       },
       {
         path: '/workflow/designer',
         name: 'designer',
         component: './workflow/designer',
-        access: 'canWorkDesigner'
+        access: 'canWorkDesigner',
       },
       {
         path: '/workflow/detail',

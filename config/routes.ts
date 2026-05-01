@@ -225,30 +225,35 @@ export default [
   },
   {
     path: '/aiManage',
-    name: 'AI管理',
+    name: 'aiManage',
     icon: 'RobotOutlined',
     routes: [
       {
         path: '/aiManage/llm',
-        name: 'LLM管理',
+        name: 'llm',
         routes: [
           {
             path: '/aiManage/llm/provider',
-            name: '供应商管理',
+            name: 'provider',
             component: './aiManage/llm/provider',
           },
           {
             path: '/aiManage/llm/endpoint',
-            name: '接入点管理',
+            name: 'endpoint',
             component: './aiManage/llm/endpoint',
           },
           {
             path: '/aiManage/llm/model',
-            name: '模型管理',
+            name: 'model',
             component: './aiManage/llm/model'
           },
         ]
-      }
+      },
+      {
+        path: '/aiManage/kb',
+        name: 'kb',
+        component: './aiManage/kb',
+      },
 
     ],
   },

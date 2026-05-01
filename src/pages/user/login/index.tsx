@@ -10,6 +10,7 @@ import {
   LoginForm,
   ProFormCaptcha,
   ProFormCheckbox,
+  ProFormSelect,
   ProFormText,
 } from '@ant-design/pro-components';
 import {
@@ -24,11 +25,10 @@ import { createStyles } from 'antd-style';
 import React, { useState } from 'react';
 import { flushSync } from 'react-dom';
 import { Footer } from '@/components';
-import { login } from '@/services/ant-design-pro/api';
 import { getFakeCaptcha } from '@/services/ant-design-pro/login';
+import api from '@/services/yuan/index';
+import { sysTenantStrSelect } from '@/services/yuan/sysTenantController';
 import Settings from '../../../../config/defaultSettings';
-import api from '@/services/yuan/index'
-import { log } from 'console';
 
 const useStyles = createStyles(({ token }) => {
   return {
@@ -113,7 +113,7 @@ const LoginMessage: React.FC<{
 };
 
 const Login: React.FC = () => {
-  const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
+  const [userLoginState] = useState<API.LoginResult>({});
   const [type, setType] = useState<string>('account');
   const { initialState, setInitialState } = useModel('@@initialState');
   const { styles } = useStyles();
@@ -141,7 +141,7 @@ const Login: React.FC = () => {
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
         });
-        localStorage.setItem("token", msg.data?.token ?? "");
+        localStorage.setItem('token', msg.data?.token ?? '');
         message.success(defaultLoginSuccessMessage);
         await fetchUserInfo();
         const urlParams = new URL(window.location.href).searchParams;
@@ -237,6 +237,25 @@ const Login: React.FC = () => {
           )}
           {type === 'account' && (
             <>
+              <ProFormSelect
+                name="tenantId"
+                fieldProps={{
+                  size: 'large',
+                  showSearch: true,
+                  optionFilterProp: 'label',
+                }}
+                placeholder="请选择租户"
+                request={async () => {
+                  const res = await sysTenantStrSelect();
+                  return res.data || [];
+                }}
+                rules={[
+                  {
+                    required: true,
+                    message: '请选择租户！',
+                  },
+                ]}
+              />
               <ProFormText
                 name="username"
                 fieldProps={{

@@ -95,3 +95,11 @@ export async function sysTenantList(
     ...(options || {}),
   });
 }
+
+/** 租户选择列表 GET /system/sysTenant/strselect */
+export async function sysTenantStrSelect(options?: { [key: string]: any }) {
+  return request<API.RListStrSelectModel>("/system/sysTenant/strselect", {
+    method: "GET",
+    ...(options || {}),
+  });
+}

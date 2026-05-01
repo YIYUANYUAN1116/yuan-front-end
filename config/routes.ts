@@ -187,6 +187,42 @@ export default [
     ],
   },
   {
+    path: '/tool',
+    name: 'tool',
+    icon: 'tool',
+    routes: [
+      {
+        path: '/tool',
+        redirect: '/tool/gen/schemaGroup',
+      },
+      {
+        path: '/tool/gen',
+        name: 'gen',
+        routes: [
+          {
+            path: '/tool/gen',
+            redirect: '/tool/gen/schemaGroup',
+          },
+          {
+            path: '/tool/gen/schemaGroup',
+            name: 'schemaGroup',
+            component: './tool/gen/schemaGroup',
+          },
+          {
+            path: '/tool/gen/schema',
+            name: 'schema',
+            component: './tool/gen/schema',
+          },
+          {
+            path: '/tool/gen/schemaField',
+            name: 'schemaField',
+            component: './tool/gen/schemaField',
+          },
+        ],
+      },
+    ],
+  },
+  {
     path: '/llm',
     name: 'LLM管理',
     icon: 'RobotOutlined',
@@ -219,7 +255,6 @@ export default [
         name: '对话',
         component: './ai/chat/index',
       },
-
     ],
   },
 

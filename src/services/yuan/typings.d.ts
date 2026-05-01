@@ -32,6 +32,18 @@ declare namespace API {
 
   type AvatarVo = Record<string, any>;
 
+  type batchGenCodeParams = {
+    /** 表名 */
+    tableNameStr: string;
+  };
+
+  type batchGenFrontendCodeParams = {
+    /** 执行命令路径 */
+    workPath: string;
+    /** 执行生成前端文件命令 */
+    previewCode: string;
+  };
+
   type ChatAttachmentBo = {
     id?: string;
     /** tenantId */
@@ -567,6 +579,11 @@ declare namespace API {
     sha256?: string;
   };
 
+  type getByTableNameParams = {
+    /** 表名 */
+    tableName: string;
+  };
+
   type getInfo1Params = {
     /** 主键 */
     id: number;
@@ -653,6 +670,7 @@ declare namespace API {
     endpointCode?: string;
     endpointName?: string;
     providerId?: string;
+    providerName?: string;
     /** OpenAI-compatible baseUrl like https://api.openai.com or http://localhost:11434/v1 */
     baseUrl: string;
     /** DEMO ONLY; prod should use api_key_ref + secret manager */
@@ -1348,6 +1366,18 @@ declare namespace API {
     data?: ReactRouterVo[];
   };
 
+  type RListSchemaFieldVo = {
+    code?: number;
+    msg?: string;
+    data?: SchemaFieldVo[];
+  };
+
+  type RListSchemaGroupVo = {
+    code?: number;
+    msg?: string;
+    data?: SchemaGroupVo[];
+  };
+
   type RListSelectModel = {
     code?: number;
     msg?: string;
@@ -1438,6 +1468,12 @@ declare namespace API {
     data?: OaLeaveApplyVo;
   };
 
+  type RObject = {
+    code?: number;
+    msg?: string;
+    data?: any;
+  };
+
   type roleAllocatedUserListParams = {
     bo: SysUserBo;
     pageQuery: PageQuery;
@@ -1481,6 +1517,24 @@ declare namespace API {
     code?: number;
     msg?: string;
     data?: ProfileVo;
+  };
+
+  type RSchemaFieldVo = {
+    code?: number;
+    msg?: string;
+    data?: SchemaFieldVo;
+  };
+
+  type RSchemaGroupVo = {
+    code?: number;
+    msg?: string;
+    data?: SchemaGroupVo;
+  };
+
+  type RSchemaVo = {
+    code?: number;
+    msg?: string;
+    data?: SchemaVo;
   };
 
   type RSelectRolesVo = {
@@ -1649,6 +1703,228 @@ declare namespace API {
     code?: number;
     msg?: string;
     data?: WfTaskVo;
+  };
+
+  type SchemaBo = {
+    /** 主键 */
+    id: string;
+    /** 分组ID */
+    schemaGroupId?: string;
+    /** 模型名称 */
+    name: string;
+    /** 表名 */
+    tableName: string;
+    /** 备注 */
+    remark?: string;
+  };
+
+  type SchemaFieldBo = {
+    /** 主键 */
+    id: string;
+    /** 模型ID */
+    schemaId: string;
+    /** 模型名称 */
+    schemaName?: string;
+    /** 字段名称 */
+    name: string;
+    /** 字段编码 */
+    code: string;
+    /** 字段类型 */
+    type?: string;
+    /** 字段注释 */
+    comment?: string;
+    /** 是否主键 */
+    isPk?: string;
+    /** 是否必填 */
+    isRequired?: string;
+    /** 是否唯一 */
+    isUnique?: string;
+    /** 默认值 */
+    defaultValue?: string;
+    /** 字段长度 */
+    length?: number;
+    /** 小数位数 */
+    scale?: number;
+    /** 排序 */
+    sort?: number;
+    /** 是否列表显示（0否 1是） */
+    isList?: string;
+    /** 是否查询字段（0否 1是） */
+    isQuery?: string;
+    /** 是否插入字段（0否 1是） */
+    isInsert?: string;
+    /** 是否编辑字段（0否 1是） */
+    isEdit?: string;
+    /** 查询方式 */
+    queryType?: string;
+    /** 显示类型 */
+    htmlType?: string;
+    /** 字典类型 */
+    dictType?: string;
+    /** 备注 */
+    remark?: string;
+  };
+
+  type schemaFieldGetInfoParams = {
+    /** 主键 */
+    id: number;
+  };
+
+  type schemaFieldListBySchemaIdParams = {
+    /** 模型ID */
+    schemaId: number;
+  };
+
+  type schemaFieldListParams = {
+    bo: SchemaFieldBo;
+    pageQuery: PageQuery;
+  };
+
+  type schemaFieldRemoveParams = {
+    /** 主键串 */
+    ids: number[];
+  };
+
+  type SchemaFieldVo = {
+    /** 主键 */
+    id?: string;
+    /** 模型ID */
+    schemaId?: string;
+    /** 模型名称 */
+    schemaName?: string;
+    /** 字段名称 */
+    name?: string;
+    /** 字段编码 */
+    code?: string;
+    /** 字段类型 */
+    type?: string;
+    /** 字段注释 */
+    comment?: string;
+    /** 是否主键 */
+    isPk?: string;
+    /** 是否必填 */
+    isRequired?: string;
+    /** 是否唯一 */
+    isUnique?: string;
+    /** 默认值 */
+    defaultValue?: string;
+    /** 字段长度 */
+    length?: number;
+    /** 小数位数 */
+    scale?: number;
+    /** 排序 */
+    sort?: number;
+    /** 是否列表显示 */
+    isList?: string;
+    /** 是否查询字段 */
+    isQuery?: string;
+    /** 是否插入字段 */
+    isInsert?: string;
+    /** 是否编辑字段 */
+    isEdit?: string;
+    /** 查询方式 */
+    queryType?: string;
+    /** 显示类型 */
+    htmlType?: string;
+    /** 字典类型 */
+    dictType?: string;
+    /** 备注 */
+    remark?: string;
+  };
+
+  type schemaGetInfoParams = {
+    /** 主键 */
+    id: number;
+  };
+
+  type SchemaGroupBo = {
+    /** 主键 */
+    id: string;
+    /** 分组名称 */
+    name: string;
+    /** 分组编码 */
+    code: string;
+    /** 图标 */
+    icon?: string;
+    /** 备注 */
+    remark?: string;
+    sort?: number;
+  };
+
+  type schemaGroupGetInfoParams = {
+    /** 主键 */
+    id: number;
+  };
+
+  type schemaGroupListParams = {
+    bo: SchemaGroupBo;
+    pageQuery: PageQuery;
+  };
+
+  type schemaGroupRemoveParams = {
+    /** 主键串 */
+    ids: number[];
+  };
+
+  type SchemaGroupVo = {
+    /** 主键 */
+    id?: string;
+    /** 分组名称 */
+    name?: string;
+    /** 分组编码 */
+    code?: string;
+    /** 图标 */
+    icon?: string;
+    /** 排序 */
+    sort?: number;
+    /** 备注 */
+    remark?: string;
+    /** 创建时间 */
+    createTime?: string;
+  };
+
+  type schemaListParams = {
+    bo: SchemaBo;
+    pageQuery: PageQuery;
+  };
+
+  type schemaRemoveParams = {
+    /** 主键串 */
+    ids: number[];
+  };
+
+  type SchemaVo = {
+    /** 主键 */
+    id?: string;
+    /** 分组ID */
+    schemaGroupId?: string;
+    moduleName?: string;
+    /** 模型名称 */
+    name?: string;
+    /** 模型编码 */
+    code?: string;
+    /** 表名 */
+    tableName?: string;
+    /** 字典 */
+    dictType?: string;
+    /** 表注释 */
+    comment?: string;
+    /** 存储引擎 */
+    engine?: string;
+    /** 列表字段 */
+    listKeys?: string;
+    /** 搜索表单字段 */
+    searchFormKeys?: string;
+    /** 表单设计 */
+    designer?: string;
+    /** 状态 */
+    status?: string;
+    /** 排序 */
+    sort?: number;
+    /** 备注 */
+    remark?: string;
+    /** 创建时间 */
+    createTime?: string;
   };
 
   type selectEndpointByProviderParams = {
@@ -3019,6 +3295,39 @@ declare namespace API {
     msg?: string;
   };
 
+  type TableDataInfoSchemaFieldVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: SchemaFieldVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoSchemaGroupVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: SchemaGroupVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoSchemaVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: SchemaVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
   type TableDataInfoSysBizNoSeqVo = {
     /** 总记录数 */
     total?: string;
@@ -3335,8 +3644,8 @@ declare namespace API {
   type TreeLong = {
     name?: { empty?: boolean };
     id?: string;
-    parentId?: string;
     config?: TreeNodeConfig;
+    parentId?: string;
     weight?: any;
     empty?: boolean;
   };

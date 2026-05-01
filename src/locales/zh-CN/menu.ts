@@ -62,6 +62,13 @@ export default {
   'menu.system.tenant': '租户管理',
   'menu.system.llm': 'LLM配置',
 
+  /**系统工具 */
+  'menu.tool': '系统工具',
+  'menu.tool.gen': '代码生成',
+  'menu.tool.gen.schemaGroup': '模型分组',
+  'menu.tool.gen.schema': '数据模型',
+  'menu.tool.gen.schemaField': '模型字段',
+
   /** 工作流*/
   'menu.workflow': '工作流管理',
   'menu.workflow.definition': '流程定义',
@@ -89,9 +96,7 @@ export default {
   'menu.llm.model': '模型管理',
   'menu.llm.endpoint': '接入点管理',
 
-  
   /**AI */
   'menu.ai': 'AI应用',
-  'menu.ai.chat':'AI对话'
-
+  'menu.ai.chat': 'AI对话',
 };

@@ -10,6 +10,7 @@ import * as chatMessageChunkController from "./chatMessageChunkController";
 import * as chatMessageController from "./chatMessageController";
 import * as chatModelController from "./chatModelController";
 import * as chatSessionController from "./chatSessionController";
+import * as genController from "./genController";
 import * as llmEndpointController from "./llmEndpointController";
 import * as llmInvocationController from "./llmInvocationController";
 import * as llmModelController from "./llmModelController";
@@ -18,6 +19,9 @@ import * as llmProviderController from "./llmProviderController";
 import * as llmRouteRuleController from "./llmRouteRuleController";
 import * as oaLeaveApplyController from "./oaLeaveApplyController";
 import * as ossController from "./ossController";
+import * as schemaController from "./schemaController";
+import * as schemaFieldController from "./schemaFieldController";
+import * as schemaGroupController from "./schemaGroupController";
 import * as sysBizNoSeqController from "./sysBizNoSeqController";
 import * as sysDeptController from "./sysDeptController";
 import * as sysDictDataController from "./sysDictDataController";
@@ -67,6 +71,9 @@ export default {
   sysDictTypeController,
   sysDictDataController,
   oaLeaveApplyController,
+  schemaController,
+  schemaGroupController,
+  schemaFieldController,
   llmRouteRuleController,
   llmProviderController,
   llmPolicyController,
@@ -83,4 +90,5 @@ export default {
   authController,
   chatController,
   workPlaceController,
+  genController,
 };

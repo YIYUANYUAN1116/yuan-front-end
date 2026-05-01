@@ -11,6 +11,15 @@ import * as chatMessageController from "./chatMessageController";
 import * as chatModelController from "./chatModelController";
 import * as chatSessionController from "./chatSessionController";
 import * as genController from "./genController";
+import * as kbBaseAuthController from "./kbBaseAuthController";
+import * as kbBaseController from "./kbBaseController";
+import * as kbChunkController from "./kbChunkController";
+import * as kbDocumentController from "./kbDocumentController";
+import * as kbDocumentTextController from "./kbDocumentTextController";
+import * as kbEmbeddingController from "./kbEmbeddingController";
+import * as kbRetrievalController from "./kbRetrievalController";
+import * as kbRetrievalHitController from "./kbRetrievalHitController";
+import * as kbRetrievalLogController from "./kbRetrievalLogController";
 import * as llmEndpointController from "./llmEndpointController";
 import * as llmInvocationController from "./llmInvocationController";
 import * as llmModelController from "./llmModelController";
@@ -80,6 +89,14 @@ export default {
   llmModelController,
   llmInvocationController,
   llmEndpointController,
+  kbRetrievalLogController,
+  kbRetrievalHitController,
+  kbEmbeddingController,
+  kbDocumentController,
+  kbDocumentTextController,
+  kbChunkController,
+  kbBaseController,
+  kbBaseAuthController,
   chatSessionController,
   chatModelController,
   chatMessageController,
@@ -88,6 +105,7 @@ export default {
   chatAttachmentController,
   ossController,
   authController,
+  kbRetrievalController,
   chatController,
   workPlaceController,
   genController,

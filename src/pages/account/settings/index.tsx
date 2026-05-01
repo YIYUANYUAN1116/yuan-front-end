@@ -7,12 +7,12 @@ import { getProfile } from '@/services/yuan/sysProfileController';
 
 const index = () => {
   // 1. 在 index 组件中获取数据（只请求一次）
-  const { data: profileData } = useRequest(getProfile);
+  const { data: profileData, refresh } = useRequest(getProfile);
 
   return (
     <ProCard ghost gutter={16}>
       <ProCard colSpan="30%" style={{ height: '100%' }} bordered>
-        <ProfileInfoCard data={profileData} />
+        <ProfileInfoCard data={profileData} onRefresh={refresh} />
       </ProCard>
 
       <ProCard colSpan="70%" style={{ height: '100%' }} bordered>

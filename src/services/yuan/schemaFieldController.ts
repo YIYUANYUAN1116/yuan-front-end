@@ -60,6 +60,20 @@ export async function schemaFieldRemove(
   });
 }
 
+/** 同步数据库字段 PUT /dev/schemaField/${param0}/syncUpdate */
+export async function schemaFieldSyncUpdate(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.schemaFieldSyncUpdateParams,
+  options?: { [key: string]: any }
+) {
+  const { id: param0, ...queryParams } = params;
+  return request<API.RVoid>(`/dev/schemaField/${param0}/syncUpdate`, {
+    method: "PUT",
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}
+
 /** 批量更新字段配置 批量更新字段配置 PUT /dev/schemaField/batchUpdate */
 export async function schemaFieldBatchUpdateFieldConfig(
   body: API.SchemaFieldBo[],

@@ -1,6 +1,7 @@
 ﻿import { access } from 'fs';
 import path from 'path';
 import component from '@/locales/bn-BD/component';
+import route from 'mock/route';
 
 /**
  * @name umi 的路由配置
@@ -223,21 +224,32 @@ export default [
     ],
   },
   {
-    path: '/llm',
-    name: 'LLM管理',
+    path: '/aiManage',
+    name: 'AI管理',
     icon: 'RobotOutlined',
     routes: [
       {
-        path: '/llm/provider',
-        name: '供应商管理',
-        component: './llm/provider',
-      },
-      {
-        path: '/llm/endpoint',
-        name: '接入点管理',
-        component: './llm/endpoint',
-      },
-      { path: '/llm/model', name: '模型管理', component: './llm/model' },
+        path: '/aiManage/llm',
+        name: 'LLM管理',
+        routes: [
+          {
+            path: '/aiManage/llm/provider',
+            name: '供应商管理',
+            component: './aiManage/llm/provider',
+          },
+          {
+            path: '/aiManage/llm/endpoint',
+            name: '接入点管理',
+            component: './aiManage/llm/endpoint',
+          },
+          {
+            path: '/aiManage/llm/model',
+            name: '模型管理',
+            component: './aiManage/llm/model'
+          },
+        ]
+      }
+
     ],
   },
 

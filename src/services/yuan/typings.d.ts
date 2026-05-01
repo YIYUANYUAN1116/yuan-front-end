@@ -30,8 +30,6 @@ declare namespace API {
     taskId: string;
   };
 
-  type AvatarVo = Record<string, any>;
-
   type batchGenCodeParams = {
     /** 表名 */
     tableNameStr: string;
@@ -430,6 +428,10 @@ declare namespace API {
     sceneCode?: string;
     bizType?: string;
     bizId?: string;
+    kbIds?: string[];
+    retrievalTopK?: number;
+    retrievalMinScore?: number;
+    retrievalEmbeddingModelId?: string;
   };
 
   type ChatSessionBo = {
@@ -599,6 +601,833 @@ declare namespace API {
     filename: string;
     contentType: string;
     sizeBytes: string;
+  };
+
+  type KbBaseAuthBo = {
+    authId?: string;
+    /** 租户ID */
+    tenantId?: string;
+    /** 知识库ID */
+    kbId: string;
+    /** 授权对象类型：USER-用户，ROLE-角色，DEPT-部门，TENANT-租户 */
+    subjectType: string;
+    /** 授权对象ID */
+    subjectId: string;
+    /** 权限：READ-读取，WRITE-编辑，MANAGE-管理 */
+    permission: string;
+    /** 状态：ENABLED-启用，DISABLED-禁用 */
+    status: string;
+    /** 创建人 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime: string;
+    /** 更新人 */
+    updateBy?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 逻辑删除：0-未删除，2-已删除 */
+    delFlag: string;
+  };
+
+  type KbBaseAuthExportParams = {
+    bo: KbBaseAuthBo;
+  };
+
+  type KbBaseAuthGetInfoParams = {
+    /** 主键 */
+    authId: string;
+  };
+
+  type KbBaseAuthListParams = {
+    bo: KbBaseAuthBo;
+    pageQuery: PageQuery;
+  };
+
+  type KbBaseAuthRemoveParams = {
+    /** 主键串 */
+    authIds: string[];
+  };
+
+  type KbBaseAuthVo = {
+    authId?: string;
+    /** 租户ID */
+    tenantId?: string;
+    /** 知识库ID */
+    kbId?: string;
+    /** 授权对象类型：USER-用户，ROLE-角色，DEPT-部门，TENANT-租户 */
+    subjectType?: string;
+    /** 授权对象ID */
+    subjectId?: string;
+    /** 权限：READ-读取，WRITE-编辑，MANAGE-管理 */
+    permission?: string;
+    /** 状态：ENABLED-启用，DISABLED-禁用 */
+    status?: string;
+    /** 创建人 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 更新人 */
+    updateBy?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 逻辑删除：0-未删除，2-已删除 */
+    delFlag?: string;
+  };
+
+  type KbBaseBo = {
+    kbId?: string;
+    /** 租户ID */
+    tenantId?: string;
+    /** 知识库编码 */
+    kbCode: string;
+    /** 知识库名称 */
+    kbName: string;
+    /** 知识库描述 */
+    description?: string;
+    /** 可见范围：PRIVATE-私有，TEAM-团队，TENANT-租户，PUBLIC-公开 */
+    visibility: string;
+    /** 知识库负责人/拥有者ID */
+    ownerId?: string;
+    /** 默认向量模型ID，对应 llm_model.model_id */
+    embeddingModelId?: string;
+    /** 默认切分策略 */
+    chunkStrategy?: string;
+    /** 默认切片大小 */
+    chunkSize?: number;
+    /** 默认切片重叠大小 */
+    chunkOverlap?: number;
+    /** 状态：ENABLED-启用，DISABLED-禁用 */
+    status: string;
+    /** 创建人 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime: string;
+    /** 更新人 */
+    updateBy?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 逻辑删除：0-未删除，2-已删除 */
+    delFlag: string;
+  };
+
+  type KbBaseExportParams = {
+    bo: KbBaseBo;
+  };
+
+  type KbBaseGetInfoParams = {
+    /** 主键 */
+    kbId: string;
+  };
+
+  type KbBaseListParams = {
+    bo: KbBaseBo;
+    pageQuery: PageQuery;
+  };
+
+  type KbBaseRemoveParams = {
+    /** 主键串 */
+    kbIds: string[];
+  };
+
+  type KbBaseVo = {
+    kbId?: string;
+    /** 租户ID */
+    tenantId?: string;
+    /** 知识库编码 */
+    kbCode?: string;
+    /** 知识库名称 */
+    kbName?: string;
+    /** 知识库描述 */
+    description?: string;
+    /** 可见范围：PRIVATE-私有，TEAM-团队，TENANT-租户，PUBLIC-公开 */
+    visibility?: string;
+    /** 知识库负责人/拥有者ID */
+    ownerId?: string;
+    /** 默认向量模型ID，对应 llm_model.model_id */
+    embeddingModelId?: string;
+    /** 默认切分策略 */
+    chunkStrategy?: string;
+    /** 默认切片大小 */
+    chunkSize?: number;
+    /** 默认切片重叠大小 */
+    chunkOverlap?: number;
+    /** 状态：ENABLED-启用，DISABLED-禁用 */
+    status?: string;
+    /** 创建人 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 更新人 */
+    updateBy?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 逻辑删除：0-未删除，2-已删除 */
+    delFlag?: string;
+  };
+
+  type KbChunkBo = {
+    chunkId?: string;
+    /** 租户ID */
+    tenantId?: string;
+    /** 知识库ID */
+    kbId: string;
+    /** 文档ID */
+    docId: string;
+    /** 文档内切片序号 */
+    chunkNo: number;
+    /** 切片标题 */
+    chunkTitle?: string;
+    /** 切片内容 */
+    content: string;
+    /** 切片内容Hash */
+    contentHash?: string;
+    /** Token数量 */
+    tokenCount?: number;
+    /** 字符数量 */
+    charCount?: number;
+    /** 页码，PDF/Word 可用 */
+    pageNo?: number;
+    /** 章节标题 */
+    sectionTitle?: string;
+    /** 在文档文本中的起始位置 */
+    startOffset?: number;
+    /** 在文档文本中的结束位置 */
+    endOffset?: number;
+    /** 向量化状态：PENDING-待处理，EMBEDDING-处理中，SUCCESS-成功，FAILED-失败 */
+    embeddingStatus: string;
+    /** 默认向量记录ID */
+    embeddingId?: string;
+    /** 状态：ENABLED-启用，DISABLED-禁用 */
+    status: string;
+    /** 创建人 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime: string;
+    /** 更新人 */
+    updateBy?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 逻辑删除：0-未删除，2-已删除 */
+    delFlag: string;
+  };
+
+  type KbChunkExportParams = {
+    bo: KbChunkBo;
+  };
+
+  type KbChunkGetInfoParams = {
+    /** 主键 */
+    chunkId: string;
+  };
+
+  type KbChunkListParams = {
+    bo: KbChunkBo;
+    pageQuery: PageQuery;
+  };
+
+  type KbChunkRemoveParams = {
+    /** 主键串 */
+    chunkIds: string[];
+  };
+
+  type KbChunkVo = {
+    chunkId?: string;
+    /** 租户ID */
+    tenantId?: string;
+    /** 知识库ID */
+    kbId?: string;
+    /** 文档ID */
+    docId?: string;
+    /** 文档内切片序号 */
+    chunkNo?: number;
+    /** 切片标题 */
+    chunkTitle?: string;
+    /** 切片内容 */
+    content?: string;
+    /** 切片内容Hash */
+    contentHash?: string;
+    /** Token数量 */
+    tokenCount?: number;
+    /** 字符数量 */
+    charCount?: number;
+    /** 页码，PDF/Word 可用 */
+    pageNo?: number;
+    /** 章节标题 */
+    sectionTitle?: string;
+    /** 在文档文本中的起始位置 */
+    startOffset?: number;
+    /** 在文档文本中的结束位置 */
+    endOffset?: number;
+    /** 向量化状态：PENDING-待处理，EMBEDDING-处理中，SUCCESS-成功，FAILED-失败 */
+    embeddingStatus?: string;
+    /** 默认向量记录ID */
+    embeddingId?: string;
+    /** 状态：ENABLED-启用，DISABLED-禁用 */
+    status?: string;
+    /** 创建人 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 更新人 */
+    updateBy?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 逻辑删除：0-未删除，2-已删除 */
+    delFlag?: string;
+  };
+
+  type KbDocumentBo = {
+    docId?: string;
+    /** 租户ID */
+    tenantId?: string;
+    /** 知识库ID */
+    kbId: string;
+    /** 统一文件表ID，如有 */
+    fileId?: string;
+    /** 文件名 */
+    fileName: string;
+    /** 文件类型，如 pdf/docx/txt/md */
+    fileType?: string;
+    /** 文件大小，单位字节 */
+    fileSize?: string;
+    /** 文件访问地址或对象存储地址 */
+    fileUrl?: string;
+    /** 对象存储Key */
+    objectKey?: string;
+    /** 文档标题 */
+    title?: string;
+    /** 来源类型：UPLOAD-上传，URL-网页，MANUAL-手工录入，API-接口导入 */
+    sourceType: string;
+    /** 来源URL */
+    sourceUrl?: string;
+    /** 解析状态：PENDING-待解析，PARSING-解析中，SUCCESS-成功，FAILED-失败 */
+    parseStatus: string;
+    /** 向量化状态：PENDING-待处理，EMBEDDING-处理中，SUCCESS-成功，FAILED-失败 */
+    embedStatus: string;
+    /** 切片数量 */
+    chunkCount: number;
+    /** Token数量 */
+    tokenCount: number;
+    /** 字符数量 */
+    charCount: number;
+    /** 文档内容Hash，用于判断是否重复或变更 */
+    contentHash?: string;
+    /** 错误信息 */
+    errorMessage?: string;
+    /** 状态：ENABLED-启用，DISABLED-禁用 */
+    status: string;
+    /** 创建人 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime: string;
+    /** 更新人 */
+    updateBy?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 逻辑删除：0-未删除，2-已删除 */
+    delFlag: string;
+  };
+
+  type KbDocumentExportParams = {
+    bo: KbDocumentBo;
+  };
+
+  type KbDocumentGetInfoParams = {
+    /** 主键 */
+    docId: string;
+  };
+
+  type KbDocumentListParams = {
+    bo: KbDocumentBo;
+    pageQuery: PageQuery;
+  };
+
+  type KbDocumentRemoveParams = {
+    /** 主键串 */
+    docIds: string[];
+  };
+
+  type KbDocumentTextBo = {
+    textId?: string;
+    /** 租户ID */
+    tenantId?: string;
+    /** 知识库ID */
+    kbId: string;
+    /** 文档ID */
+    docId: string;
+    /** 解析原始文本 */
+    rawText?: string;
+    /** 清洗后文本 */
+    cleanText?: string;
+    /** 解析器类型：PDF/DOCX/TXT/MARKDOWN */
+    parserType?: string;
+    /** 解析器版本 */
+    parserVersion?: string;
+    /** 字符数量 */
+    charCount: number;
+    /** Token数量 */
+    tokenCount: number;
+    /** 状态：ENABLED-启用，DISABLED-禁用 */
+    status: string;
+    /** 创建人 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime: string;
+    /** 更新人 */
+    updateBy?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 逻辑删除：0-未删除，2-已删除 */
+    delFlag: string;
+  };
+
+  type KbDocumentTextExportParams = {
+    bo: KbDocumentTextBo;
+  };
+
+  type KbDocumentTextGetInfoParams = {
+    /** 主键 */
+    textId: string;
+  };
+
+  type KbDocumentTextListParams = {
+    bo: KbDocumentTextBo;
+    pageQuery: PageQuery;
+  };
+
+  type KbDocumentTextRemoveParams = {
+    /** 主键串 */
+    textIds: string[];
+  };
+
+  type KbDocumentTextVo = {
+    textId?: string;
+    /** 租户ID */
+    tenantId?: string;
+    /** 知识库ID */
+    kbId?: string;
+    /** 文档ID */
+    docId?: string;
+    /** 解析原始文本 */
+    rawText?: string;
+    /** 清洗后文本 */
+    cleanText?: string;
+    /** 解析器类型：PDF/DOCX/TXT/MARKDOWN */
+    parserType?: string;
+    /** 解析器版本 */
+    parserVersion?: string;
+    /** 字符数量 */
+    charCount?: number;
+    /** Token数量 */
+    tokenCount?: number;
+    /** 状态：ENABLED-启用，DISABLED-禁用 */
+    status?: string;
+    /** 创建人 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 更新人 */
+    updateBy?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 逻辑删除：0-未删除，2-已删除 */
+    delFlag?: string;
+  };
+
+  type KbDocumentUploadParams = {
+    kbId: number;
+  };
+
+  type KbDocumentVo = {
+    docId?: string;
+    /** 租户ID */
+    tenantId?: string;
+    /** 知识库ID */
+    kbId?: string;
+    /** 统一文件表ID，如有 */
+    fileId?: string;
+    /** 文件名 */
+    fileName?: string;
+    /** 文件类型，如 pdf/docx/txt/md */
+    fileType?: string;
+    /** 文件大小，单位字节 */
+    fileSize?: string;
+    /** 文件访问地址或对象存储地址 */
+    fileUrl?: string;
+    /** 对象存储Key */
+    objectKey?: string;
+    /** 文档标题 */
+    title?: string;
+    /** 来源类型：UPLOAD-上传，URL-网页，MANUAL-手工录入，API-接口导入 */
+    sourceType?: string;
+    /** 来源URL */
+    sourceUrl?: string;
+    /** 解析状态：PENDING-待解析，PARSING-解析中，SUCCESS-成功，FAILED-失败 */
+    parseStatus?: string;
+    /** 向量化状态：PENDING-待处理，EMBEDDING-处理中，SUCCESS-成功，FAILED-失败 */
+    embedStatus?: string;
+    /** 切片数量 */
+    chunkCount?: number;
+    /** Token数量 */
+    tokenCount?: number;
+    /** 字符数量 */
+    charCount?: number;
+    /** 文档内容Hash，用于判断是否重复或变更 */
+    contentHash?: string;
+    /** 错误信息 */
+    errorMessage?: string;
+    /** 状态：ENABLED-启用，DISABLED-禁用 */
+    status?: string;
+    /** 创建人 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 更新人 */
+    updateBy?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 逻辑删除：0-未删除，2-已删除 */
+    delFlag?: string;
+  };
+
+  type KbEmbeddingBo = {
+    embeddingId?: string;
+    /** 租户ID */
+    tenantId?: string;
+    /** 知识库ID */
+    kbId: string;
+    /** 文档ID */
+    docId: string;
+    /** 切片ID */
+    chunkId: string;
+    /** 向量模型ID，对应 llm_model.model_id */
+    modelId: string;
+    /** 向量模型编码 */
+    modelCode: string;
+    /** 向量库类型：QDRANT/MILVUS/ELASTICSEARCH/PGVECTOR */
+    vectorStore: string;
+    /** 向量集合名称 */
+    collectionName?: string;
+    /** 向量库中的向量ID */
+    vectorId: string;
+    /** 向量维度 */
+    vectorDim: number;
+    /** 对应切片内容Hash */
+    contentHash?: string;
+    /** 向量化版本，用于重新向量化区分 */
+    embedVersion?: string;
+    /** 状态：SUCCESS-成功，FAILED-失败，DISABLED-禁用 */
+    status: string;
+    /** 错误信息 */
+    errorMessage?: string;
+    /** 创建人 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime: string;
+    /** 更新人 */
+    updateBy?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 逻辑删除：0-未删除，2-已删除 */
+    delFlag: string;
+  };
+
+  type KbEmbeddingExportParams = {
+    bo: KbEmbeddingBo;
+  };
+
+  type KbEmbeddingGetInfoParams = {
+    /** 主键 */
+    embeddingId: string;
+  };
+
+  type KbEmbeddingListParams = {
+    bo: KbEmbeddingBo;
+    pageQuery: PageQuery;
+  };
+
+  type KbEmbeddingRemoveParams = {
+    /** 主键串 */
+    embeddingIds: string[];
+  };
+
+  type KbEmbeddingVo = {
+    embeddingId?: string;
+    /** 租户ID */
+    tenantId?: string;
+    /** 知识库ID */
+    kbId?: string;
+    /** 文档ID */
+    docId?: string;
+    /** 切片ID */
+    chunkId?: string;
+    /** 向量模型ID，对应 llm_model.model_id */
+    modelId?: string;
+    /** 向量模型编码 */
+    modelCode?: string;
+    /** 向量库类型：QDRANT/MILVUS/ELASTICSEARCH/PGVECTOR */
+    vectorStore?: string;
+    /** 向量集合名称 */
+    collectionName?: string;
+    /** 向量库中的向量ID */
+    vectorId?: string;
+    /** 向量维度 */
+    vectorDim?: number;
+    /** 对应切片内容Hash */
+    contentHash?: string;
+    /** 向量化版本，用于重新向量化区分 */
+    embedVersion?: string;
+    /** 状态：SUCCESS-成功，FAILED-失败，DISABLED-禁用 */
+    status?: string;
+    /** 错误信息 */
+    errorMessage?: string;
+    /** 创建人 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 更新人 */
+    updateBy?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 逻辑删除：0-未删除，2-已删除 */
+    delFlag?: string;
+  };
+
+  type KbRetrievalHitBo = {
+    hitId?: string;
+    /** 租户ID */
+    tenantId?: string;
+    /** 检索日志ID */
+    logId: string;
+    /** 知识库ID */
+    kbId: string;
+    /** 文档ID */
+    docId: string;
+    /** 切片ID */
+    chunkId: string;
+    /** 召回排序 */
+    rankNo: number;
+    /** 向量相似度分数 */
+    score?: number;
+    /** 重排序分数 */
+    rerankScore?: number;
+    /** 是否最终注入Prompt：0-否，1-是 */
+    usedInPrompt: number;
+    /** 命中内容预览 */
+    contentPreview?: string;
+    /** 状态：SUCCESS-成功，DISCARDED-丢弃 */
+    status: string;
+    /** 创建人 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime: string;
+    /** 更新人 */
+    updateBy?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 逻辑删除：0-未删除，2-已删除 */
+    delFlag: string;
+  };
+
+  type KbRetrievalHitDto = {
+    kbId?: string;
+    docId?: string;
+    chunkId?: string;
+    rankNo?: number;
+    score?: number;
+    content?: string;
+    contentPreview?: string;
+  };
+
+  type KbRetrievalHitExportParams = {
+    bo: KbRetrievalHitBo;
+  };
+
+  type KbRetrievalHitGetInfoParams = {
+    /** 主键 */
+    hitId: string;
+  };
+
+  type KbRetrievalHitListParams = {
+    bo: KbRetrievalHitBo;
+    pageQuery: PageQuery;
+  };
+
+  type KbRetrievalHitRemoveParams = {
+    /** 主键串 */
+    hitIds: string[];
+  };
+
+  type KbRetrievalHitVo = {
+    hitId?: string;
+    /** 租户ID */
+    tenantId?: string;
+    /** 检索日志ID */
+    logId?: string;
+    /** 知识库ID */
+    kbId?: string;
+    /** 文档ID */
+    docId?: string;
+    /** 切片ID */
+    chunkId?: string;
+    /** 召回排序 */
+    rankNo?: number;
+    /** 向量相似度分数 */
+    score?: number;
+    /** 重排序分数 */
+    rerankScore?: number;
+    /** 是否最终注入Prompt：0-否，1-是 */
+    usedInPrompt?: number;
+    /** 命中内容预览 */
+    contentPreview?: string;
+    /** 状态：SUCCESS-成功，DISCARDED-丢弃 */
+    status?: string;
+    /** 创建人 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 更新人 */
+    updateBy?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 逻辑删除：0-未删除，2-已删除 */
+    delFlag?: string;
+  };
+
+  type KbRetrievalLogBo = {
+    logId?: string;
+    /** 租户ID */
+    tenantId?: string;
+    /** 知识库ID，单知识库检索时使用 */
+    kbId?: string;
+    /** 知识库ID列表，多知识库检索时使用，逗号分隔 */
+    kbIds?: string;
+    /** 聊天会话ID */
+    sessionId?: string;
+    /** 对话ID */
+    conversationId?: string;
+    /** 用户消息ID */
+    messageId?: string;
+    /** 模型调用记录ID */
+    invocationId?: string;
+    /** 原始问题 */
+    queryText: string;
+    /** 改写后的检索问题 */
+    rewriteQuery?: string;
+    /** 问题向量化模型ID */
+    embeddingModelId?: string;
+    /** 召回数量 */
+    topK: number;
+    /** 最低相似度分数 */
+    minScore?: number;
+    /** 命中数量 */
+    hitCount: number;
+    /** 最终注入上下文的数量 */
+    usedCount: number;
+    /** 检索耗时，毫秒 */
+    latencyMs?: number;
+    /** 状态：SUCCESS-成功，FAILED-失败 */
+    status: string;
+    /** 错误信息 */
+    errorMessage?: string;
+    /** 创建人 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime: string;
+    /** 更新人 */
+    updateBy?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 逻辑删除：0-未删除，2-已删除 */
+    delFlag: string;
+  };
+
+  type KbRetrievalLogExportParams = {
+    bo: KbRetrievalLogBo;
+  };
+
+  type KbRetrievalLogGetInfoParams = {
+    /** 主键 */
+    logId: string;
+  };
+
+  type KbRetrievalLogListParams = {
+    bo: KbRetrievalLogBo;
+    pageQuery: PageQuery;
+  };
+
+  type KbRetrievalLogRemoveParams = {
+    /** 主键串 */
+    logIds: string[];
+  };
+
+  type KbRetrievalLogVo = {
+    logId?: string;
+    /** 租户ID */
+    tenantId?: string;
+    /** 知识库ID，单知识库检索时使用 */
+    kbId?: string;
+    /** 知识库ID列表，多知识库检索时使用，逗号分隔 */
+    kbIds?: string;
+    /** 聊天会话ID */
+    sessionId?: string;
+    /** 对话ID */
+    conversationId?: string;
+    /** 用户消息ID */
+    messageId?: string;
+    /** 模型调用记录ID */
+    invocationId?: string;
+    /** 原始问题 */
+    queryText?: string;
+    /** 改写后的检索问题 */
+    rewriteQuery?: string;
+    /** 问题向量化模型ID */
+    embeddingModelId?: string;
+    /** 召回数量 */
+    topK?: number;
+    /** 最低相似度分数 */
+    minScore?: number;
+    /** 命中数量 */
+    hitCount?: number;
+    /** 最终注入上下文的数量 */
+    usedCount?: number;
+    /** 检索耗时，毫秒 */
+    latencyMs?: number;
+    /** 状态：SUCCESS-成功，FAILED-失败 */
+    status?: string;
+    /** 错误信息 */
+    errorMessage?: string;
+    /** 创建人 */
+    createBy?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 更新人 */
+    updateBy?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 逻辑删除：0-未删除，2-已删除 */
+    delFlag?: string;
+  };
+
+  type KbRetrievalRequest = {
+    tenantId?: string;
+    kbId?: string;
+    kbIds?: string[];
+    query: string;
+    embeddingModelId?: string;
+    topK?: number;
+    minScore?: number;
+    sessionId?: string;
+    conversationId?: string;
+    messageId?: string;
+    invocationId?: string;
+  };
+
+  type KbRetrievalResponse = {
+    logId?: string;
+    hitCount?: number;
+    usedCount?: number;
+    hits?: KbRetrievalHitDto[];
   };
 
   type LfAssignee = {
@@ -847,6 +1676,7 @@ declare namespace API {
     modelName?: string;
     /** displayName */
     displayName?: string;
+    modelType?: string;
     /** {"stream":true,"json":true,"tools":true,"vision":false,"thinking":false} */
     capabilityJson?: string;
     /** contextWindow */
@@ -882,6 +1712,7 @@ declare namespace API {
     endpointId?: string;
     /** providerCode */
     providerName?: string;
+    modelType?: string;
     providerId?: string;
     /** remote model name, e.g. gpt-4o-mini */
     modelName?: string;
@@ -1281,12 +2112,6 @@ declare namespace API {
     postGroup?: string;
   };
 
-  type RAvatarVo = {
-    code?: number;
-    msg?: string;
-    data?: AvatarVo;
-  };
-
   type RChatAttachmentVo = {
     code?: number;
     msg?: string;
@@ -1358,6 +2183,60 @@ declare namespace API {
     code?: number;
     msg?: string;
     data?: FileObjectKey;
+  };
+
+  type RKbBaseAuthVo = {
+    code?: number;
+    msg?: string;
+    data?: KbBaseAuthVo;
+  };
+
+  type RKbBaseVo = {
+    code?: number;
+    msg?: string;
+    data?: KbBaseVo;
+  };
+
+  type RKbChunkVo = {
+    code?: number;
+    msg?: string;
+    data?: KbChunkVo;
+  };
+
+  type RKbDocumentTextVo = {
+    code?: number;
+    msg?: string;
+    data?: KbDocumentTextVo;
+  };
+
+  type RKbDocumentVo = {
+    code?: number;
+    msg?: string;
+    data?: KbDocumentVo;
+  };
+
+  type RKbEmbeddingVo = {
+    code?: number;
+    msg?: string;
+    data?: KbEmbeddingVo;
+  };
+
+  type RKbRetrievalHitVo = {
+    code?: number;
+    msg?: string;
+    data?: KbRetrievalHitVo;
+  };
+
+  type RKbRetrievalLogVo = {
+    code?: number;
+    msg?: string;
+    data?: KbRetrievalLogVo;
+  };
+
+  type RKbRetrievalResponse = {
+    code?: number;
+    msg?: string;
+    data?: KbRetrievalResponse;
   };
 
   type RListReactRouterVo = {
@@ -1783,6 +2662,10 @@ declare namespace API {
   type schemaFieldRemoveParams = {
     /** 主键串 */
     ids: number[];
+  };
+
+  type schemaFieldSyncUpdateParams = {
+    id: string;
   };
 
   type SchemaFieldVo = {
@@ -3150,6 +4033,7 @@ declare namespace API {
     postName?: string;
     isPrimaryPost?: boolean;
     primaryPostId?: string;
+    avatarUrl?: string;
   };
 
   type TableDataInfoChatAttachmentVo = {
@@ -3212,6 +4096,94 @@ declare namespace API {
     total?: string;
     /** 列表数据 */
     rows?: ChatSessionVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoKbBaseAuthVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: KbBaseAuthVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoKbBaseVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: KbBaseVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoKbChunkVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: KbChunkVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoKbDocumentTextVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: KbDocumentTextVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoKbDocumentVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: KbDocumentVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoKbEmbeddingVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: KbEmbeddingVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoKbRetrievalHitVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: KbRetrievalHitVo[];
+    /** 消息状态码 */
+    code?: number;
+    /** 消息内容 */
+    msg?: string;
+  };
+
+  type TableDataInfoKbRetrievalLogVo = {
+    /** 总记录数 */
+    total?: string;
+    /** 列表数据 */
+    rows?: KbRetrievalLogVo[];
     /** 消息状态码 */
     code?: number;
     /** 消息内容 */
@@ -3644,8 +4616,8 @@ declare namespace API {
   type TreeLong = {
     name?: { empty?: boolean };
     id?: string;
-    config?: TreeNodeConfig;
     parentId?: string;
+    config?: TreeNodeConfig;
     weight?: any;
     empty?: boolean;
   };

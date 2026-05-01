@@ -25,7 +25,7 @@ export async function updateProfile(
   });
 }
 
-/** 个人信息 头像上传 POST /system/user/profile/avatar */
+/** 用户头像 头像上传 POST /system/user/profile/avatar */
 export async function avatar(
   body: {},
   avatarFile?: File,
@@ -56,7 +56,7 @@ export async function avatar(
     }
   });
 
-  return request<API.RAvatarVo>("/system/user/profile/avatar", {
+  return request<API.RString>("/system/user/profile/avatar", {
     method: "POST",
     data: formData,
     requestType: "form",

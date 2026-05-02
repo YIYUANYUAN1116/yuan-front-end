@@ -312,6 +312,8 @@ declare namespace API {
     createTime?: string;
     /** updateTime */
     updateTime?: string;
+    /** 知识库检索命中条目 */
+    retrievalHits?: KbRetrievalHitVo[];
   };
 
   type ChatModelBo = {
@@ -690,6 +692,7 @@ declare namespace API {
     ownerId?: string;
     /** 默认向量模型ID，对应 llm_model.model_id */
     embeddingModelId?: string;
+    embeddingModel?: string;
     /** 默认切分策略 */
     chunkStrategy?: string;
     /** 默认切片大小 */
@@ -701,13 +704,13 @@ declare namespace API {
     /** 创建人 */
     createBy?: string;
     /** 创建时间 */
-    createTime: string;
+    createTime?: string;
     /** 更新人 */
     updateBy?: string;
     /** 更新时间 */
     updateTime?: string;
     /** 逻辑删除：0-未删除，2-已删除 */
-    delFlag: string;
+    delFlag?: string;
   };
 
   type KbBaseExportParams = {
@@ -772,8 +775,10 @@ declare namespace API {
     tenantId?: string;
     /** 知识库ID */
     kbId: string;
+    kbName?: string;
     /** 文档ID */
     docId: string;
+    docName?: string;
     /** 文档内切片序号 */
     chunkNo: number;
     /** 切片标题 */
@@ -885,6 +890,7 @@ declare namespace API {
     tenantId?: string;
     /** 知识库ID */
     kbId: string;
+    kbName?: string;
     /** 统一文件表ID，如有 */
     fileId?: string;
     /** 文件名 */
@@ -1303,6 +1309,8 @@ declare namespace API {
     updateTime?: string;
     /** 逻辑删除：0-未删除，2-已删除 */
     delFlag?: string;
+    /** helper */
+    completeContent?: string;
   };
 
   type KbRetrievalLogBo = {
@@ -1313,8 +1321,6 @@ declare namespace API {
     kbId?: string;
     /** 知识库ID列表，多知识库检索时使用，逗号分隔 */
     kbIds?: string;
-    /** 聊天会话ID */
-    sessionId?: string;
     /** 对话ID */
     conversationId?: string;
     /** 用户消息ID */
@@ -1380,8 +1386,6 @@ declare namespace API {
     kbId?: string;
     /** 知识库ID列表，多知识库检索时使用，逗号分隔 */
     kbIds?: string;
-    /** 聊天会话ID */
-    sessionId?: string;
     /** 对话ID */
     conversationId?: string;
     /** 用户消息ID */

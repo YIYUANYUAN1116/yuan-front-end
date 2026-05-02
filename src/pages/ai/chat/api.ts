@@ -18,6 +18,7 @@ export type ChatMessage = {
   content: string;
   status?: MessageStatus;
   createdAt: string;
+  retrievalHits?: API.KbRetrievalHitVo[];
 };
 
 export type ConversationItem = {
@@ -76,6 +77,7 @@ type StreamMeta = {
   conversationId?: string;
   title?: string;
   preview?: string;
+  retrievalHits?: API.KbRetrievalHitVo[];
 };
 
 type SseEvent = {
@@ -138,6 +140,43 @@ const safeJsonParse = (value: string) => {
   }
 };
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const normalizeRetrievalHits = (value: unknown): API.KbRetrievalHitVo[] => {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return value.filter(isRecord) as API.KbRetrievalHitVo[];
+};
+
+const extractRetrievalHits = (value: unknown): API.KbRetrievalHitVo[] => {
+  const directHits = normalizeRetrievalHits(value);
+  if (directHits.length) {
+    return directHits;
+  }
+  if (!isRecord(value)) {
+    return [];
+  }
+
+  const candidates = [
+    value.retrievalHits,
+    isRecord(value.data) ? value.data.retrievalHits : undefined,
+    isRecord(value.result) ? value.result.retrievalHits : undefined,
+    isRecord(value.message) ? value.message.retrievalHits : undefined,
+    isRecord(value.assistantMessage) ? value.assistantMessage.retrievalHits : undefined,
+  ];
+
+  for (const candidate of candidates) {
+    const hits = normalizeRetrievalHits(candidate);
+    if (hits.length) {
+      return hits;
+    }
+  }
+
+  return [];
+};
+
 const normalizeMessageRole = (role?: string): ChatRole | null => {
   if (role === 'user') {
     return 'user';
@@ -196,6 +235,7 @@ const mapMessageItem = (item: API.ChatMessageVo): ChatMessage | null => {
     content: item.content ?? '',
     status: item.status === 'FAILED' ? 'error' : 'done',
     createdAt: item.createTime || item.updateTime || dayjs().toISOString(),
+    retrievalHits: normalizeRetrievalHits(item.retrievalHits),
   };
 };
 
@@ -216,12 +256,16 @@ const parseEventPayload = (raw: string) => {
     };
   }
 
+  const retrievalHits = extractRetrievalHits(parsed);
   const meta: StreamMeta = {
     conversationId:
       parsed.conversationId ?? parsed.data?.conversationId ?? parsed.result?.conversationId,
     title: parsed.title ?? parsed.data?.title ?? parsed.result?.title,
     preview: parsed.preview ?? parsed.data?.preview ?? parsed.result?.preview,
   };
+  if (retrievalHits.length) {
+    meta.retrievalHits = retrievalHits;
+  }
 
   const text =
     parsed.delta ??
@@ -252,6 +296,9 @@ const buildMetaFromNamedEvent = (eventName: string, rawData: string): StreamMeta
   }
   if (eventName === 'preview') {
     return { preview: rawData.trim() };
+  }
+  if (eventName === 'retrievalHits') {
+    return { retrievalHits: extractRetrievalHits(safeJsonParse(rawData) ?? rawData) };
   }
   return {};
 };
@@ -667,6 +714,7 @@ export const chatPageApi = {
         content: finalContent,
         status: 'done',
         createdAt: dayjs().toISOString(),
+        retrievalHits: meta.retrievalHits,
       },
     };
   },

@@ -1,8 +1,10 @@
 import {
   CopyOutlined,
   DeleteOutlined,
+  DownOutlined,
   EllipsisOutlined,
   EditOutlined,
+  FileSearchOutlined,
   PlusOutlined,
   ReloadOutlined,
   RobotOutlined,
@@ -77,6 +79,36 @@ const findLastUserIndex = (messages: ChatMessage[]) => {
 };
 
 const isPersistedConversationId = (value?: string) => Boolean(value && /^\d+$/.test(value));
+
+type RetrievalHitView = API.KbRetrievalHitVo & {
+  content?: string;
+  docName?: string;
+  documentName?: string;
+  kbName?: string;
+  knowledgeBaseName?: string;
+  title?: string;
+};
+
+const getRetrievalHitTitle = (hit: RetrievalHitView, index: number) =>
+  hit.docName || hit.documentName || hit.title || hit.chunkId || `来源 ${index + 1}`;
+
+const getRetrievalHitPreview = (hit: RetrievalHitView) => hit.completeContent || hit.contentPreview || '暂无内容预览';
+
+const formatRetrievalScore = (score?: number) => {
+  if (typeof score !== 'number') {
+    return undefined;
+  }
+  return score > 1 ? score.toFixed(3) : `${(score * 100).toFixed(1)}%`;
+};
+
+const getRetrievalHitMeta = (hit: RetrievalHitView) => {
+  const parts = [
+    hit.kbName || hit.knowledgeBaseName || (hit.kbId ? `知识库 ${hit.kbId}` : undefined),
+    hit.docId ? `文档 ${hit.docId}` : undefined,
+    hit.rankNo ? `#${hit.rankNo}` : undefined,
+  ];
+  return parts.filter(Boolean).join(' · ');
+};
 
 type ConversationPaging = {
   pageNum: number;
@@ -292,6 +324,68 @@ const useStyle = createStyles(({ token, css }) => ({
   assistantToolbar: css`
     margin-top: 10px;
   `,
+  retrievalWrap: css`
+    margin-top: 12px;
+  `,
+  retrievalToggle: css`
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    border-radius: 999px;
+    border-color: ${token.colorBorderSecondary};
+    color: ${token.colorTextSecondary};
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+  `,
+  retrievalPanel: css`
+    margin-top: 8px;
+    width: min(100%, 720px);
+    border: 1px solid ${token.colorBorderSecondary};
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    overflow: hidden;
+  `,
+  retrievalItem: css`
+    padding: 12px 14px;
+
+    & + & {
+      border-top: 1px solid ${token.colorBorderSecondary};
+    }
+  `,
+  retrievalItemHeader: css`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+  `,
+  retrievalItemTitle: css`
+    min-width: 0;
+    color: ${token.colorText};
+    font-size: 13px;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  `,
+  retrievalItemScore: css`
+    flex-shrink: 0;
+    color: ${token.colorTextTertiary};
+    font-size: 12px;
+  `,
+  retrievalItemMeta: css`
+    margin-bottom: 6px;
+    color: ${token.colorTextTertiary};
+    font-size: 12px;
+  `,
+  retrievalItemPreview: css`
+    color: ${token.colorTextSecondary};
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+  `,
   userToolbar: css`
     margin-top: 10px;
     display: flex;
@@ -425,6 +519,7 @@ const ChatPage: React.FC = () => {
   const [titleInputValue, setTitleInputValue] = useState('');
   const [openConversationMenuId, setOpenConversationMenuId] = useState<string>();
   const [conversationPagingMap, setConversationPagingMap] = useState<Record<string, ConversationPaging>>({});
+  const [expandedRetrievalMessageIds, setExpandedRetrievalMessageIds] = useState<string[]>([]);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const runtimeContext = useMemo(
@@ -934,6 +1029,53 @@ const ChatPage: React.FC = () => {
     }
   };
 
+  const toggleRetrievalHits = (messageId: string) => {
+    setExpandedRetrievalMessageIds((prev) =>
+      prev.includes(messageId) ? prev.filter((item) => item !== messageId) : [...prev, messageId],
+    );
+  };
+
+  const renderRetrievalHits = (chatMessage: ChatMessage) => {
+    const hits = (chatMessage.retrievalHits ?? []) as RetrievalHitView[];
+    if (!hits.length) {
+      return null;
+    }
+
+    const expanded = expandedRetrievalMessageIds.includes(chatMessage.id);
+
+    return (
+      <div className={styles.retrievalWrap}>
+        <Button
+          className={styles.retrievalToggle}
+          size="small"
+          icon={<FileSearchOutlined />}
+          onClick={() => toggleRetrievalHits(chatMessage.id)}
+        >
+          已参考 {hits.length} 条知识库
+          <DownOutlined rotate={expanded ? 180 : 0} />
+        </Button>
+        {expanded ? (
+          <div className={styles.retrievalPanel}>
+            {hits.map((hit, index) => {
+              const score = formatRetrievalScore(hit.rerankScore ?? hit.score);
+              const meta = getRetrievalHitMeta(hit);
+              return (
+                <div key={hit.hitId ?? hit.chunkId ?? `${chatMessage.id}_${index}`} className={styles.retrievalItem}>
+                  <div className={styles.retrievalItemHeader}>
+                    <div className={styles.retrievalItemTitle}>{getRetrievalHitTitle(hit, index)}</div>
+                    {score ? <div className={styles.retrievalItemScore}>匹配度 {score}</div> : null}
+                  </div>
+                  {meta ? <div className={styles.retrievalItemMeta}>{meta}</div> : null}
+                  <div className={styles.retrievalItemPreview}>{getRetrievalHitPreview(hit)}</div>
+                </div>
+              );
+            })}
+          </div>
+        ) : null}
+      </div>
+    );
+  };
+
   const handleStartConversationRename = (conversation: ConversationItem) => {
     setOpenConversationMenuId(undefined);
     setTitleInputValue(conversation.title);
@@ -1217,6 +1359,8 @@ const ChatPage: React.FC = () => {
                               </div>
                             )}
                           </div>
+
+                          {renderRetrievalHits(item)}
 
                           {item.status !== 'streaming' && item.content ? (
                           <Space className={styles.assistantToolbar} size={4}>

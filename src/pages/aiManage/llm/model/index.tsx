@@ -1,21 +1,35 @@
+import { PlusOutlined } from '@ant-design/icons';
+import type { ActionType, ProColumns } from '@ant-design/pro-components';
+import { PageContainer, ProTable } from '@ant-design/pro-components';
+import { Access, useAccess } from '@umijs/max';
+import { Button, Popconfirm, Space, Table } from 'antd';
+import { useRef } from 'react';
+import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
+import { DictEnum } from '@/const/dict-enum';
+import { useActionRequest } from '@/hooks/action/useActionRequest';
+import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 import { useTableRequest } from '@/hooks/table/useTableRequest';
 import { llmModelList, llmModelRemove } from '@/services/yuan/llmModelController';
-import { ActionType, PageContainer, ProColumns, ProTable } from '@ant-design/pro-components';
-import { Access, useAccess } from '@umijs/max';
-import { Button, Popconfirm, Space, Table, Tag } from 'antd';
-import React, { useRef } from 'react'
-import { PlusOutlined } from '@ant-design/icons';
-import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
-import { useActionRequest } from '@/hooks/action/useActionRequest';
 import { LlmModelDrawerForm } from './components/LlmModelDrawerForm';
-import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
-import { DictEnum } from '@/const/dict-enum';
+import { useDictDataTagMap } from '@/hooks/dict/useDictDataTagMap';
 
-const index = () => {
+const LlmModelPage = () => {
   const actionRef = useRef<ActionType | null>(null);
   const access = useAccess();
   const statusEnum = useDictDataValueEnum(DictEnum.SYS_NORMAL_DISABLE);
+
+  const modelTypetagMap = useDictDataTagMap(DictEnum.AI_MODEL_TYPE)
+  const modelTypeEnum = useDictDataValueEnum(DictEnum.AI_MODEL_TYPE);
+  const modelType = (value: string | number) => {
+        const tag = modelTypetagMap[String(value)];
+        return tag?.render?.() ?? value;
+  };
+    
+  const { run: deleteRun, loading: deleteLoading } = useActionRequest(
+    llmModelRemove,
+    actionRef.current?.reload,
+  );
 
   const columns: ProColumns<API.LlmModelVo>[] = [
     {
@@ -29,49 +43,74 @@ const index = () => {
       valueType: 'indexBorder',
       width: 48,
     },
-    { title: '显示名称', dataIndex: 'displayName' ,width:150},
-    { title: '模型名', dataIndex: 'modelName', copyable: true ,width:150},
+    {
+      title: '显示名称',
+      dataIndex: 'displayName',
+      width: 150,
+    },
+    {
+      title: '模型名称',
+      dataIndex: 'modelName',
+      copyable: true,
+      width: 150,
+    },
+    {
+      title: '模型类型',
+      dataIndex: 'modelType',
+      valueEnum: modelTypeEnum,
+      width: 120,
+      render: (_, record) => modelType(record.modelType || ''),
+    },
     {
       title: '供应商',
       dataIndex: 'providerId',
-      width: 150,
-      ...HIDE_COLUMN
+      ...HIDE_COLUMN,
     },
     {
       title: '供应商',
       dataIndex: 'providerName',
-      width: 150
+      width: 150,
+      hideInSearch: true,
     },
     {
       title: '接入点',
       dataIndex: 'endpointName',
-      width: 150
+      width: 150,
+      hideInSearch: true,
     },
     {
-      title: '供应商',
+      title: '接入点',
       dataIndex: 'endpointId',
-      width: 200,
-      ...HIDE_COLUMN
+      ...HIDE_COLUMN,
     },
     {
       title: '状态',
       dataIndex: 'status',
       width: 80,
-      valueEnum:statusEnum
+      valueEnum: statusEnum,
     },
-    { title: '创建时间', dataIndex: 'createTime', width: 180 },
-    { title: '更新时间', dataIndex: 'updateTime', width: 180 },
+    {
+      title: '创建时间',
+      dataIndex: 'createTime',
+      width: 180,
+      valueType: 'dateTime',
+      hideInSearch: true,
+    },
+    {
+      title: '更新时间',
+      dataIndex: 'updateTime',
+      width: 180,
+      valueType: 'dateTime',
+      hideInSearch: true,
+    },
     {
       title: '操作',
       valueType: 'option',
       key: 'option',
       hideInSearch: true,
-      render: (text, record) => (
+      render: (_, record) => (
         <Space size="small">
-          <Access
-            key="edit"
-            accessible={access.canAccess('ai:llmModel:list') || false}
-          >
+          <Access key="edit" accessible={access.canAccess('ai:llmModel:list') || false}>
             <LlmModelDrawerForm
               mode="edit"
               trigger={<a>编辑</a>}
@@ -80,10 +119,7 @@ const index = () => {
             />
           </Access>
 
-          <Access
-            key="remove"
-            accessible={access.canAccess('ai:llmModel:remove')}
-          >
+          <Access key="remove" accessible={access.canAccess('ai:llmModel:remove')}>
             <Popconfirm
               title="模型删除"
               description={`确认删除模型：${record.modelName}`}
@@ -100,12 +136,8 @@ const index = () => {
     },
   ];
 
-  const { run: deleteRun, loading: deleteLoading } = useActionRequest(
-    llmModelRemove,
-    actionRef.current?.reload,
-  );
-
   const request = useTableRequest(llmModelList);
+
   return (
     <PageContainer>
       <ProTable<API.LlmModelVo>
@@ -113,18 +145,18 @@ const index = () => {
         actionRef={actionRef}
         request={request}
         columnsState={{
-          persistenceKey: 'sys-user-pro-table',
+          persistenceKey: 'llm-model-pro-table',
           persistenceType: 'localStorage',
           defaultValue: {
             option: { fixed: 'right', disable: true },
           },
         }}
-        rowKey="userId"
+        rowKey="id"
         search={{ labelWidth: 'auto' }}
         pagination={{ pageSize: 10 }}
         headerTitle="模型管理"
         toolBarRender={() => [
-          <Access key="add" accessible={access.canAccess('system:user:add')}>
+          <Access key="add" accessible={access.canAccess('ai:llmModel:add')}>
             <LlmModelDrawerForm
               mode="add"
               trigger={
@@ -137,16 +169,11 @@ const index = () => {
           </Access>,
         ]}
         rowSelection={{
-          // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
-          // 注释该行则默认不显示下拉选项
           selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
         }}
         tableAlertOptionRender={false}
         tableAlertRender={(props) => (
-          <Access
-            key="remove"
-            accessible={access.canAccess('ai:llmModel:remove')}
-          >
+          <Access key="remove" accessible={access.canAccess('ai:llmModel:remove')}>
             <BatchDeleteAlert<API.LlmModelVo>
               {...props}
               actionRef={actionRef}
@@ -157,6 +184,6 @@ const index = () => {
       />
     </PageContainer>
   );
-}
+};
 
-export default index
+export default LlmModelPage;

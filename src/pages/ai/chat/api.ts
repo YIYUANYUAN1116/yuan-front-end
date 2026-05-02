@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import { selectModel } from '@/services/yuan/llmModelController';
+import { kbBaseSelect } from '@/services/yuan/kbBaseController';
 import {
   chatConversationEdit,
   chatConversationGetInfo,
@@ -24,6 +25,7 @@ export type ConversationItem = {
   title: string;
   preview: string;
   model: string;
+  kbIds?: string[];
   updatedAt: string;
   messages: ChatMessage[];
   isDraft?: boolean;
@@ -56,6 +58,7 @@ export type LoadChatMessagesResult = {
 export type SendChatMessageParams = ChatRuntimeContext & {
   conversationId?: string;
   model: string;
+  kbIds?: string[];
   content: string;
   messages: ChatMessage[];
   regenerate?: boolean;
@@ -165,11 +168,17 @@ const mapModelOption = (item: API.SelectModel): ModelOption | null => {
 
 const mapConversationItem = (item: API.ChatConversationVo, defaultModel: string): ConversationItem => {
   const meta = item.metaJson ? safeJsonParse(item.metaJson) : undefined;
+  const kbIds = Array.isArray(meta?.kbIds)
+    ? meta.kbIds
+        .filter((value: unknown): value is string | number => typeof value === 'string' || typeof value === 'number')
+        .map((value: string | number) => String(value))
+    : [];
   return {
     id: item.id,
     title: item.title || '未命名会话',
     preview: '',
     model: typeof meta?.model === 'string' ? meta.model : defaultModel,
+    kbIds,
     updatedAt: item.lastMessageAt || item.updateTime || item.createTime || dayjs().toISOString(),
     messages: [],
   };
@@ -317,6 +326,11 @@ export const chatPageApi = {
     return (response.data ?? []).map(mapModelOption).filter(Boolean) as ModelOption[];
   },
 
+  async loadKnowledgeBases(): Promise<ModelOption[]> {
+    const response = await kbBaseSelect();
+    return (response.data ?? []).map(mapModelOption).filter(Boolean) as ModelOption[];
+  },
+
   async loadConversations(
     params: ChatRuntimeContext & {
       defaultModel: string;
@@ -420,6 +434,7 @@ export const chatPageApi = {
       traceId,
       conversationId: params.conversationId,
       modelId: params.model,
+      kbIds: params.kbIds?.length ? params.kbIds : undefined,
       autoSelectModel: !params.model,
       stream: true,
       persistChatMessage: true,

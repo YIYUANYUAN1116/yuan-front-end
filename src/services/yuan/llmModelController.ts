@@ -96,7 +96,15 @@ export async function llmModelList(
   });
 }
 
-/** 获取供应商选择框列表 GET /ai/llmModel/selectModel */
+/** 获取模型选择 GET /ai/llmModel/selectEmbeddingModel */
+export async function selectEmbeddingModel(options?: { [key: string]: any }) {
+  return request<API.RListSelectModel>("/ai/llmModel/selectEmbeddingModel", {
+    method: "GET",
+    ...(options || {}),
+  });
+}
+
+/** 获取对话模型选择 GET /ai/llmModel/selectModel */
 export async function selectModel(options?: { [key: string]: any }) {
   return request<API.RListSelectModel>("/ai/llmModel/selectModel", {
     method: "GET",

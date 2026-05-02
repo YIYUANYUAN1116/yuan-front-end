@@ -35,6 +35,6 @@ export enum DictEnum {
   OA_LEAVE_TYPE = 'oa_leave_type',//请假类型
   OA_APPLY_STATUS= 'oa_apply_status', //oa申请状态
 
-
+  AI_MODEL_TYPE = 'ai_model_type',//ai模型类型
 
 }

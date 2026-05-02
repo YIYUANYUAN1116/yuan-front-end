@@ -53,11 +53,12 @@ const formatRelativeGroup = (value: string) => {
   return '更早';
 };
 
-const createDraftConversation = (model = ''): ConversationItem => ({
+const createDraftConversation = (model = '', kbIds: string[] = []): ConversationItem => ({
   id: uid('conv'),
   title: '新对话',
   preview: '开始一段新的对话',
   model,
+  kbIds,
   updatedAt: dayjs().toISOString(),
   messages: [],
   isDraft: true,
@@ -392,6 +393,12 @@ const useStyle = createStyles(({ token, css }) => ({
   `,
   composerControls: css`
     display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  `,
+  composerControlRow: css`
+    display: flex;
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
@@ -404,11 +411,13 @@ const ChatPage: React.FC = () => {
   const { initialState } = useModel('@@initialState');
   const [markdownClassName] = useMarkdownTheme();
   const [modelOptions, setModelOptions] = useState<ModelOption[]>([]);
+  const [knowledgeBaseOptions, setKnowledgeBaseOptions] = useState<ModelOption[]>([]);
   const [conversations, setConversations] = useState<ConversationItem[]>([initialDraftRef.current]);
   const [activeConversationId, setActiveConversationId] = useState(initialDraftRef.current.id);
   const [inputValue, setInputValue] = useState('');
   const [pendingAssistantId, setPendingAssistantId] = useState<string>();
   const [loadingModels, setLoadingModels] = useState(true);
+  const [loadingKnowledgeBases, setLoadingKnowledgeBases] = useState(true);
   const [loadingConversations, setLoadingConversations] = useState(true);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [loadingMoreMessages, setLoadingMoreMessages] = useState(false);
@@ -469,6 +478,7 @@ const ChatPage: React.FC = () => {
         ? {
             ...item,
             model: previous.model || item.model,
+            kbIds: previous.kbIds?.length ? previous.kbIds : item.kbIds,
             preview: item.preview || previous.preview,
             messages: previous.messages.length ? previous.messages : item.messages,
           }
@@ -494,15 +504,20 @@ const ChatPage: React.FC = () => {
       }
 
       setLoadingModels(true);
+      setLoadingKnowledgeBases(true);
       setLoadingConversations(true);
 
       try {
-        const remoteModels = await chatPageApi.loadModels();
+        const [remoteModels, remoteKnowledgeBases] = await Promise.all([
+          chatPageApi.loadModels(),
+          chatPageApi.loadKnowledgeBases(),
+        ]);
         if (cancelled) {
           return;
         }
 
         setModelOptions(remoteModels);
+        setKnowledgeBaseOptions(remoteKnowledgeBases);
         const resolvedDefaultModel = remoteModels[0]?.value ?? '';
         setConversations((prev) =>
           prev.map((item) => ({
@@ -540,6 +555,7 @@ const ChatPage: React.FC = () => {
       } finally {
         if (!cancelled) {
           setLoadingModels(false);
+          setLoadingKnowledgeBases(false);
           setLoadingConversations(false);
         }
       }
@@ -643,7 +659,10 @@ const ChatPage: React.FC = () => {
   }, [activeConversation?.id, activeConversation?.isDraft, runtimeContext.tenantId, runtimeContext.userId]);
 
   const createConversation = () => {
-    const nextConversation = createDraftConversation(activeConversation?.model ?? defaultModel);
+    const nextConversation = createDraftConversation(
+      activeConversation?.model ?? defaultModel,
+      activeConversation?.kbIds ?? [],
+    );
     setConversations((prev) => [nextConversation, ...prev]);
     setActiveConversationId(nextConversation.id);
     setInputValue('');
@@ -737,7 +756,11 @@ const ChatPage: React.FC = () => {
     setPendingAssistantId(undefined);
   };
 
-  const refreshConversationData = async (preferredConversationId?: string, preferredModel?: string) => {
+  const refreshConversationData = async (
+    preferredConversationId?: string,
+    preferredModel?: string,
+    preferredKbIds: string[] = [],
+  ) => {
     if (!runtimeContext.tenantId || !runtimeContext.userId) {
       return;
     }
@@ -748,7 +771,7 @@ const ChatPage: React.FC = () => {
     });
 
     if (remoteConversations.length === 0) {
-      const draftConversation = createDraftConversation(preferredModel ?? defaultModel);
+      const draftConversation = createDraftConversation(preferredModel ?? defaultModel, preferredKbIds);
       setConversations([draftConversation]);
       setActiveConversationId(draftConversation.id);
       return;
@@ -773,6 +796,7 @@ const ChatPage: React.FC = () => {
           ? {
               ...item,
               model: item.model || preferredModel || defaultModel,
+              kbIds: item.kbIds?.length ? item.kbIds : preferredKbIds,
             }
           : item,
       ),
@@ -837,6 +861,7 @@ const ChatPage: React.FC = () => {
         ...runtimeContext,
         conversationId: activeConversation.isDraft ? undefined : activeConversation.id,
         model: activeConversation.model,
+        kbIds: activeConversation.kbIds,
         content,
         messages: currentMessages,
         onDelta: (deltaText) => {
@@ -844,7 +869,11 @@ const ChatPage: React.FC = () => {
         },
       });
       applyAssistantResult(activeConversation.id, assistantId, result);
-      await refreshConversationData(result.conversationId ?? (activeConversation.isDraft ? undefined : activeConversation.id), activeConversation.model);
+      await refreshConversationData(
+        result.conversationId ?? (activeConversation.isDraft ? undefined : activeConversation.id),
+        activeConversation.model,
+        activeConversation.kbIds ?? [],
+      );
     } catch (_error) {
       removeAssistantPlaceholder(activeConversation.id, assistantId);
       message.error('发送失败，请检查聊天接口或服务状态');
@@ -876,6 +905,7 @@ const ChatPage: React.FC = () => {
         ...runtimeContext,
         conversationId: activeConversation.isDraft ? undefined : activeConversation.id,
         model: activeConversation.model,
+        kbIds: activeConversation.kbIds,
         content: lastUserMessage.content,
         messages: requestMessages,
         regenerate: true,
@@ -884,7 +914,11 @@ const ChatPage: React.FC = () => {
         },
       });
       applyAssistantResult(activeConversation.id, assistantId, result);
-      await refreshConversationData(result.conversationId ?? (activeConversation.isDraft ? undefined : activeConversation.id), activeConversation.model);
+      await refreshConversationData(
+        result.conversationId ?? (activeConversation.isDraft ? undefined : activeConversation.id),
+        activeConversation.model,
+        activeConversation.kbIds ?? [],
+      );
     } catch (_error) {
       removeAssistantPlaceholder(activeConversation.id, assistantId);
       message.error('重新生成失败，请检查聊天接口或服务状态');
@@ -1254,22 +1288,44 @@ const ChatPage: React.FC = () => {
 
               <div className={styles.composerFooter}>
                 <div className={styles.composerControls}>
-                  <div className={styles.composerHint}>当前模型：</div>
-                  <Select
-                    options={modelOptions}
-                    style={{ width: 200 }}
-                    value={activeConversation?.model}
-                    loading={loadingModels}
-                    disabled={!modelOptions.length}
-                    placeholder="选择模型"
-                    onChange={(value) => {
-                      if (!activeConversation) {
-                        return;
-                      }
-                      updateConversation(activeConversation.id, (item) => ({ ...item, model: value }));
-                    }}
-                  />
-                  {loadingMessages ? <div className={styles.composerHint}>正在加载消息</div> : null}
+                  <div className={styles.composerControlRow}>
+                    <div className={styles.composerHint}>当前模型：</div>
+                    <Select
+                      options={modelOptions}
+                      style={{ width: 200 }}
+                      value={activeConversation?.model}
+                      loading={loadingModels}
+                      disabled={!modelOptions.length}
+                      placeholder="选择模型"
+                      onChange={(value) => {
+                        if (!activeConversation) {
+                          return;
+                        }
+                        updateConversation(activeConversation.id, (item) => ({ ...item, model: value }));
+                      }}
+                    />
+                    {loadingMessages ? <div className={styles.composerHint}>正在加载消息</div> : null}
+                  </div>
+                  <div className={styles.composerControlRow}>
+                    <div className={styles.composerHint}>知识库：</div>
+                    <Select
+                      mode="multiple"
+                      allowClear
+                      maxTagCount="responsive"
+                      options={knowledgeBaseOptions}
+                      style={{ minWidth: 240, maxWidth: 360 }}
+                      value={activeConversation?.kbIds ?? []}
+                      loading={loadingKnowledgeBases}
+                      disabled={!knowledgeBaseOptions.length}
+                      placeholder="选择知识库"
+                      onChange={(value) => {
+                        if (!activeConversation) {
+                          return;
+                        }
+                        updateConversation(activeConversation.id, (item) => ({ ...item, kbIds: value }));
+                      }}
+                    />
+                  </div>
                 </div>
                 <Space>
                   <Button onClick={() => void handleRegenerate()} disabled={!currentMessages.length || isResponding}>

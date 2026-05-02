@@ -95,3 +95,11 @@ export async function kbBaseList(
     ...(options || {}),
   });
 }
+
+/** 知识库下拉选择 GET /ai/kbBase/select */
+export async function kbBaseSelect(options?: { [key: string]: any }) {
+  return request<API.RListSelectModel>("/ai/kbBase/select", {
+    method: "GET",
+    ...(options || {}),
+  });
+}

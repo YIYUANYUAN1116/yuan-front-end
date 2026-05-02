@@ -43,7 +43,7 @@ const index = () => {
     {
       title: '请假类型',
       dataIndex: 'leaveType',
-      valueEnum:leaveTypeEnum,
+      valueEnum: leaveTypeEnum,
       render: (_, record) => leaveType(record.leaveType || ''),
       width: 100
     },

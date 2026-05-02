@@ -96,22 +96,40 @@ export async function kbDocumentList(
   });
 }
 
+/** 文档下拉选择 GET /ai/kbDocument/select/${param0} */
+export async function kbDocumentSelect(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.KbDocumentSelectParams,
+  options?: { [key: string]: any }
+) {
+  const { kbId: param0, ...queryParams } = params;
+  return request<API.RListSelectModel>(`/ai/kbDocument/select/${param0}`, {
+    method: "GET",
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}
+
 /** Upload and index knowledge base document POST /ai/kbDocument/upload */
 export async function kbDocumentUpload(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.KbDocumentUploadParams,
-  body: {},
+  file?: File,
   options?: { [key: string]: any }
 ) {
+  const formData = new FormData();
+
+  if (file) {
+    formData.append("file", file);
+  }
+
   return request<API.RKbDocumentVo>("/ai/kbDocument/upload", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     params: {
       ...params,
     },
-    data: body,
+    data: formData,
+    requestType: "form",
     ...(options || {}),
   });
 }

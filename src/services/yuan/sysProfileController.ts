@@ -56,7 +56,7 @@ export async function avatar(
     }
   });
 
-  return request<API.RString>("/system/user/profile/avatar", {
+  return request<API.RT>("/system/user/profile/avatar", {
     method: "POST",
     data: formData,
     requestType: "form",

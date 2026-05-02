@@ -1,8 +1,10 @@
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import {
   ModalForm,
   PageContainer,
+  ProForm,
+  ProFormDependency,
   ProFormDigit,
   ProFormSelect,
   ProFormText,
@@ -10,8 +12,9 @@ import {
   ProTable,
 } from '@ant-design/pro-components';
 import { Access, useAccess } from '@umijs/max';
-import { Button, Popconfirm, Space, Table, Tabs, Typography } from 'antd';
-import { useRef } from 'react';
+import { Button, message, Popconfirm, Space, Table, Tabs, Upload } from 'antd';
+import type { UploadFile } from 'antd';
+import { useRef, useState } from 'react';
 import BatchDeleteAlert from '@/components/ProTable/BatchDeleteAlert';
 import { OperationMode, OperationModes } from '@/const/Const';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
@@ -21,6 +24,7 @@ import {
   kbBaseEdit,
   kbBaseList,
   kbBaseRemove,
+  kbBaseSelect,
 } from '@/services/yuan/kbBaseController';
 import {
   kbBaseAuthAdd,
@@ -35,18 +39,45 @@ import {
   kbChunkRemove,
 } from '@/services/yuan/kbChunkController';
 import {
-  kbDocumentAdd,
   kbDocumentEdit,
   kbDocumentList,
   kbDocumentRemove,
+  kbDocumentSelect,
+  kbDocumentUpload,
 } from '@/services/yuan/kbDocumentController';
+import { selectEmbeddingModel } from '@/services/yuan/llmModelController';
 import { HIDE_COLUMN } from '@/util/ColumsUtils';
 
 type Reload = ActionType['reload'];
+type SelectOption = { label: string; value: string };
 
-const statusValueEnum = {
-  ENABLED: { text: '启用', status: 'Success' },
-  DISABLED: { text: '禁用', status: 'Default' },
+const toOptions = (data?: API.SelectModel[]): SelectOption[] =>
+  (data || [])
+    .filter((item) => item.value)
+    .map((item) => ({
+      label: item.label || item.value || '',
+      value: item.value || '',
+    }));
+
+const loadKbOptions = async () => {
+  const res = await kbBaseSelect();
+  return toOptions(res.data);
+};
+
+const loadDocumentOptions = async (kbId?: string) => {
+  if (!kbId) return [];
+  const res = await kbDocumentSelect({ kbId });
+  return toOptions(res.data);
+};
+
+const loadEmbeddingModelOptions = async () => {
+  const res = await selectEmbeddingModel();
+  return toOptions(res.data);
+};
+
+const enabledStatusValueEnum = {
+  '0': { text: '启用', status: 'Success' },
+  '1': { text: '禁用', status: 'Default' },
 };
 
 const visibilityValueEnum = {
@@ -108,7 +139,7 @@ const KbBaseModalForm = ({ mode, trigger, reload, record }: KbBaseFormProps) => 
       trigger={trigger}
       initialValues={{
         visibility: 'PRIVATE',
-        status: 'ENABLED',
+        status: '0',
         chunkSize: 1000,
         chunkOverlap: 100,
         ...record,
@@ -141,14 +172,19 @@ const KbBaseModalForm = ({ mode, trigger, reload, record }: KbBaseFormProps) => 
         rules={[{ required: true, message: '请选择可见范围' }]}
       />
       <ProFormText name="ownerId" label="负责人ID" placeholder="请输入负责人ID" />
-      <ProFormText name="embeddingModelId" label="向量模型ID" placeholder="请输入向量模型ID" />
+      <ProFormSelect
+        name="embeddingModelId"
+        label="向量模型"
+        placeholder="请选择向量模型"
+        request={loadEmbeddingModelOptions}
+      />
       <ProFormText name="chunkStrategy" label="切分策略" placeholder="请输入切分策略" />
       <ProFormDigit name="chunkSize" label="切片大小" min={1} fieldProps={{ precision: 0 }} />
       <ProFormDigit name="chunkOverlap" label="重叠大小" min={0} fieldProps={{ precision: 0 }} />
       <ProFormSelect
         name="status"
         label="状态"
-        valueEnum={statusValueEnum}
+        valueEnum={enabledStatusValueEnum}
         rules={[{ required: true, message: '请选择状态' }]}
       />
     </ModalForm>
@@ -172,11 +208,25 @@ const KbBaseTable = () => {
     { title: '描述', dataIndex: 'description', ellipsis: true, hideInSearch: true },
     { title: '可见范围', dataIndex: 'visibility', valueEnum: visibilityValueEnum, width: 100 },
     { title: '负责人ID', dataIndex: 'ownerId', width: 140 },
-    { title: '向量模型ID', dataIndex: 'embeddingModelId', width: 160, hideInSearch: true },
+    { title: '向量模型ID', dataIndex: 'embeddingModelId', ...HIDE_COLUMN },
+    {
+      title: '向量模型',
+      dataIndex: 'embeddingModel',
+      width: 160,
+      hideInSearch: true,
+      renderText: (_, record) => record.embeddingModel || record.embeddingModelId || '-',
+    },
+    {
+      title: '向量模型',
+      dataIndex: 'embeddingModelId',
+      valueType: 'select',
+      hideInTable: true,
+      request: loadEmbeddingModelOptions,
+    },
     { title: '切分策略', dataIndex: 'chunkStrategy', width: 120, hideInSearch: true },
     { title: '切片大小', dataIndex: 'chunkSize', width: 100, hideInSearch: true },
     { title: '重叠大小', dataIndex: 'chunkOverlap', width: 100, hideInSearch: true },
-    { title: '状态', dataIndex: 'status', valueEnum: statusValueEnum, width: 90 },
+    { title: '状态', dataIndex: 'status', valueEnum: enabledStatusValueEnum, width: 90 },
     { title: '创建时间', dataIndex: 'createTime', valueType: 'dateTime', width: 180, hideInSearch: true },
     {
       title: '操作',
@@ -257,9 +307,66 @@ interface KbDocumentFormProps {
   record?: API.KbDocumentVo;
 }
 
+type KbDocumentUploadFormValues = {
+  kbId: string;
+  file: UploadFile[];
+};
+
 const KbDocumentModalForm = ({ mode, trigger, reload, record }: KbDocumentFormProps) => {
   const isEdit = mode === OperationModes.EDIT;
-  const { run, loading } = useActionRequest(isEdit ? kbDocumentEdit : kbDocumentAdd, reload);
+  const [uploading, setUploading] = useState(false);
+  const { run, loading } = useActionRequest(kbDocumentEdit, reload);
+
+  if (!isEdit) {
+    return (
+      <ModalForm<KbDocumentUploadFormValues>
+        title="新增文档"
+        trigger={trigger}
+        modalProps={{ destroyOnClose: true, okButtonProps: { loading: uploading } }}
+        width={520}
+        onFinish={async (values) => {
+          const uploadFile = values.file?.[0]?.originFileObj;
+
+          if (!uploadFile) {
+            message.error('请选择上传文件');
+            return false;
+          }
+
+          setUploading(true);
+          try {
+            await kbDocumentUpload({ kbId: Number(values.kbId) }, uploadFile);
+            message.success('文档上传成功');
+            reload?.();
+            return true;
+          } catch (error: any) {
+            message.error(error?.message || '文档上传失败');
+            return false;
+          } finally {
+            setUploading(false);
+          }
+        }}
+      >
+        <ProFormSelect
+          name="kbId"
+          label="知识库"
+          placeholder="请选择知识库"
+          request={loadKbOptions}
+          rules={[{ required: true, message: '请选择知识库' }]}
+        />
+        <ProForm.Item
+          name="file"
+          label="上传文件"
+          valuePropName="fileList"
+          getValueFromEvent={(event: { fileList?: UploadFile[] }) => event?.fileList}
+          rules={[{ required: true, message: '请选择上传文件' }]}
+        >
+          <Upload beforeUpload={() => false} maxCount={1}>
+            <Button icon={<UploadOutlined />}>选择文件</Button>
+          </Upload>
+        </ProForm.Item>
+      </ModalForm>
+    );
+  }
 
   return (
     <ModalForm<API.KbDocumentBo>
@@ -269,7 +376,7 @@ const KbDocumentModalForm = ({ mode, trigger, reload, record }: KbDocumentFormPr
         sourceType: 'MANUAL',
         parseStatus: 'PENDING',
         embedStatus: 'PENDING',
-        status: 'ENABLED',
+        status: '0',
         chunkCount: 0,
         tokenCount: 0,
         charCount: 0,
@@ -283,11 +390,12 @@ const KbDocumentModalForm = ({ mode, trigger, reload, record }: KbDocumentFormPr
       }}
     >
       <ProFormText name="docId" hidden />
-      <ProFormText
+      <ProFormSelect
         name="kbId"
-        label="知识库ID"
-        placeholder="请输入知识库ID"
-        rules={[{ required: true, message: '请输入知识库ID' }]}
+        label="知识库"
+        placeholder="请选择知识库"
+        request={loadKbOptions}
+        rules={[{ required: true, message: '请选择知识库' }]}
       />
       <ProFormText
         name="fileName"
@@ -326,7 +434,7 @@ const KbDocumentModalForm = ({ mode, trigger, reload, record }: KbDocumentFormPr
       <ProFormSelect
         name="status"
         label="状态"
-        valueEnum={statusValueEnum}
+        valueEnum={enabledStatusValueEnum}
         rules={[{ required: true, message: '请选择状态' }]}
       />
     </ModalForm>
@@ -345,7 +453,14 @@ const KbDocumentTable = () => {
   const columns: ProColumns<API.KbDocumentVo>[] = [
     { title: 'ID', dataIndex: 'docId', ...HIDE_COLUMN },
     { title: '序号', dataIndex: 'index', valueType: 'indexBorder', width: 48 },
-    { title: '知识库ID', dataIndex: 'kbId', width: 140, copyable: true },
+    {
+      title: '知识库',
+      dataIndex: 'kbId',
+      valueType: 'select',
+      hideInTable: true,
+      request: loadKbOptions,
+    },
+    { title: '知识库', dataIndex: 'kbName', width: 160, hideInSearch: true },
     { title: '文件名', dataIndex: 'fileName', width: 180, ellipsis: true },
     { title: '文档标题', dataIndex: 'title', width: 180, ellipsis: true },
     { title: '文件类型', dataIndex: 'fileType', width: 100 },
@@ -355,7 +470,7 @@ const KbDocumentTable = () => {
     { title: '切片数', dataIndex: 'chunkCount', width: 90, hideInSearch: true },
     { title: 'Token数', dataIndex: 'tokenCount', width: 100, hideInSearch: true },
     { title: '字符数', dataIndex: 'charCount', width: 100, hideInSearch: true },
-    { title: '状态', dataIndex: 'status', valueEnum: statusValueEnum, width: 90 },
+    { title: '状态', dataIndex: 'status', valueEnum: enabledStatusValueEnum, width: 90 },
     { title: '创建时间', dataIndex: 'createTime', valueType: 'dateTime', width: 180, hideInSearch: true },
     {
       title: '操作',
@@ -447,7 +562,7 @@ const KbChunkModalForm = ({ mode, trigger, reload, record }: KbChunkFormProps) =
       initialValues={{
         chunkNo: 1,
         embeddingStatus: 'PENDING',
-        status: 'ENABLED',
+        status: '0',
         ...record,
       }}
       modalProps={{ okButtonProps: { loading } }}
@@ -458,18 +573,25 @@ const KbChunkModalForm = ({ mode, trigger, reload, record }: KbChunkFormProps) =
       }}
     >
       <ProFormText name="chunkId" hidden />
-      <ProFormText
+      <ProFormSelect
         name="kbId"
-        label="知识库ID"
-        placeholder="请输入知识库ID"
-        rules={[{ required: true, message: '请输入知识库ID' }]}
+        label="知识库"
+        placeholder="请选择知识库"
+        request={loadKbOptions}
+        rules={[{ required: true, message: '请选择知识库' }]}
       />
-      <ProFormText
-        name="docId"
-        label="文档ID"
-        placeholder="请输入文档ID"
-        rules={[{ required: true, message: '请输入文档ID' }]}
-      />
+      <ProFormDependency name={['kbId']}>
+        {({ kbId }) => (
+          <ProFormSelect
+            name="docId"
+            label="文档"
+            placeholder="请选择文档"
+            disabled={!kbId}
+            request={() => loadDocumentOptions(kbId)}
+            rules={[{ required: true, message: '请选择文档' }]}
+          />
+        )}
+      </ProFormDependency>
       <ProFormDigit
         name="chunkNo"
         label="切片序号"
@@ -499,7 +621,7 @@ const KbChunkModalForm = ({ mode, trigger, reload, record }: KbChunkFormProps) =
       <ProFormSelect
         name="status"
         label="状态"
-        valueEnum={statusValueEnum}
+        valueEnum={enabledStatusValueEnum}
         rules={[{ required: true, message: '请选择状态' }]}
       />
     </ModalForm>
@@ -518,8 +640,23 @@ const KbChunkTable = () => {
   const columns: ProColumns<API.KbChunkVo>[] = [
     { title: 'ID', dataIndex: 'chunkId', ...HIDE_COLUMN },
     { title: '序号', dataIndex: 'index', valueType: 'indexBorder', width: 48 },
-    { title: '知识库ID', dataIndex: 'kbId', width: 140, copyable: true },
-    { title: '文档ID', dataIndex: 'docId', width: 140, copyable: true },
+    {
+      title: '知识库',
+      dataIndex: 'kbId',
+      valueType: 'select',
+      hideInTable: true,
+      request: loadKbOptions,
+    },
+    {
+      title: '文档',
+      dataIndex: 'docId',
+      valueType: 'select',
+      hideInTable: true,
+      dependencies: ['kbId'],
+      request: (params) => loadDocumentOptions(params?.kbId),
+    },
+    { title: '知识库', dataIndex: 'kbName', width: 160, hideInSearch: true },
+    { title: '文档', dataIndex: 'docName', width: 180, ellipsis: true, hideInSearch: true },
     { title: '切片序号', dataIndex: 'chunkNo', width: 100 },
     { title: '切片标题', dataIndex: 'chunkTitle', width: 180, ellipsis: true },
     { title: '内容', dataIndex: 'content', ellipsis: true, hideInSearch: true },
@@ -527,7 +664,7 @@ const KbChunkTable = () => {
     { title: '字符数', dataIndex: 'charCount', width: 100, hideInSearch: true },
     { title: '页码', dataIndex: 'pageNo', width: 80, hideInSearch: true },
     { title: '向量化状态', dataIndex: 'embeddingStatus', valueEnum: processStatusValueEnum, width: 120 },
-    { title: '状态', dataIndex: 'status', valueEnum: statusValueEnum, width: 90 },
+    { title: '状态', dataIndex: 'status', valueEnum: enabledStatusValueEnum, width: 90 },
     { title: '创建时间', dataIndex: 'createTime', valueType: 'dateTime', width: 180, hideInSearch: true },
     {
       title: '操作',
@@ -619,7 +756,7 @@ const KbBaseAuthModalForm = ({ mode, trigger, reload, record }: KbBaseAuthFormPr
       initialValues={{
         subjectType: 'USER',
         permission: 'READ',
-        status: 'ENABLED',
+        status: '0',
         ...record,
       }}
       modalProps={{ okButtonProps: { loading } }}
@@ -630,11 +767,12 @@ const KbBaseAuthModalForm = ({ mode, trigger, reload, record }: KbBaseAuthFormPr
       }}
     >
       <ProFormText name="authId" hidden />
-      <ProFormText
+      <ProFormSelect
         name="kbId"
-        label="知识库ID"
-        placeholder="请输入知识库ID"
-        rules={[{ required: true, message: '请输入知识库ID' }]}
+        label="知识库"
+        placeholder="请选择知识库"
+        request={loadKbOptions}
+        rules={[{ required: true, message: '请选择知识库' }]}
       />
       <ProFormSelect
         name="subjectType"
@@ -657,7 +795,7 @@ const KbBaseAuthModalForm = ({ mode, trigger, reload, record }: KbBaseAuthFormPr
       <ProFormSelect
         name="status"
         label="状态"
-        valueEnum={statusValueEnum}
+        valueEnum={enabledStatusValueEnum}
         rules={[{ required: true, message: '请选择状态' }]}
       />
     </ModalForm>
@@ -676,11 +814,24 @@ const KbBaseAuthTable = () => {
   const columns: ProColumns<API.KbBaseAuthVo>[] = [
     { title: 'ID', dataIndex: 'authId', ...HIDE_COLUMN },
     { title: '序号', dataIndex: 'index', valueType: 'indexBorder', width: 48 },
-    { title: '知识库ID', dataIndex: 'kbId', width: 140, copyable: true },
+    {
+      title: '知识库',
+      dataIndex: 'kbId',
+      valueType: 'select',
+      hideInTable: true,
+      request: loadKbOptions,
+    },
+    {
+      title: '知识库',
+      dataIndex: 'kbName',
+      width: 160,
+      hideInSearch: true,
+      renderText: (_, record) => (record as API.KbBaseAuthVo & { kbName?: string }).kbName || record.kbId || '-',
+    },
     { title: '对象类型', dataIndex: 'subjectType', valueEnum: subjectTypeValueEnum, width: 120 },
     { title: '对象ID', dataIndex: 'subjectId', width: 140, copyable: true },
     { title: '权限', dataIndex: 'permission', valueEnum: permissionValueEnum, width: 100 },
-    { title: '状态', dataIndex: 'status', valueEnum: statusValueEnum, width: 90 },
+    { title: '状态', dataIndex: 'status', valueEnum: enabledStatusValueEnum, width: 90 },
     { title: '创建时间', dataIndex: 'createTime', valueType: 'dateTime', width: 180, hideInSearch: true },
     {
       title: '操作',
@@ -757,9 +908,6 @@ const KbBaseAuthTable = () => {
 const KbManagePage = () => {
   return (
     <PageContainer>
-      <Typography.Paragraph type="secondary">
-        管理知识库、文档、切片与授权数据。
-      </Typography.Paragraph>
       <Tabs
         items={[
           { key: 'base', label: '知识库', children: <KbBaseTable /> },

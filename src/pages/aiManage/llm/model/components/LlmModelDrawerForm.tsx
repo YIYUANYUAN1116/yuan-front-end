@@ -1,16 +1,18 @@
 import { OperationMode, OperationModes } from '@/const/Const';
+import { DictEnum } from '@/const/dict-enum';
 import { useActionRequest } from '@/hooks/action/useActionRequest';
+import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum';
 import { selectEndpointByProvider } from '@/services/yuan/llmEndpointController';
 import { llmModelAdd, llmModelEdit } from '@/services/yuan/llmModelController';
 import { selectProvider } from '@/services/yuan/llmProviderController';
 import {
-  ActionType,
+  type ActionType,
   ModalForm,
   ProFormDependency,
   ProFormSelect,
   ProFormText,
 } from '@ant-design/pro-components';
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 
 interface LlmModelDrawerFormProps {
   mode: OperationMode;
@@ -23,6 +25,7 @@ export const LlmModelDrawerForm = (props: LlmModelDrawerFormProps) => {
   const { mode, trigger, reload, record } = props;
   const isEdit = mode === OperationModes.EDIT;
   const formRef = useRef<any>(null);
+  const modelTypeEnum = useDictDataValueEnum(DictEnum.AI_MODEL_TYPE);
 
   const { run, loading } = useActionRequest(
     isEdit ? llmModelEdit : llmModelAdd,
@@ -62,6 +65,14 @@ export const LlmModelDrawerForm = (props: LlmModelDrawerFormProps) => {
       />
 
       <ProFormSelect
+        name="modelType"
+        label="模型类型"
+        placeholder="请选择模型类型"
+        valueEnum={modelTypeEnum}
+        rules={[{ required: true, message: '请选择模型类型' }]}
+      />
+
+      <ProFormSelect
         name="providerId"
         label="供应商"
         placeholder="请选择供应商"
@@ -93,7 +104,7 @@ export const LlmModelDrawerForm = (props: LlmModelDrawerFormProps) => {
                 if (!providerId) {
                   return [];
                 }
-                const res = await selectEndpointByProvider({providerId:providerId});
+                const res = await selectEndpointByProvider({ providerId });
                 return res.data ?? [];
               }}
             />

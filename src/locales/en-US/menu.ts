@@ -49,4 +49,10 @@ export default {
   'menu.editor.flow': 'Flow Editor',
   'menu.editor.mind': 'Mind Editor',
   'menu.editor.koni': 'Koni Editor',
+  'menu.aiManage': 'AI Management',
+  'menu.aiManage.llm': 'LLM Management',
+  'menu.aiManage.llm.provider': 'Provider Management',
+  'menu.aiManage.llm.model': 'Model Management',
+  'menu.aiManage.llm.endpoint': 'Endpoint Management',
+  'menu.aiManage.kb': 'Knowledge Base Management',
 };

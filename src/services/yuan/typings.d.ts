@@ -745,6 +745,7 @@ declare namespace API {
     ownerId?: string;
     /** 默认向量模型ID，对应 llm_model.model_id */
     embeddingModelId?: string;
+    embeddingModel?: string;
     /** 默认切分策略 */
     chunkStrategy?: string;
     /** 默认切片大小 */
@@ -836,8 +837,10 @@ declare namespace API {
     tenantId?: string;
     /** 知识库ID */
     kbId?: string;
+    kbName?: string;
     /** 文档ID */
     docId?: string;
+    docName?: string;
     /** 文档内切片序号 */
     chunkNo?: number;
     /** 切片标题 */
@@ -947,6 +950,10 @@ declare namespace API {
     docIds: string[];
   };
 
+  type KbDocumentSelectParams = {
+    kbId: string;
+  };
+
   type KbDocumentTextBo = {
     textId?: string;
     /** 租户ID */
@@ -1044,6 +1051,7 @@ declare namespace API {
     tenantId?: string;
     /** 知识库ID */
     kbId?: string;
+    kbName?: string;
     /** 统一文件表ID，如有 */
     fileId?: string;
     /** 文件名 */
@@ -1157,14 +1165,17 @@ declare namespace API {
     tenantId?: string;
     /** 知识库ID */
     kbId?: string;
+    kbName?: string;
     /** 文档ID */
     docId?: string;
+    docName?: string;
     /** 切片ID */
     chunkId?: string;
     /** 向量模型ID，对应 llm_model.model_id */
     modelId?: string;
     /** 向量模型编码 */
     modelCode?: string;
+    modelName?: string;
     /** 向量库类型：QDRANT/MILVUS/ELASTICSEARCH/PGVECTOR */
     vectorStore?: string;
     /** 向量集合名称 */
@@ -2078,7 +2089,7 @@ declare namespace API {
   type OssScope = {
     tenantId?: string;
     namespace?: "TEMP" | "FORMAL" | "PUBLIC";
-    prefix?: "OA" | "SYS" | "EXP" | "CON" | "PUR" | "WF";
+    prefix?: "OA" | "SYS" | "EXP" | "CON" | "PUR" | "AI" | "WF";
   };
 
   type PageQuery = {
@@ -2516,6 +2527,12 @@ declare namespace API {
     code?: number;
     msg?: string;
     data?: SysUserPostVo;
+  };
+
+  type RT = {
+    code?: number;
+    msg?: string;
+    data?: T;
   };
 
   type RTreeSelectVo = {
@@ -4035,6 +4052,8 @@ declare namespace API {
     primaryPostId?: string;
     avatarUrl?: string;
   };
+
+  type T = Record<string, any>;
 
   type TableDataInfoChatAttachmentVo = {
     /** 总记录数 */

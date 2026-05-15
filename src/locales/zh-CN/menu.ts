@@ -96,7 +96,10 @@ export default {
   'menu.aiManage.llm.provider': '供应商管理',
   'menu.aiManage.llm.model': '模型管理',
   'menu.aiManage.llm.endpoint': '接入点管理',
+  'menu.aiManage.llm.invocation': '模型调用日志',
   'menu.aiManage.kb': '知识库管理',
+  'menu.aiManage.kb.base': '知识库管理',
+  'menu.aiManage.kb.retrievalLog': '知识库检索日志',
 
   /**AI */
   'menu.ai': 'AI应用',

@@ -727,6 +727,10 @@ declare namespace API {
     pageQuery: PageQuery;
   };
 
+  type KbBaseRebuildIndexParams = {
+    kbId: string;
+  };
+
   type KbBaseRemoveParams = {
     /** 主键串 */
     kbIds: string[];
@@ -949,6 +953,10 @@ declare namespace API {
   type KbDocumentListParams = {
     bo: KbDocumentBo;
     pageQuery: PageQuery;
+  };
+
+  type KbDocumentRebuildIndexParams = {
+    docId: string;
   };
 
   type KbDocumentRemoveParams = {
@@ -1422,6 +1430,8 @@ declare namespace API {
     updateTime?: string;
     /** 逻辑删除：0-未删除，2-已删除 */
     delFlag?: string;
+    /** helper */
+    hitVoList?: KbRetrievalHitVo[];
   };
 
   type KbRetrievalRequest = {
@@ -2198,6 +2208,12 @@ declare namespace API {
     code?: number;
     msg?: string;
     data?: FileObjectKey;
+  };
+
+  type RInteger = {
+    code?: number;
+    msg?: string;
+    data?: number;
   };
 
   type RKbBaseAuthVo = {

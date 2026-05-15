@@ -23,6 +23,7 @@ import {
   kbBaseAdd,
   kbBaseEdit,
   kbBaseList,
+  kbBaseRebuildIndex,
   kbBaseRemove,
   kbBaseSelect,
 } from '@/services/yuan/kbBaseController';
@@ -41,6 +42,7 @@ import {
 import {
   kbDocumentEdit,
   kbDocumentList,
+  kbDocumentRebuildIndex,
   kbDocumentRemove,
   kbDocumentSelect,
   kbDocumentUpload,
@@ -198,6 +200,11 @@ const KbBaseTable = () => {
     kbBaseRemove,
     actionRef.current?.reload,
   );
+  const { run: rebuildIndexRun, loading: rebuildIndexLoading } = useActionRequest(
+    kbBaseRebuildIndex,
+    actionRef.current?.reload,
+    { successMessage: '重建知识库索引任务已提交' },
+  );
   const request = useTableRequest(kbBaseList);
 
   const columns: ProColumns<API.KbBaseVo>[] = [
@@ -233,7 +240,7 @@ const KbBaseTable = () => {
       valueType: 'option',
       key: 'option',
       fixed: 'right',
-      width: 120,
+      width: 200,
       render: (_, record) => (
         <Space size="small">
           <Access accessible={access.canAccess('ai:kbBase:edit')}>
@@ -243,6 +250,18 @@ const KbBaseTable = () => {
               record={record}
               reload={actionRef.current?.reload}
             />
+          </Access>
+          <Access accessible={access.canAccess('ai:kbBase:edit')}>
+            <Popconfirm
+              title="重建知识库索引"
+              description={`确认重建知识库索引：${record.kbName || record.kbCode || record.kbId}`}
+              okText="确认"
+              cancelText="取消"
+              okButtonProps={{ loading: rebuildIndexLoading }}
+              onConfirm={() => record.kbId && rebuildIndexRun({ kbId: record.kbId })}
+            >
+              <a>重建索引</a>
+            </Popconfirm>
           </Access>
           <Access accessible={access.canAccess('ai:kbBase:remove')}>
             <Popconfirm
@@ -448,6 +467,11 @@ const KbDocumentTable = () => {
     kbDocumentRemove,
     actionRef.current?.reload,
   );
+  const { run: rebuildIndexRun, loading: rebuildIndexLoading } = useActionRequest(
+    kbDocumentRebuildIndex,
+    actionRef.current?.reload,
+    { successMessage: '重建文档索引任务已提交' },
+  );
   const request = useTableRequest(kbDocumentList);
 
   const columns: ProColumns<API.KbDocumentVo>[] = [
@@ -477,7 +501,7 @@ const KbDocumentTable = () => {
       valueType: 'option',
       key: 'option',
       fixed: 'right',
-      width: 120,
+      width: 200,
       render: (_, record) => (
         <Space size="small">
           <Access accessible={access.canAccess('ai:kbDocument:edit')}>
@@ -487,6 +511,18 @@ const KbDocumentTable = () => {
               record={record}
               reload={actionRef.current?.reload}
             />
+          </Access>
+          <Access accessible={access.canAccess('ai:kbDocument:edit')}>
+            <Popconfirm
+              title="重建文档索引"
+              description={`确认重建文档索引：${record.title || record.fileName || record.docId}`}
+              okText="确认"
+              cancelText="取消"
+              okButtonProps={{ loading: rebuildIndexLoading }}
+              onConfirm={() => record.docId && rebuildIndexRun({ docId: record.docId })}
+            >
+              <a>重建索引</a>
+            </Popconfirm>
           </Access>
           <Access accessible={access.canAccess('ai:kbDocument:remove')}>
             <Popconfirm

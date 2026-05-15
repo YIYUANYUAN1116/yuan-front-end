@@ -54,5 +54,8 @@ export default {
   'menu.aiManage.llm.provider': 'Provider Management',
   'menu.aiManage.llm.model': 'Model Management',
   'menu.aiManage.llm.endpoint': 'Endpoint Management',
+  'menu.aiManage.llm.invocation': 'Model Invocation Audit Logs',
   'menu.aiManage.kb': 'Knowledge Base Management',
+  'menu.aiManage.kb.base': 'Knowledge Base Management',
+  'menu.aiManage.kb.retrievalLog': 'Knowledge Base Retrieval Logs',
 };

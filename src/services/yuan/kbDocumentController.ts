@@ -60,6 +60,20 @@ export async function kbDocumentRemove(
   });
 }
 
+/** Rebuild knowledge base document index POST /ai/kbDocument/${param0}/rebuildIndex */
+export async function kbDocumentRebuildIndex(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.KbDocumentRebuildIndexParams,
+  options?: { [key: string]: any }
+) {
+  const { docId: param0, ...queryParams } = params;
+  return request<API.RKbDocumentVo>(`/ai/kbDocument/${param0}/rebuildIndex`, {
+    method: "POST",
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}
+
 /** 导出知识库文档表列表 导出知识库文档表列表 POST /ai/kbDocument/export */
 export async function kbDocumentExport(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)

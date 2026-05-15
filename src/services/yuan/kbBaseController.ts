@@ -60,6 +60,20 @@ export async function kbBaseRemove(
   });
 }
 
+/** Rebuild knowledge base index POST /ai/kbBase/${param0}/rebuildIndex */
+export async function kbBaseRebuildIndex(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.KbBaseRebuildIndexParams,
+  options?: { [key: string]: any }
+) {
+  const { kbId: param0, ...queryParams } = params;
+  return request<API.RInteger>(`/ai/kbBase/${param0}/rebuildIndex`, {
+    method: "POST",
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}
+
 /** 导出知识库主表列表 导出知识库主表列表 POST /ai/kbBase/export */
 export async function kbBaseExport(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)

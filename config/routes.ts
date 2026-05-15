@@ -247,12 +247,32 @@ export default [
             name: 'model',
             component: './aiManage/llm/model'
           },
+          {
+            path: '/aiManage/llm/invocation',
+            name: 'invocation',
+            component: './aiManage/llm/invocation',
+          },
         ]
       },
       {
         path: '/aiManage/kb',
         name: 'kb',
-        component: './aiManage/kb',
+        routes: [
+          {
+            path: '/aiManage/kb',
+            redirect: '/aiManage/kb/base',
+          },
+          {
+            path: '/aiManage/kb/base',
+            name: 'base',
+            component: './aiManage/kb',
+          },
+          {
+            path: '/aiManage/kb/retrieval-log',
+            name: 'retrievalLog',
+            component: './aiManage/kb/retrievalLog',
+          },
+        ],
       },
 
     ],

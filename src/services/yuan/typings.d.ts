@@ -30,6 +30,10 @@ declare namespace API {
     taskId: string;
   };
 
+  type archiveVersionParams = {
+    versionId: string;
+  };
+
   type batchGenCodeParams = {
     /** 表名 */
     tableNameStr: string;
@@ -495,6 +499,20 @@ declare namespace API {
     sizeBytes?: string;
   };
 
+  type CreateDefinitionVersionDto = {
+    sourceVersionId?: string;
+    versionName?: string;
+    changeSummary?: string;
+  };
+
+  type createVersionParams = {
+    id: string;
+  };
+
+  type deleteVersionParams = {
+    versionId: string;
+  };
+
   type deptAllocatedUserListParams = {
     bo: SysUserBo;
     pageQuery: PageQuery;
@@ -817,8 +835,6 @@ declare namespace API {
     updateBy?: string;
     /** 更新时间 */
     updateTime?: string;
-    /** 逻辑删除：0-未删除，2-已删除 */
-    delFlag: string;
   };
 
   type KbChunkExportParams = {
@@ -884,8 +900,6 @@ declare namespace API {
     updateBy?: string;
     /** 更新时间 */
     updateTime?: string;
-    /** 逻辑删除：0-未删除，2-已删除 */
-    delFlag?: string;
   };
 
   type KbDocumentBo = {
@@ -998,8 +1012,6 @@ declare namespace API {
     updateBy?: string;
     /** 更新时间 */
     updateTime?: string;
-    /** 逻辑删除：0-未删除，2-已删除 */
-    delFlag: string;
   };
 
   type KbDocumentTextExportParams = {
@@ -1051,8 +1063,6 @@ declare namespace API {
     updateBy?: string;
     /** 更新时间 */
     updateTime?: string;
-    /** 逻辑删除：0-未删除，2-已删除 */
-    delFlag?: string;
   };
 
   type KbDocumentUploadParams = {
@@ -1150,8 +1160,6 @@ declare namespace API {
     updateBy?: string;
     /** 更新时间 */
     updateTime?: string;
-    /** 逻辑删除：0-未删除，2-已删除 */
-    delFlag: string;
   };
 
   type KbEmbeddingExportParams = {
@@ -1214,8 +1222,6 @@ declare namespace API {
     updateBy?: string;
     /** 更新时间 */
     updateTime?: string;
-    /** 逻辑删除：0-未删除，2-已删除 */
-    delFlag?: string;
   };
 
   type KbRetrievalHitBo = {
@@ -1496,6 +1502,7 @@ declare namespace API {
     height?: string;
     wfType?: string;
     assignee?: LfAssignee;
+    approvalMode?: "ANY" | "ALL";
     condition?: Expression;
     aiNodeConfig?: AiNodeConfig;
   };
@@ -2103,7 +2110,7 @@ declare namespace API {
   type OssScope = {
     tenantId?: string;
     namespace?: "TEMP" | "FORMAL" | "PUBLIC";
-    prefix?: "OA" | "SYS" | "EXP" | "CON" | "PUR" | "AI" | "WF";
+    prefix?: "OA" | "SYS" | "EXP" | "CON" | "PUR" | "AI" | "KB" | "WF";
   };
 
   type PageQuery = {
@@ -2135,6 +2142,10 @@ declare namespace API {
     roleGroup?: string;
     /** 用户所属岗位组 */
     postGroup?: string;
+  };
+
+  type publishVersionParams = {
+    versionId: string;
   };
 
   type RChatAttachmentVo = {
@@ -2318,6 +2329,12 @@ declare namespace API {
     data?: SysPostVo[];
   };
 
+  type RListWfDefinitionVersionVo = {
+    code?: number;
+    msg?: string;
+    data?: WfDefinitionVersionVo[];
+  };
+
   type RLlmEndpointVo = {
     code?: number;
     msg?: string;
@@ -2410,17 +2427,6 @@ declare namespace API {
     variables?: Record<string, any>;
     taskId: string;
     targetActivityId: string;
-  };
-
-  type RollbackToPreviousCmd = {
-    /** 操作人（当前用户） */
-    operatorId?: string;
-    operatorName?: string;
-    tenantId?: string;
-    /** 备注 / 审批意见 */
-    comment?: string;
-    variables?: Record<string, any>;
-    taskId: string;
   };
 
   type RProfileVo = {
@@ -2591,6 +2597,12 @@ declare namespace API {
     data?: WfCcVo;
   };
 
+  type RWfDefinitionVersionVo = {
+    code?: number;
+    msg?: string;
+    data?: WfDefinitionVersionVo;
+  };
+
   type RWfDefinitionVo = {
     code?: number;
     msg?: string;
@@ -2619,6 +2631,17 @@ declare namespace API {
     code?: number;
     msg?: string;
     data?: WfTaskVo;
+  };
+
+  type SaveDefinitionDraftDto = {
+    definitionJson: string;
+    formSchema?: string;
+    versionName?: string;
+    changeSummary?: string;
+  };
+
+  type saveDraftParams = {
+    versionId: string;
   };
 
   type SchemaBo = {
@@ -4686,6 +4709,14 @@ declare namespace API {
     roles?: string[];
   };
 
+  type versionParams = {
+    versionId: string;
+  };
+
+  type versionsParams = {
+    id: string;
+  };
+
   type WfApprovalDetailVO = {
     /** 实例基础信息 */
     instance?: WfInstanceVo;
@@ -4810,6 +4841,9 @@ declare namespace API {
   };
 
   type WfDefinitionBo = {
+    /** Initial content for the automatically created v1 draft; never mapped to wf_definition. */
+    initialDefinitionJson?: string;
+    initialFormSchema?: string;
     id?: string;
     /** 租户ID */
     tenantId?: string;
@@ -4817,14 +4851,8 @@ declare namespace API {
     definitionKey: string;
     /** 流程名称 */
     definitionName: string;
-    /** 版本号(递增) */
-    version?: number;
-    /** 状态(DRAFT/PUBLISHED) */
+/** 状态(DRAFT/PUBLISHED) */
     status?: string;
-    /** 表单定义(JSON Schema) */
-    formSchema?: string;
-    /** 流程定义JSON */
-    flowJson?: string;
     /** 备注 */
     remark?: string;
     /** createBy */
@@ -4838,12 +4866,6 @@ declare namespace API {
   type WfDefinitionChangeStatusParams = {
     id: string;
     action: string;
-  };
-
-  type WfDefinitionDto = {
-    id?: string;
-    formSchema?: string;
-    flowJson?: string;
   };
 
   type WfDefinitionExportParams = {
@@ -4865,29 +4887,32 @@ declare namespace API {
     ids: string[];
   };
 
+  type WfDefinitionVersionVo = {
+    versionId?: string;
+    definitionId?: string;
+    versionNo?: number;
+    definitionJson?: string;
+    formSchema?: string;
+    status?: "DRAFT" | "PUBLISHED" | "DISABLED" | "ARCHIVED";
+    versionName?: string;
+    changeSummary?: string;
+    publishTime?: string;
+    publishedBy?: string;
+    createTime?: string;
+    updateTime?: string;
+  };
+
   type WfDefinitionVo = {
     id: string;
-    /** 租户ID */
     tenantId?: string;
-    /** 流程业务标识(leave, expense) */
     definitionKey?: string;
-    /** 流程名称 */
     definitionName?: string;
-    /** 版本号(递增) */
-    version?: number;
-    /** 状态(DRAFT/PUBLISHED) */
     status?: string;
-    /** 表单定义(JSON Schema) */
-    formSchema?: string;
-    /** 流程定义JSON */
-    flowJson?: string;
-    /** 备注 */
+    latestVersionNo?: number;
+    publishedVersionId?: string;
     remark?: string;
-    /** createBy */
     createBy?: string;
-    /** createTime */
     createTime?: string;
-    /** updateTime */
     updateTime?: string;
   };
 
@@ -4900,8 +4925,10 @@ declare namespace API {
     /** 流程业务标识 */
     definitionKey?: string;
     definitionName?: string;
-    /** 流程版本 */
-    definitionVersion?: number;
+    /** 流程定义版本ID */
+    definitionVersionId?: string;
+    /** 流程定义版本号 */
+    definitionVersionNo?: number;
     /** 状态(RUNNING/APPROVED/REJECTED/CANCELED) */
     status?: string;
     /** startTime */
@@ -4954,8 +4981,10 @@ declare namespace API {
     definitionId?: string;
     /** 流程业务标识 */
     definitionKey?: string;
-    /** 流程版本 */
-    definitionVersion?: number;
+    /** 流程定义版本ID */
+    definitionVersionId?: string;
+    /** 流程定义版本号 */
+    definitionVersionNo?: number;
     /** 状态(RUNNING/APPROVED/REJECTED/CANCELED) */
     status?: "RUNNING" | "APPROVED" | "REJECTED" | "CANCELED";
     /** 发起人 */
@@ -4995,6 +5024,8 @@ declare namespace API {
     operatorId?: string;
     /** 状态(WAIT/DONE) */
     status: string;
+    totalTaskCount?: number;
+    completedTaskCount?: number;
     /** 执行顺序 */
     orderNo: number;
     /** createTime */
@@ -5043,6 +5074,8 @@ declare namespace API {
     operatorId?: string;
     /** 状态(WAIT/DONE) */
     status?: "WAIT" | "DONE" | "CANCELED" | "NOT_REACHED";
+    totalTaskCount?: number;
+    completedTaskCount?: number;
     /** 执行顺序 */
     orderNo?: number;
     /** createTime */

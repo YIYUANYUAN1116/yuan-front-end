@@ -181,21 +181,6 @@ export async function wfTaskRollbackTo(
   });
 }
 
-/** 退回上一节点 POST /workflow/wfTask/rollbackToPrev */
-export async function wfTaskRollbackToPrev(
-  body: API.RollbackToPreviousCmd,
-  options?: { [key: string]: any }
-) {
-  return request<API.RLong>("/workflow/wfTask/rollbackToPrev", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
-}
-
 /** 转交 POST /workflow/wfTask/transfer */
 export async function wfTaskTransfer(
   body: API.TransferTaskCmd,

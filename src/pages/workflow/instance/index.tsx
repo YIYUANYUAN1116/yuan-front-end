@@ -55,9 +55,10 @@ export default () => {
       dataIndex: "bizNo",
       render: (_, r) => r.bizNo ? <a onClick={() => history.push(`/workflow/detail?bizNo=${r.bizNo}&bizType=Leave`)}>{r.bizNo}</a> : '-',
     },
+    { title: "版本ID", dataIndex: "definitionVersionId", hideInSearch: true },
     {
       title: "版本号",
-      dataIndex: "definitionVersion",
+      dataIndex: "definitionVersionNo",
       hideInSearch: true,
     },
     {

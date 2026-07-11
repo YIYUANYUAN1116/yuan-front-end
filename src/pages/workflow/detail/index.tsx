@@ -55,6 +55,13 @@ const index = () => {
                     />)
                 }
 
+                {wfData?.instance && (
+                    <ProDescriptions column={2} dataSource={wfData.instance}>
+                        <ProDescriptions.Item label="流程版本ID" dataIndex="definitionVersionId" />
+                        <ProDescriptions.Item label="流程版本号" dataIndex="definitionVersionNo" />
+                    </ProDescriptions>
+                )}
+
                 {
                     (wfData && <WfFlowProgressBar
                         layers={wfData?.layers}

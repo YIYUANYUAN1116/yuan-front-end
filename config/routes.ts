@@ -357,10 +357,11 @@ export default [
         access: 'canWorkInstance',
       },
       {
-        path: '/workflow/designer',
+        path: '/workflow/definition/:definitionId/versions/:versionId/design',
         name: 'designer',
         component: './workflow/designer',
         access: 'canWorkDesigner',
+        hideInMenu: true,
       },
       {
         path: '/workflow/detail',

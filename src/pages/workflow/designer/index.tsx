@@ -1,14 +1,14 @@
 import { PageContainer, ProFormSelect } from '@ant-design/pro-components'
 import { LogicFlow } from '@logicflow/core'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { useRequest, useSearchParams } from '@umijs/max'
+import { history, useParams, useRequest } from '@umijs/max'
 import '@logicflow/extension/lib/style/index.css'
 import '@logicflow/core/lib/style/index.css'
 import './index.less'
-import { Button, Card, Form, Input, message, Select, Space, TreeSelect } from 'antd'
+import { Button, Card, Form, Input, message, Modal, Select, Space, Tag, TreeSelect } from 'antd'
 import { DndPanel, Menu, SelectionSelect } from '@logicflow/extension'
 import { PreviewJsonForm } from './components/PreViewJosnForm'
-import { wfDefinitionEditDto, wfDefinitionGetInfo } from '@/services/yuan/wfDefinitionController'
+import { wfDefinitionVersionGetInfo, wfDefinitionVersionPublish, wfDefinitionVersionSaveDraft } from '@/services/yuan/wfDefinitionController'
 import AssigneePicker from './components/AssigneePicker'
 import { Assignee, EdgeCondition, GatewayBranchVM, initialFlowData, WfTypeConst } from './types.ts/DesiginerTypes'
 import { useDictDataValueEnum } from '@/hooks/dict/useDictDataValueEnum'
@@ -32,10 +32,12 @@ const Index = () => {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
   const [form] = Form.useForm()
   const [gatewayBranches, setGatewayBranches] = useState<GatewayBranchVM[]>([])
-  const [searchParams] = useSearchParams()
-  const id = searchParams.get('id') || ''
+  const { definitionId = '', versionId = '' } = useParams<{ definitionId: string; versionId: string }>()
+  const draftCacheKey = `wf-designer-draft:${versionId}`
   const [messageApi, contextHolder] = message.useMessage()
   const [previewData, setPreviewData] = useState<any>({})
+  const [versionName, setVersionName] = useState('')
+  const [changeSummary, setChangeSummary] = useState('')
 
   // =========================
   // 1) 字典：字段 / 操作符
@@ -227,10 +229,34 @@ const Index = () => {
   // =========================
   // 4) 获取流程定义
   // =========================
-  const { data } = useRequest(() => wfDefinitionGetInfo({ id }), {
-    ready: !!id,
-    refreshDeps: [id],
+  const { data, refresh } = useRequest(() => wfDefinitionVersionGetInfo({ versionId }), {
+    ready: !!definitionId && !!versionId,
+    refreshDeps: [versionId],
   })
+  const readOnly = data?.status !== 'DRAFT'
+
+  const saveCurrentDraft = async () => {
+    if (readOnly || !lfRef.current) return
+    const definitionJson = JSON.stringify(lfRef.current.getGraphData())
+    const formSchema = data?.formSchema || '{}'
+    await wfDefinitionVersionSaveDraft({ versionId }, { definitionJson, formSchema, versionName, changeSummary })
+    localStorage.setItem(draftCacheKey, JSON.stringify({ definitionJson, formSchema, versionName, changeSummary }))
+    messageApi.success('草稿已保存')
+  }
+
+  const publishCurrentDraft = () => {
+    Modal.confirm({
+      title: '发布当前草稿？',
+      content: '发布前将先保存设计器中的最新内容。发布后当前版本将切换为只读。',
+      async onOk() {
+        await saveCurrentDraft()
+        await wfDefinitionVersionPublish({ versionId })
+        localStorage.removeItem(draftCacheKey)
+        messageApi.success('版本已发布')
+        await refresh()
+      },
+    })
+  }
 
   // =========================
   // 5) 初始化 LogicFlow
@@ -247,14 +273,14 @@ const Index = () => {
       plugins: [DndPanel, SelectionSelect, Menu],
     })
 
-    lf.extension.dndPanel.setPatternItems([
+    ;(lf.extension.dndPanel as any).setPatternItems([
       {
         label: '选区',
         icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAAH6ji2bAAAABGdBTUEAALGPC/xhBQAAAOVJREFUOBGtVMENwzAIjKP++2026ETdpv10iy7WFbqFyyW6GBywLCv5gI+Dw2Bluj1znuSjhb99Gkn6QILDY2imo60p8nsnc9bEo3+QJ+AKHfMdZHnl78wyTnyHZD53Zzx73MRSgYvnqgCUHj6gwdck7Zsp1VOrz0Uz8NbKunzAW+Gu4fYW28bUYutYlzSa7B84Fh7d1kjLwhcSdYAYrdkMQVpsBr5XgDGuXwQfQr0y9zwLda+DUYXLaGKdd2ZTtvbolaO87pdo24hP7ov16N0zArH1ur3iwJpXxm+v7oAJNR4JEP8DoAuSFEkYH7cAAAAASUVORK5CYII=',
         callback: () => {
-          lf.extension.selectionSelect.openSelectionSelect()
+          (lf.extension.selectionSelect as any).openSelectionSelect()
           lf.once('selection:selected', () => {
-            lf.extension.selectionSelect.closeSelectionSelect()
+            (lf.extension.selectionSelect as any).closeSelectionSelect()
           })
         },
       },
@@ -334,13 +360,18 @@ const Index = () => {
   // =========================
   useEffect(() => {
     if (!data || !lfRef.current) return
-    if (data.flowJson) {
-      lfRef.current.render(JSON.parse(data.flowJson))
+    setVersionName(data.versionName || '')
+    setChangeSummary(data.changeSummary || '')
+    const cached = data.status === 'DRAFT' ? localStorage.getItem(draftCacheKey) : null
+    const definitionJson = cached ? JSON.parse(cached).definitionJson : data.definitionJson
+    if (definitionJson) {
+      lfRef.current.render(JSON.parse(definitionJson))
     } else {
       lfRef.current.render(initialFlowData)
     }
+    lfRef.current.updateEditConfig({ isSilentMode: data.status !== 'DRAFT' })
     lfRef.current.translateCenter()
-  }, [data])
+  }, [data, draftCacheKey])
 
   return (
     <PageContainer title="审批流编辑器" content="可视化拖拽设计审批流" className="wf-page" onBack={() => history.back()}>
@@ -349,7 +380,7 @@ const Index = () => {
         <div className="editorLayout">
           <Card
             className="canvasCard"
-            title={'流程画布' + (data?.definitionName ? ` - ${data.definitionName}` : '')}
+            title={<Space>流程画布 <Tag>v{data?.versionNo}</Tag><Tag color={data?.status === 'DRAFT' ? 'blue' : 'green'}>{data?.status}</Tag></Space>}
             styles={{ body: { padding: 0 } }}
             extra={
               <Space>
@@ -357,37 +388,24 @@ const Index = () => {
                   trigger={<Button onClick={handleOpenPreview}>预览 JSON</Button>}
                   jsonData={previewData}
                   title="流程定义 JSON"
-                  definitionName={data?.definitionName}
+                  definitionName={data?.versionName}
                 />
 
-                <Button
-                  key="save"
-                  type="primary"
-                  onClick={async () => {
-                    const lf = lfRef.current
-                    if (!lf) return
-                    const graph = lf.getGraphData()
-                    const newData = {
-                      id: data?.id,
-                      flowJson: JSON.stringify(graph),
-                    }
-                    await wfDefinitionEditDto({ ...newData })
-                    messageApi.success('流程已保存')
-                  }}
-                >
-                  保存流程
-                </Button>
+                <Input value={versionName} disabled={readOnly} onChange={(e) => setVersionName(e.target.value)} placeholder="版本名称" style={{ width: 140 }} />
+                <Input value={changeSummary} disabled={readOnly} onChange={(e) => setChangeSummary(e.target.value)} placeholder="变更说明" style={{ width: 180 }} />
+                {!readOnly && <Button key="save" type="primary" onClick={saveCurrentDraft}>保存草稿</Button>}
+                {!readOnly && <Button key="publish" danger onClick={publishCurrentDraft}>发布版本</Button>}
               </Space>
             }
           >
             <div className="canvasContainer" ref={containerRef} />
           </Card>
 
-          <Card title="节点配置" className="sidePanel">
+          <Card title={readOnly ? '节点配置（只读）' : '节点配置'} className="sidePanel">
             {!selectedNodeId ? (
               <div>请在画布上选择一个节点进行配置</div>
             ) : (
-              <Form form={form} layout="vertical">
+              <Form form={form} layout="vertical" disabled={readOnly}>
                 <Form.Item
                   label="节点名称"
                   name="label"

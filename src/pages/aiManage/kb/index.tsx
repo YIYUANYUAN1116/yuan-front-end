@@ -698,7 +698,7 @@ const KbChunkTable = () => {
     { title: '内容', dataIndex: 'content', ellipsis: true, hideInSearch: true },
     { title: 'Token数', dataIndex: 'tokenCount', width: 100, hideInSearch: true },
     { title: '字符数', dataIndex: 'charCount', width: 100, hideInSearch: true },
-    { title: '页码', dataIndex: 'pageNo', width: 80, hideInSearch: true },
+    // { title: '页码', dataIndex: 'pageNo', width: 80, hideInSearch: true },
     { title: '向量化状态', dataIndex: 'embeddingStatus', valueEnum: processStatusValueEnum, width: 120 },
     { title: '状态', dataIndex: 'status', valueEnum: enabledStatusValueEnum, width: 90 },
     { title: '创建时间', dataIndex: 'createTime', valueType: 'dateTime', width: 180, hideInSearch: true },

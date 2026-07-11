@@ -74,19 +74,43 @@ export async function wfDefinitionChangeStatus(
   });
 }
 
-/** 修改wfd_dto 修改wfd PUT /workflow/wfDefinition/dto */
-export async function wfDefinitionEditDto(
-  body: API.WfDefinitionDto,
+/** 此处后端没有提供注释 GET /workflow/wfDefinition/${param0}/versions */
+export async function wfDefinitionVersionList(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.versionsParams,
   options?: { [key: string]: any }
 ) {
-  return request<API.RVoid>("/workflow/wfDefinition/dto", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
+  const { id: param0, ...queryParams } = params;
+  return request<API.RListWfDefinitionVersionVo>(
+    `/workflow/wfDefinition/${param0}/versions`,
+    {
+      method: "GET",
+      params: { ...queryParams },
+      ...(options || {}),
+    }
+  );
+}
+
+/** 此处后端没有提供注释 POST /workflow/wfDefinition/${param0}/versions */
+export async function wfDefinitionVersionCreate(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.createVersionParams,
+  body: API.CreateDefinitionVersionDto,
+  options?: { [key: string]: any }
+) {
+  const { id: param0, ...queryParams } = params;
+  return request<API.RWfDefinitionVersionVo>(
+    `/workflow/wfDefinition/${param0}/versions`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      params: { ...queryParams },
+      data: body,
+      ...(options || {}),
+    }
+  );
 }
 
 /** 导出wfd列表 导出wfd列表 POST /workflow/wfDefinition/export */
@@ -123,6 +147,90 @@ export async function wfDefinitionList(
         pageQuery: undefined,
         ...params["pageQuery"],
       },
+      ...(options || {}),
+    }
+  );
+}
+
+/** 此处后端没有提供注释 GET /workflow/wfDefinition/versions/${param0} */
+export async function wfDefinitionVersionGetInfo(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.versionParams,
+  options?: { [key: string]: any }
+) {
+  const { versionId: param0, ...queryParams } = params;
+  return request<API.RWfDefinitionVersionVo>(
+    `/workflow/wfDefinition/versions/${param0}`,
+    {
+      method: "GET",
+      params: { ...queryParams },
+      ...(options || {}),
+    }
+  );
+}
+
+/** 此处后端没有提供注释 DELETE /workflow/wfDefinition/versions/${param0} */
+export async function wfDefinitionVersionRemove(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.deleteVersionParams,
+  options?: { [key: string]: any }
+) {
+  const { versionId: param0, ...queryParams } = params;
+  return request<API.RVoid>(`/workflow/wfDefinition/versions/${param0}`, {
+    method: "DELETE",
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}
+
+/** 此处后端没有提供注释 POST /workflow/wfDefinition/versions/${param0}/archive */
+export async function wfDefinitionVersionArchive(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.archiveVersionParams,
+  options?: { [key: string]: any }
+) {
+  const { versionId: param0, ...queryParams } = params;
+  return request<API.RVoid>(
+    `/workflow/wfDefinition/versions/${param0}/archive`,
+    {
+      method: "POST",
+      params: { ...queryParams },
+      ...(options || {}),
+    }
+  );
+}
+
+/** 此处后端没有提供注释 PUT /workflow/wfDefinition/versions/${param0}/draft */
+export async function wfDefinitionVersionSaveDraft(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.saveDraftParams,
+  body: API.SaveDefinitionDraftDto,
+  options?: { [key: string]: any }
+) {
+  const { versionId: param0, ...queryParams } = params;
+  return request<API.RVoid>(`/workflow/wfDefinition/versions/${param0}/draft`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    params: { ...queryParams },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** 此处后端没有提供注释 POST /workflow/wfDefinition/versions/${param0}/publish */
+export async function wfDefinitionVersionPublish(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.publishVersionParams,
+  options?: { [key: string]: any }
+) {
+  const { versionId: param0, ...queryParams } = params;
+  return request<API.RVoid>(
+    `/workflow/wfDefinition/versions/${param0}/publish`,
+    {
+      method: "POST",
+      params: { ...queryParams },
       ...(options || {}),
     }
   );

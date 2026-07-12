@@ -1,0 +1,4 @@
+interface:
+  display_name: "Yuan CRUD Page"
+  short_description: "Develop Yuan ProTable and ProForm CRUD pages"
+  default_prompt: "Use $develop-yuan-crud-page to add or update a Yuan CRUD page consistently."

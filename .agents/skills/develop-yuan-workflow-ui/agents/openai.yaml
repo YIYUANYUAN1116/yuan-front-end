@@ -1,0 +1,4 @@
+interface:
+  display_name: "Yuan Workflow UI"
+  short_description: "Develop Yuan workflow and approval interfaces"
+  default_prompt: "Use $develop-yuan-workflow-ui to modify a Yuan workflow UI safely."
